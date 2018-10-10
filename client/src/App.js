@@ -1,16 +1,28 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+
+import Landing from './Landing/Landing';
 
 export default class App extends Component {
+  state = {
+    page: 'Landing',
+    category: '',
+    quiz: {}
+  }
+
+  changePage = (page, state={}) => {
+    this.setState({
+      ...state,
+      page
+    });
+  };
+
   render() {
-    return (
-      <View style={styles.container}>
-        
-      </View>
-    );
+    let props = {
+      changePage: this.changePage
+    };
+
+    if (this.state.page === 'Landing') {
+      return <Landing {...props} />;
+    }
   }
 }
-
-const styles = StyleSheet.create({
-  container: {}
-});
