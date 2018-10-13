@@ -2,11 +2,13 @@ import React, {Component} from 'react';
 
 import Landing from './Landing/Landing';
 
+const pages = {
+  Landing
+};
+
 export default class App extends Component {
   state = {
-    page: 'Landing',
-    category: '',
-    quiz: {}
+    page: 'Landing'
   }
 
   changePage = (page, state={}) => {
@@ -21,8 +23,7 @@ export default class App extends Component {
       changePage: this.changePage
     };
 
-    if (this.state.page === 'Landing') {
-      return <Landing {...props} />;
-    }
+    const Page = pages[this.state.page];
+    return <Page {...props} />
   }
 }

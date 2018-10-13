@@ -1,27 +1,236 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
+import {
+  StyleSheet, 
+  View, 
+  Image, 
+  Dimensions, 
+  Animated,
+  Easing,
+  Platform
+} from 'react-native';
 
-import Button from '../shared/Button/Button';
+import Buttons from './Buttons/Buttons';
+import Login from './Login/Login';
+import Register from './Register/Register';
 
 export default class Landing extends Component {
+  state = {
+    preset: 'Landing'
+  }
+
+  componentWillMount() {
+    this.animatedState = {
+      loginOpacity: new Animated.Value(0),
+      registerOpacity: new Animated.Value(0),
+      landingOpacity: new Animated.Value(1),
+      logomarkOpacity: new Animated.Value(1),
+      backgroundHeight: new Animated.Value(Dimensions.get('window').height * 0.75)
+    };
+    this.animationPresets = {
+      'Login': () => {
+        this.setState({preset: this.state.preset + '-Login'}, () => {
+          Animated.timing(
+            this.animatedState.backgroundHeight,
+            {
+              toValue: Dimensions.get('window').height * 0.35,
+              duration: 250,
+              easing: Easing.bezier(0.77, 0, 0.175, 1)
+            }
+          ).start();
+          Animated.timing(
+            this.animatedState.loginOpacity,
+            {
+              toValue: 1,
+              duration: 75,
+              delay: 75,
+              easing: Easing.bezier(0.77, 0, 0.175, 1)
+            }
+          ).start();
+          Animated.parallel([
+            Animated.timing(
+              this.animatedState.logomarkOpacity,
+              {
+                toValue: 0,
+                duration: 250,
+                easing: Easing.bezier(0.77, 0, 0.175, 1)
+              }
+            ),
+            Animated.timing(
+              this.animatedState.registerOpacity,
+              {
+                toValue: 0,
+                duration: 250,
+                easing: Easing.bezier(0.77, 0, 0.175, 1)
+              }
+            ),
+            Animated.timing(
+              this.animatedState.landingOpacity,
+              {
+                toValue: 0,
+                duration: 250,
+                easing: Easing.bezier(0.77, 0, 0.175, 1)
+              }
+            )
+          ]).start(() => {
+            this.setState({preset: 'Login'});
+          });
+        });
+      },
+      'Register': () => {
+        this.setState({preset: this.state.preset + 'Register'}, () => {
+          Animated.timing(
+            this.animatedState.backgroundHeight,
+            {
+              toValue: Dimensions.get('window').height * 0.25,
+              duration: 250,
+              easing: Easing.bezier(0.77, 0, 0.175, 1)
+            }
+          ).start();
+          Animated.timing(
+            this.animatedState.registerOpacity,
+            {
+              toValue: 1,
+              duration: 75,
+              delay: 75,
+              easing: Easing.bezier(0.77, 0, 0.175, 1)
+            }
+          ).start();
+          Animated.parallel([
+            Animated.timing(
+              this.animatedState.logomarkOpacity,
+              {
+                toValue: 0,
+                duration: 250,
+                easing: Easing.bezier(0.77, 0, 0.175, 1)
+              }
+            ),
+            Animated.timing(
+              this.animatedState.loginOpacity,
+              {
+                toValue: 0,
+                duration: 250,
+                easing: Easing.bezier(0.77, 0, 0.175, 1)
+              }
+            ),
+            Animated.timing(
+              this.animatedState.landingOpacity,
+              {
+                toValue: 0,
+                duration: 250,
+                easing: Easing.bezier(0.77, 0, 0.175, 1)
+              }
+            )
+          ]).start(() => {
+            this.setState({preset: 'Register'});
+          });
+        });
+      },
+      'Landing': () => {
+        this.setState({preset: 'Landing' + this.state.preset}, () => {
+          Animated.timing(
+            this.animatedState.backgroundHeight,
+            {
+              toValue: Dimensions.get('window').height * 0.75,
+              duration: 250,
+              easing: Easing.bezier(0.77, 0, 0.175, 1)
+            }
+          ).start();
+          Animated.parallel([
+            Animated.timing(
+              this.animatedState.logomarkOpacity,
+              {
+                toValue: 1,
+                duration: 125,
+                easing: Easing.bezier(0.77, 0, 0.175, 1)
+              }
+            ),
+            Animated.timing(
+              this.animatedState.loginOpacity,
+              {
+                toValue: 0,
+                duration: 125,
+                easing: Easing.bezier(0.77, 0, 0.175, 1)
+              }
+            ),
+            Animated.timing(
+              this.animatedState.registerOpacity,
+              {
+                toValue: 0,
+                duration: 125,
+                easing: Easing.bezier(0.77, 0, 0.175, 1)
+              }
+            ),
+            Animated.timing(
+              this.animatedState.landingOpacity,
+              {
+                toValue: 1,
+                duration: 250,
+                easing: Easing.bezier(0.77, 0, 0.175, 1)
+              }
+            )
+          ]).start(() => {
+            this.setState({preset: 'Landing'});
+          });
+        });
+      }
+    };
+  }
+  
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.background}>
-          <View style={styles.logoBox}>
-            <Image 
-              style={styles.logomark}
-              source={require('../images/logomark.png')}
-              resizeMode="contain"
-            />
-          </View>
-        </View>
-        <View style={styles.buttons}>
-          <Button 
-            style={styles.button}
-            text="Kayıt ol"
-          />
-          <Text style={styles.login}>Hesabın var mı? Giriş yap.</Text>
+        <Animated.View 
+          style={[
+            styles.background,
+            {height: this.animatedState.backgroundHeight}
+          ]}
+        >
+          {this.state.preset.includes('Landing') && (
+            <Animated.View 
+              style={[
+                styles.logoBox,
+                {opacity: this.animatedState.logomarkOpacity}
+              ]}                                                                                                                                                                              
+            >
+              <Image 
+                style={styles.logomark}
+                source={require('../images/logomark.png')}
+                resizeMode="contain"
+              />
+            </Animated.View>
+          )}
+        </Animated.View>
+        {this.state.preset.includes('Landing') && (
+          <Animated.View 
+            style={[
+              styles.buttons,
+              {opacity: this.animatedState.landingOpacity}
+            ]}
+          >
+            <Buttons animationPresets={this.animationPresets} />
+          </Animated.View>
+        )}
+        <View style={styles.main}>
+          {this.state.preset.includes('Login') && (
+            <Animated.View 
+              style={[
+                styles.login,
+                {opacity: this.animatedState.loginOpacity}
+              ]}
+            >
+              <Login animationPresets={this.animationPresets} />
+            </Animated.View>
+          )}
+          {this.state.preset.includes('Register') && (
+            <Animated.View 
+              style={[
+                styles.register,
+                {opacity: this.animatedState.registerOpacity}
+              ]}
+            >
+              <Register animationPresets={this.animationPresets} />
+            </Animated.View>
+          )}
         </View>
       </View>
     );
@@ -34,22 +243,54 @@ const styles = StyleSheet.create({
   },
   background: {
     backgroundColor: '#16425B',
-    height: Dimensions.get('window').height * 0.75,
     justifyContent: 'center',
     alignItems: 'center'
   },
-  logomark: {
-    width: Dimensions.get('window').width * 0.75
-  },
   buttons: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 25,
     flex: 1
   },
+  main: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   login: {
-    marginTop: 15,
-    fontWeight: '500',
-    color: 'rgba(0, 0, 0, 0.9)'
+    backgroundColor: 'white',
+    width: Dimensions.get('window').width * 0.9,
+    borderRadius: 10,
+    padding: 20,
+    ...Platform.select({ 
+      ios: { 
+        shadowColor: '#000', 
+        shadowOffset: {width: 0, height: 0}, 
+        shadowOpacity: 0.1, 
+        shadowRadius: 50, 
+      }, 
+      android: { 
+        elevation: 5 
+      }, 
+    }),
+  },
+  register: {
+    backgroundColor: 'white',
+    width: Dimensions.get('window').width * 0.9,
+    borderRadius: 10,
+    padding: 20,
+    ...Platform.select({ 
+      ios: { 
+        shadowColor: 'black', 
+        shadowOffset: {width: 0, height: 0}, 
+        shadowOpacity: 0.1, 
+        shadowRadius: 50, 
+      }, 
+      android: { 
+        elevation: 5 
+      }, 
+    }),
+  },
+  logomark: {
+    width: Dimensions.get('window').width * 0.75
   }
 });
