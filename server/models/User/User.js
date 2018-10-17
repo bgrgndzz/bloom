@@ -14,7 +14,15 @@ const UserSchema = new Schema({
     password: {
       type: String,
       required: true
-    }
+    },
+    active: {
+      type: Boolean,
+      default: true
+    },
+    loginCount: {
+      type: Number,
+      default: 0
+    } 
   },
   user: {
     firstName: {
