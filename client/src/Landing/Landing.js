@@ -5,13 +5,14 @@ import {
   Image, 
   Dimensions, 
   Animated,
-  Easing,
-  Platform
+  Easing
 } from 'react-native';
 
 import Buttons from './Buttons/Buttons';
 import Login from './Login/Login';
 import Register from './Register/Register';
+
+import logomark from '../images/logomark.png';
 
 export default class Landing extends Component {
   state = {
@@ -51,7 +52,7 @@ export default class Landing extends Component {
               this.animatedState.logomarkOpacity,
               {
                 toValue: 0,
-                duration: 250,
+                duration: 125,
                 easing: Easing.bezier(0.77, 0, 0.175, 1)
               }
             ),
@@ -100,7 +101,7 @@ export default class Landing extends Component {
               this.animatedState.logomarkOpacity,
               {
                 toValue: 0,
-                duration: 250,
+                duration: 125,
                 easing: Easing.bezier(0.77, 0, 0.175, 1)
               }
             ),
@@ -140,6 +141,7 @@ export default class Landing extends Component {
               this.animatedState.logomarkOpacity,
               {
                 toValue: 1,
+                delay: 125,
                 duration: 125,
                 easing: Easing.bezier(0.77, 0, 0.175, 1)
               }
@@ -192,9 +194,9 @@ export default class Landing extends Component {
                 {opacity: this.animatedState.logomarkOpacity}
               ]}                                                                                                                                                                              
             >
-              <Image 
+              <Animated.Image 
                 style={styles.logomark}
-                source={require('../images/logomark.png')}
+                source={logomark}
                 resizeMode="contain"
               />
             </Animated.View>
@@ -210,8 +212,8 @@ export default class Landing extends Component {
             <Buttons animationPresets={this.animationPresets} />
           </Animated.View>
         )}
-        <View style={styles.main}>
-          {this.state.preset.includes('Login') && (
+        {this.state.preset.includes('Login') && (
+          <View style={styles.main}>
             <Animated.View 
               style={[
                 styles.login,
@@ -220,8 +222,10 @@ export default class Landing extends Component {
             >
               <Login animationPresets={this.animationPresets} />
             </Animated.View>
-          )}
-          {this.state.preset.includes('Register') && (
+          </View>
+        )}
+        {this.state.preset.includes('Register') && (
+          <View style={styles.main}>
             <Animated.View 
               style={[
                 styles.register,
@@ -230,8 +234,8 @@ export default class Landing extends Component {
             >
               <Register animationPresets={this.animationPresets} />
             </Animated.View>
-          )}
-        </View>
+          </View>
+        )}
       </View>
     );
   }
@@ -261,34 +265,22 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width * 0.9,
     borderRadius: 10,
     padding: 20,
-    ...Platform.select({ 
-      ios: { 
-        shadowColor: '#000', 
-        shadowOffset: {width: 0, height: 0}, 
-        shadowOpacity: 0.1, 
-        shadowRadius: 50, 
-      }, 
-      android: { 
-        elevation: 5 
-      }, 
-    }),
+    shadowColor: '#000', 
+    shadowOffset: {width: 0, height: 0}, 
+    shadowOpacity: 0.25, 
+    shadowRadius: 10, 
+    elevation: 5
   },
   register: {
     backgroundColor: 'white',
     width: Dimensions.get('window').width * 0.9,
     borderRadius: 10,
     padding: 20,
-    ...Platform.select({ 
-      ios: { 
-        shadowColor: 'black', 
-        shadowOffset: {width: 0, height: 0}, 
-        shadowOpacity: 0.1, 
-        shadowRadius: 50, 
-      }, 
-      android: { 
-        elevation: 5 
-      }, 
-    }),
+    shadowColor: '#000', 
+    shadowOffset: {width: 0, height: 0}, 
+    shadowOpacity: 0.25, 
+    shadowRadius: 10, 
+    elevation: 5
   },
   logomark: {
     width: Dimensions.get('window').width * 0.75

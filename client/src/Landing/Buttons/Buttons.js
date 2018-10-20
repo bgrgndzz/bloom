@@ -3,7 +3,8 @@ import {
   StyleSheet, 
   Text, 
   View, 
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from 'react-native';
 
 import Button from '../../shared/Button/Button';

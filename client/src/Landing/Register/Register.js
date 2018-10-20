@@ -2,14 +2,13 @@ import React, {Component} from 'react';
 import {
   StyleSheet, 
   Text, 
-  View,
-  TouchableOpacity,
-  Image
+  View
 } from 'react-native';
 
 import Back from '../../shared/Back/Back';
 import Button from '../../shared/Button/Button';
 import Input from '../../shared/Input/Input';
+import Dropdown from '../../shared/Dropdown/Dropdown';
 
 export default class Register extends Component {
   state = {
@@ -17,12 +16,23 @@ export default class Register extends Component {
     lastName: '',
     email: '',
     password: '',
+    password2: '',
     school: ''
   };
+
+  componentWillMount() {
+    this.schools = [
+      'Robert Kolej',
+      'Üsküdar Amerikan Lisesi'
+    ];
+  }
 
   onChangeText = (key) => {
     return (input) => this.setState({[key]: input});
   }
+  onSelect = (key) => {
+    return (index, input) => this.setState({[key]: input});
+  };
 
   render() {
     return (
@@ -47,10 +57,10 @@ export default class Register extends Component {
             value={this.state.lastName}
           />
         </View>
-        <Input 
-          onChangeText={this.onChangeText('school')} 
-          placeholder="Okul"
-          value={this.state.school}
+        <Dropdown 
+          defaultValue={this.state.school || 'Okul'}
+          onSelect={this.onSelect('school')}
+          options={this.schools} 
         />
         <Input 
           onChangeText={this.onChangeText('email')} 
@@ -63,6 +73,11 @@ export default class Register extends Component {
           type='password'
           placeholder='Şifre'
           value={this.state.password}
+        />
+        <Input 
+          onChangeText={this.onChangeText('password2')} 
+          placeholder="Şifre Doğrulama"
+          value={this.state.password2}
         />
         <Button 
           text="Kayıt Ol" 

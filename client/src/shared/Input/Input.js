@@ -5,7 +5,7 @@ import {
   TextInput
 } from 'react-native';
 
-export default class Button extends Component {
+export default class Input extends Component {
   render() {
     const width = this.props.width || '100%';
     let props = {
@@ -40,7 +40,7 @@ export default class Button extends Component {
 const styles = StyleSheet.create({
   inputContainer: {
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 5,
     borderColor: 'rgba(0, 0, 0, 0.25)',
     borderWidth: 1,
     marginBottom: 25

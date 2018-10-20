@@ -31,7 +31,7 @@
                BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
                BuildableName = "bloom-tvOS.app"
                BlueprintName = "bloom-tvOS"
-               ReferencedContainer = "container:bloom.xcodeproj">
+               ReferencedContainer = "container:Bloom.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -45,7 +45,7 @@
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
                BuildableName = "bloom-tvOSTests.xctest"
                BlueprintName = "bloom-tvOSTests"
-               ReferencedContainer = "container:bloom.xcodeproj">
+               ReferencedContainer = "container:Bloom.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -63,7 +63,7 @@
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
                BuildableName = "bloom-tvOSTests.xctest"
                BlueprintName = "bloom-tvOSTests"
-               ReferencedContainer = "container:bloom.xcodeproj">
+               ReferencedContainer = "container:Bloom.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -73,7 +73,7 @@
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
             BuildableName = "bloom-tvOS.app"
             BlueprintName = "bloom-tvOS"
-            ReferencedContainer = "container:bloom.xcodeproj">
+            ReferencedContainer = "container:Bloom.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -96,7 +96,7 @@
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
             BuildableName = "bloom-tvOS.app"
             BlueprintName = "bloom-tvOS"
-            ReferencedContainer = "container:bloom.xcodeproj">
+            ReferencedContainer = "container:Bloom.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -115,7 +115,7 @@
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
             BuildableName = "bloom-tvOS.app"
             BlueprintName = "bloom-tvOS"
-            ReferencedContainer = "container:bloom.xcodeproj">
+            ReferencedContainer = "container:Bloom.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
