@@ -2,12 +2,16 @@ import React, {Component} from 'react';
 import {
   StyleSheet, 
   Text, 
-  View
+  View,
+  Alert,
+  AsyncStorage
 } from 'react-native';
 
 import Back from '../../shared/Back/Back';
 import Button from '../../shared/Button/Button';
 import Input from '../../shared/Input/Input';
+
+import loginPOST from './api/login';
 
 export default class Login extends Component {
   state = {
@@ -18,6 +22,12 @@ export default class Login extends Component {
   onChangeText = (key) => {
     return (input) => this.setState({[key]: input});
   }
+
+  login = () => loginPOST(this.state, (err, jwt) => {
+    if (err && !jwt) return Alert.alert(err);
+    AsyncStorage.setItem('jwt', jwt);
+    this.props.changePage('Main');
+  });
 
   render() {
     return (
@@ -40,6 +50,7 @@ export default class Login extends Component {
         />
         <Button 
           text="Giriş Yap" 
+          onPress={this.login}
         />
       </View>
     )

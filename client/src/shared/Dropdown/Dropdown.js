@@ -13,6 +13,7 @@ export default class Dropdown extends Component {
     const props = {
       style: styles.input,
       dropdownStyle: styles.dropdown,
+      dropdownTextStyle: styles.dropdownText,
       defaultValue: this.props.defaultValue,
       onSelect: this.props.onSelect,
       options: this.props.options
@@ -32,6 +33,12 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, 0.25)',
     borderWidth: 1,
     marginBottom: 25
+  },
+  dropdownText: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 15,
+    paddingRight: 15
   },
   input: {
     paddingTop: 10,

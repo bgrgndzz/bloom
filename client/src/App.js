@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 
 import Landing from './Landing/Landing';
+import Main from './Main/Main';
 
 const pages = {
-  Landing
+  Landing,
+  Main
 };
 
 export default class App extends Component {

@@ -2,13 +2,17 @@ import React, {Component} from 'react';
 import {
   StyleSheet, 
   Text, 
-  View
+  View,
+  Alert,
+  AsyncStorage
 } from 'react-native';
 
 import Back from '../../shared/Back/Back';
 import Button from '../../shared/Button/Button';
 import Input from '../../shared/Input/Input';
 import Dropdown from '../../shared/Dropdown/Dropdown';
+
+import registerPOST from './api/register';
 
 export default class Register extends Component {
   state = {
@@ -33,6 +37,12 @@ export default class Register extends Component {
   onSelect = (key) => {
     return (index, input) => this.setState({[key]: input});
   };
+
+  register = () => registerPOST(this.state, (err, jwt) => {
+    if (err && !jwt) return Alert.alert(err);
+    AsyncStorage.setItem('jwt', jwt);
+    this.props.changePage('Main');
+  });
 
   render() {
     return (
@@ -76,11 +86,13 @@ export default class Register extends Component {
         />
         <Input 
           onChangeText={this.onChangeText('password2')} 
+          type='password'
           placeholder="Şifre Doğrulama"
           value={this.state.password2}
         />
         <Button 
           text="Kayıt Ol" 
+          onPress={this.register}
         />
       </View>
     )

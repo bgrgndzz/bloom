@@ -18,7 +18,7 @@ describe('/auth/', () => {
     it('should login', done => {
       const user = new User({
         auth: {
-          email: 'johndoe',
+          email: 'johndoe@email.com',
           password: 'password'
         },
         user: {
@@ -29,7 +29,7 @@ describe('/auth/', () => {
       });
       user.save(err => {
         const formData = {
-          email: 'johndoe',
+          email: 'johndoe@email.com',
           password: 'password'
         };
         chai.request(app)
@@ -52,7 +52,7 @@ describe('/auth/', () => {
       it('should not login with a wrong password', done => {
         const user = new User({
           auth: {
-            email: 'johndoe',
+            email: 'johndoe@email.com',
             password: 'password'
           },
           user: {
@@ -63,7 +63,7 @@ describe('/auth/', () => {
         });
         user.save(err => {
           const formData = {
-            email: 'johndoe',
+            email: 'johndoe@email.com',
             password: 'not password'
           };
           chai.request(app)
@@ -85,7 +85,7 @@ describe('/auth/', () => {
       it('should not login with an invalid email', done => {
         const user = new User({
           auth: {
-            email: 'johndoe',
+            email: 'johndoe@email.com',
             password: 'password'
           },
           user: {
@@ -120,7 +120,7 @@ describe('/auth/', () => {
       it('should not login with a missing email parameter', done => {
         const user = new User({
           auth: {
-            email: 'johndoe',
+            email: 'johndoe@email.com',
             password: 'password'
           },
           user: {
@@ -152,7 +152,7 @@ describe('/auth/', () => {
       it('should not login with a missing password parameter', done => {
         const user = new User({
           auth: {
-            email: 'johndoe',
+            email: 'johndoe@email.com',
             password: 'password'
           },
           user: {
@@ -163,7 +163,7 @@ describe('/auth/', () => {
         });
         user.save(err => {
           const formData = {
-            email: 'johndoe'
+            email: 'johndoe@email.com'
           };
           chai.request(app)
             .post('/auth/login')
@@ -184,7 +184,7 @@ describe('/auth/', () => {
       it('should not login with both parameters missing', done => {
         const user = new User({
           auth: {
-            email: 'johndoe',
+            email: 'johndoe@email.com',
             password: 'password'
           },
           user: {
@@ -213,7 +213,7 @@ describe('/auth/', () => {
     it('should not login an inactive user', done => {
       const user = new User({
         auth: {
-          email: 'johndoe',
+          email: 'johndoe@email.com',
           password: 'password',
           active: false
         },
@@ -225,7 +225,7 @@ describe('/auth/', () => {
       });
       user.save(err => {
         const formData = {
-          email: 'johndoe',
+          email: 'johndoe@email.com',
           password: 'password'
         };
         chai.request(app)
@@ -250,7 +250,7 @@ describe('/auth/', () => {
       const formData = {
         firstName: 'john',
         lastName: 'doe',
-        email: 'johndoe',
+        email: 'johndoe@email.com',
         school: 'Robert College',
         password: 'password',
         password2: 'password'
@@ -274,7 +274,7 @@ describe('/auth/', () => {
       it('should not register with a missing firstName', done => {
         const formData = {
           lastName: 'doe',
-          email: 'johndoe',
+          email: 'johndoe@email.com',
           school: 'Robert College',
           password: 'password',
           password2: 'password'
@@ -297,7 +297,7 @@ describe('/auth/', () => {
       it('should not register with a missing lastName', done => {
         const formData = {
           firstName: 'john',
-          email: 'johndoe',
+          email: 'johndoe@email.com',
           school: 'Robert College',
           password: 'password',
           password2: 'password'
@@ -344,7 +344,7 @@ describe('/auth/', () => {
         const formData = {
           firstName: 'john',
           lastName: 'doe',
-          email: 'johndoe',
+          email: 'johndoe@email.com',
           password: 'password',
           password2: 'password'
         };
@@ -367,7 +367,7 @@ describe('/auth/', () => {
         const formData = {
           firstName: 'john',
           lastName: 'doe',
-          email: 'johndoe',
+          email: 'johndoe@email.com',
           school: 'Robert College',
           password2: 'password'
         };
@@ -390,7 +390,7 @@ describe('/auth/', () => {
         const formData = {
           firstName: 'john',
           lastName: 'doe',
-          email: 'johndoe',
+          email: 'johndoe@email.com',
           school: 'Robert College',
           password: 'password'
         };
@@ -415,7 +415,7 @@ describe('/auth/', () => {
         const formData = {
           firstName: 'john',
           lastName: 'doe',
-          email: 'johndoe',
+          email: 'johndoe@email.com',
           school: 'Robert College',
           password: 'password',
           password2: 'not password'
@@ -438,7 +438,7 @@ describe('/auth/', () => {
       it('should not register with an already existing email', done => {
         const user = new User({
           auth: {
-            email: 'johndoe',
+            email: 'johndoe@email.com',
             password: 'password'
           },
           user: {
@@ -451,7 +451,7 @@ describe('/auth/', () => {
           const formData = {
             firstName: 'john',
             lastName: 'doe',
-            email: 'johndoe',
+            email: 'johndoe@email.com',
             school: 'Robert College',
             password: 'password',
             password2: 'password'

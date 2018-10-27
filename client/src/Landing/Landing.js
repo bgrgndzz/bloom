@@ -12,8 +12,6 @@ import Buttons from './Buttons/Buttons';
 import Login from './Login/Login';
 import Register from './Register/Register';
 
-import logomark from '../images/logomark.png';
-
 export default class Landing extends Component {
   state = {
     preset: 'Landing'
@@ -196,7 +194,7 @@ export default class Landing extends Component {
             >
               <Animated.Image 
                 style={styles.logomark}
-                source={logomark}
+                source={require('../images/logomark.png')}
                 resizeMode="contain"
               />
             </Animated.View>
@@ -220,7 +218,10 @@ export default class Landing extends Component {
                 {opacity: this.animatedState.loginOpacity}
               ]}
             >
-              <Login animationPresets={this.animationPresets} />
+              <Login 
+                changePage={this.props.changePage}
+                animationPresets={this.animationPresets} 
+              />
             </Animated.View>
           </View>
         )}
@@ -232,7 +233,10 @@ export default class Landing extends Component {
                 {opacity: this.animatedState.registerOpacity}
               ]}
             >
-              <Register animationPresets={this.animationPresets} />
+              <Register 
+                changePage={this.props.changePage}
+                animationPresets={this.animationPresets} 
+              />
             </Animated.View>
           </View>
         )}

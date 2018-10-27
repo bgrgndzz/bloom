@@ -6,6 +6,7 @@ module.exports = function(next) {
       if (err) return next(err);
 
       this.auth.password = hash;
+      this.preSave = false;
       next();
     });
   } else {
