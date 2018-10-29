@@ -26,7 +26,7 @@ export default class Login extends Component {
   login = () => loginPOST(this.state, (err, jwt) => {
     if (err && !jwt) return Alert.alert(err);
     AsyncStorage.setItem('jwt', jwt);
-    this.props.changePage('Main');
+    this.props.changePage('Main', {jwt});
   });
 
   render() {
