@@ -1,17 +1,17 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const User = require('../models/User/User');
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const app = require('../app.js');
 const should = chai.should();
 
+const app = require('../app.js');
 
 chai.use(chaiHttp);
 
 describe('/auth/', () => {
   beforeEach(done => {
-    User.deleteMany({}).exec(done);        
+    User.deleteMany({}).exec(done);
   });
 
   describe('POST /auth/login', () => {
