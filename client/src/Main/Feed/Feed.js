@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import {
   StyleSheet, 
-  View,
+  ScrollView,
   Text,
-  Alert
+  Alert,
+  RefreshControl,
+  TouchableOpacity
 } from 'react-native';
 
 import Topic from '../shared/Topic/Topic';
@@ -11,7 +13,10 @@ import Topic from '../shared/Topic/Topic';
 import listTopics from './api/listTopics';
 
 export default class Feed extends Component {
-  state = {topics: []}
+  state = {
+    topics: [],
+    refreshing: false
+  }
 
   componentWillMount = () => {
     listTopics(this.props.jwt, (err, res) => {
@@ -19,18 +24,42 @@ export default class Feed extends Component {
       this.setState({topics: res.topics});
     });
   }
+  
+  onRefresh = () => {
+    this.setState({refreshing: true});
+    listTopics(this.props.jwt, (err, res) => {
+      if (err && !res) return Alert.alert(err);
+      this.setState({
+        topics: res.topics,
+        refreshing: false
+      });
+    });
+  }
 
   render() {
     return (
-      <View style={styles.topics}>
-        {this.state.topics.map((topic, index) => (
-          <Topic
-            key={index}
-            topic={topic.topic}
-            posts={topic.posts}
+      <ScrollView 
+        style={styles.topics}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this.onRefresh}
           />
+        }
+      >
+        {this.state.topics.map((topic, index) => (
+          <TouchableOpacity 
+            key={index}
+            onPress={() => this.props.changePage('Topic', topic)}
+          >
+            <Topic
+              topic={topic.topic}
+              posts={topic.posts}
+            />
+          </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
     );
   }
 }

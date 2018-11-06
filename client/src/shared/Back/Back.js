@@ -11,9 +11,7 @@ export default class Back extends Component {
   }
 
   onPress = () => {
-    this.setState({disabled: true}, () => {
-      this.props.animationPresets['Landing']();
-    });
+    this.setState({disabled: true}, this.props.onPress);
   }
 
   render() {
@@ -24,7 +22,7 @@ export default class Back extends Component {
       >
         <Image 
           source={require('../../images/back--blue.png')}
-          style={styles.back}
+          style={[styles.back, this.props.style]}
           resizeMode="contain"
         />
       </TouchableOpacity>

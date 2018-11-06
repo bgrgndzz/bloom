@@ -1,5 +1,5 @@
-module.exports = (jwt, callback) => {
-  fetch('http://192.168.1.34:3000/topics/list', {
+module.exports = (jwt, topic, callback) => {
+  fetch('http://192.168.1.34:3000/posts/list/' + topic, {
     headers: {'x-access-token': jwt}
   })
   .then(response => response.json())

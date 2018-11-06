@@ -23,7 +23,7 @@ export default class Button extends Component {
     const buttonText = this.props.text || '';
     return (
       <TouchableOpacity 
-        style={styles.button}
+        style={[styles.button, this.props.style]}
         onPress={this.onPress}
         disabled={this.state.disabled}
       >
@@ -36,7 +36,7 @@ export default class Button extends Component {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: '#16425B',
-    padding: 12.5,
+    padding: 10,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',

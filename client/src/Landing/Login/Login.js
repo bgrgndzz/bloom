@@ -33,7 +33,7 @@ export default class Login extends Component {
     return (
       <View style={styles.login}>
         <View style={styles.headingContainer}>
-          <Back animationPresets={this.props.animationPresets} />
+          <Back onPress={this.props.animationPresets['Landing']} />
           <Text style={styles.heading}>Giriş Yap</Text>
         </View>
         <Input 

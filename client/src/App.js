@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-
 import {AsyncStorage} from 'react-native';
+
 
 import Landing from './Landing/Landing';
 import Main from './Main/Main';
@@ -12,8 +12,21 @@ const pages = {
 
 export default class App extends Component {
   state = {
-    page: 'Landing',
+    page: '',
     jwt: ''
+  }
+
+  componentWillMount = () => {
+    AsyncStorage.getItem('jwt').then(jwt => {
+      if (jwt) {
+        this.setState({
+          page: 'Main',
+          jwt
+        });
+      } else {
+        this.setState({page: 'Landing'});
+      }
+    });
   }
 
   changePage = (page, state={}) => {
@@ -21,7 +34,7 @@ export default class App extends Component {
       ...state,
       page
     });
-  };
+  }
 
   render() {
     let props = {
@@ -30,8 +43,8 @@ export default class App extends Component {
     if (this.state.jwt) {
       props.jwt = this.state.jwt;
     }
-
+  
     const Page = pages[this.state.page];
-    return <Page {...props} />
+    return this.state.page ? <Page {...props} /> : null;
   }
 }

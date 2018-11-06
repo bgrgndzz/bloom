@@ -14,7 +14,7 @@ export default class Input extends Component {
       onChangeText: this.props.onChangeText,
       value: this.props.value,
       underlineColorAndroid: 'transparent',
-      style: [styles.input]
+      style: [styles.input, this.props.style]
     };
 
     if (this.props.type) {
@@ -30,7 +30,7 @@ export default class Input extends Component {
     }
 
     return (
-      <View style={[styles.inputContainer, {width}]}>
+      <View style={[styles.inputContainer, {width}, this.props.containerStyle]}>
         <TextInput {...props} />
       </View>
     )

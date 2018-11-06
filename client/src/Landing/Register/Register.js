@@ -48,7 +48,7 @@ export default class Register extends Component {
     return (
       <View style={styles.register}>
         <View style={styles.headingContainer}>
-          <Back animationPresets={this.props.animationPresets} />
+          <Back onPress={this.props.animationPresets['Landing']} />
           <Text style={styles.heading}>Kayıt Ol</Text>
         </View>
         <View style={styles.halfInputs}>
