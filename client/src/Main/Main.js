@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {
   StyleSheet, 
-  View
+  View,
+  AsyncStorage
 } from 'react-native';
 
 import Header from './shared/Header/Header.js';
@@ -9,10 +10,12 @@ import BottomNavigation from './shared/BottomNavigation/BottomNavigation.js';
 
 import Feed from './Feed/Feed.js';
 import Topic from './Topic/Topic.js';
+import Profile from './Profile/Profile.js';
 
 const pages = {
   Feed,
-  Topic
+  Topic,
+  Profile
 };
 
 export default class Main extends Component {
@@ -26,9 +29,19 @@ export default class Main extends Component {
       page
     });
   }
+  goHome = () => {
+    AsyncStorage.getItem('jwt').then(jwt => {
+      if (jwt) AsyncStorage.removeItem('jwt').then(() => {
+        this.props.changePage('Landing');
+      });
+    })
+    
+  }
+
   render() {
     let props = {
       changePage: this.changePage,
+      goHome: this.goHome,
       jwt: this.props.jwt
     };
 
@@ -45,7 +58,11 @@ export default class Main extends Component {
         <View style={styles.content}>
           <Page {...props} />
         </View>
-        <BottomNavigation />
+        <BottomNavigation 
+          {...props}
+          pages={pages}
+          page={this.state.page}
+        />
       </View>
     );
   }

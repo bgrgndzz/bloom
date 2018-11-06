@@ -29,7 +29,10 @@ export default class Topic extends Component {
       this.props.jwt, 
       this.props.topic, 
       (err, res) => {
-        if (err && !res) return Alert.alert(err);
+        if (err && !res) {
+          if (err === 'unauthenticated') return this.props.goHome();
+          return Alert.alert(err);
+        }
         this.setState({posts: res.posts});
       }
     );
@@ -41,7 +44,10 @@ export default class Topic extends Component {
       this.props.jwt, 
       this.props.topic, 
       (err, res) => {
-        if (err && !res) return Alert.alert(err);
+        if (err && !res) {
+          if (err === 'unauthenticated') return this.props.goHome();
+          return Alert.alert(err);
+        }
         this.setState({
           posts: res.posts,
           refreshing: false
@@ -58,12 +64,19 @@ export default class Topic extends Component {
       this.props.topic, 
       {text: this.state.post},
       (err, res) => {
-        if (err && !res) return Alert.alert(err);
+        if (err && !res) {
+          if (err === 'unauthenticated') return this.props.goHome();
+          return Alert.alert(err);
+        }
+
         listPosts(
           this.props.jwt, 
           this.props.topic, 
           (err, res) => {
-            if (err && !res) return Alert.alert(err);
+            if (err && !res) {
+              if (err === 'unauthenticated') return this.props.goHome();
+              return Alert.alert(err);
+            }
             this.setState({posts: res.posts});
           }
         );

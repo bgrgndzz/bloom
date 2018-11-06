@@ -1,5 +1,5 @@
 module.exports = (jwt, topic, body, callback) => {
-  fetch('http://192.168.1.34:3000/posts/create/' + topic, {
+  fetch('http://192.168.1.51:3000/posts/create/' + topic, {
     method: 'POST', 
     mode: 'cors',
     headers: {
@@ -11,6 +11,7 @@ module.exports = (jwt, topic, body, callback) => {
   })
   .then(response => response.json())
   .then(response => {
+    if (!response.authenticated) return callback('unauthenticated');
     if (response.error) return callback(response.error);
     return callback(null, response);
   })

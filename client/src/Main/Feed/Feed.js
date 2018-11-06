@@ -20,7 +20,10 @@ export default class Feed extends Component {
 
   componentWillMount = () => {
     listTopics(this.props.jwt, (err, res) => {
-      if (err && !res) return Alert.alert(err);
+      if (err && !res) {
+        if (err === 'unauthenticated') return this.props.goHome();
+        return Alert.alert(err);
+      }
       this.setState({topics: res.topics});
     });
   }
@@ -28,7 +31,10 @@ export default class Feed extends Component {
   onRefresh = () => {
     this.setState({refreshing: true});
     listTopics(this.props.jwt, (err, res) => {
-      if (err && !res) return Alert.alert(err);
+      if (err && !res) {
+        if (err === 'unauthenticated') return this.props.goHome();
+        return Alert.alert(err);
+      }
       this.setState({
         topics: res.topics,
         refreshing: false

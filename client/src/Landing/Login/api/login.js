@@ -1,5 +1,5 @@
 module.exports = (body, callback) => {
-  fetch('http://192.168.1.34:3000/auth/login', {
+  fetch('http://192.168.1.51:3000/auth/login', {
     method: 'POST', 
     mode: 'cors',
     headers: {
