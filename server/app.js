@@ -16,6 +16,7 @@ dotenv.config({path: path.join(__dirname, '.env')});
 const authRoute = require('./routes/auth');
 const postsRoute = require('./routes/posts');
 const topicsRoute = require('./routes/topics');
+const userRoute = require('./routes/user');
 
 // constants
 const {
@@ -48,6 +49,7 @@ app.use(helmet());
 app.use('/auth', authRoute);
 app.use('/posts', postsRoute);
 app.use('/topics', topicsRoute);
+app.use('/user', userRoute);
 
 // listen to connections
 server.listen(PORT);

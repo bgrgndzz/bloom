@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
   Post
     .find({topic: req.params.topic})
     .sort('-date')
-    .populate('author')
+    .populate('author', 'user')
     .exec((err, posts) => {
       if (posts.length === 0) {
         return res.status(422).send({
