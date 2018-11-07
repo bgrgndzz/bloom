@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {
   StyleSheet, 
   View,
-  AsyncStorage
+  AsyncStorage,
+  ActivityIndicator
 } from 'react-native';
 
 import Header from './shared/Header/Header.js';
@@ -20,22 +21,36 @@ const pages = {
 
 export default class Main extends Component {
   state = {
-    page: 'Feed'
+    page: 'Feed',
+    loading: false
   }
 
   changePage = (page, state={}) => {
-    this.setState({
-      ...state,
-      page
-    });
+    if (page === this.state.page) {
+      this.setState({
+        page: '',
+        loading: true
+      }, () => {
+        this.setState({
+          loading: false,
+          ...state,
+          page
+        });
+      });
+    } else {
+      this.setState({
+        loading: false,
+        ...state,
+        page
+      });
+    }
   }
   goHome = () => {
     AsyncStorage.getItem('jwt').then(jwt => {
       if (jwt) AsyncStorage.removeItem('jwt').then(() => {
         this.props.changePage('Landing');
       });
-    })
-    
+    });
   }
 
   render() {
@@ -47,7 +62,9 @@ export default class Main extends Component {
 
     if (this.state.page === 'Topic') {
       props.topic = this.state.topic;
-      props.posts = this.state.posts;
+    }
+    if (this.state.page === 'Profile') {
+      props.user = this.state.user;
     }
 
     const Page = pages[this.state.page];
@@ -56,7 +73,7 @@ export default class Main extends Component {
       <View style={styles.container}>
         <Header />
         <View style={styles.content}>
-          <Page {...props} />
+          {this.state.loading ? <ActivityIndicator /> : <Page {...props} />}
         </View>
         <BottomNavigation 
           {...props}

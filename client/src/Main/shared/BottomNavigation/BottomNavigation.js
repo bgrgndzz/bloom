@@ -24,7 +24,7 @@ export default class BottomNavigation extends Component {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.navItem, this.props.page === 'Profile' && styles.activeNavItem]}
-          onPress={() => this.props.changePage('Profile')}
+          onPress={() => this.props.changePage('Profile', {user: 'self'})}
         >
           <Image 
             style={styles.navIcon}

@@ -1,5 +1,5 @@
 module.exports = (jwt, callback) => {
-  fetch('http://192.168.1.51:3000/topics/list', {
+  fetch('http://192.168.1.53:3000/topics/list', {
     headers: {'x-access-token': jwt}
   })
   .then(response => response.json())

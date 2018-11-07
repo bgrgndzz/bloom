@@ -2,17 +2,25 @@ import React, {Component} from 'react';
 import {
   StyleSheet, 
   View,
-  Text
+  Text,
+  TouchableOpacity
 } from 'react-native';
 
 export default class Post extends Component {
   render() {
     return (
       <View style={styles.post}>
-        <View style={styles.top}>
-          <Text style={styles.author}>{this.props.firstName} {this.props.lastName}</Text>
-        </View>
+        {this.props.include.includes('user') && (
+          <View style={styles.top}>
+            <TouchableOpacity onPress={() => this.props.changePage('Profile', {user: this.props.userId})}>
+              <Text style={styles.author}>{this.props.firstName} {this.props.lastName}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <View style={styles.main}>
+          {this.props.include.includes('topic') && (
+            <Text style={styles.topic}>{this.props.topic}</Text>
+          )}
           <Text style={styles.text}>{this.props.text}</Text>
         </View>
       </View>

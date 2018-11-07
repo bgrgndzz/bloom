@@ -20,6 +20,16 @@ module.exports = (req, res, next) => {
           error: 'Böyle bir başlık yok'
         });
       }
+      posts = posts.map(post => {
+        return {
+          ...post._doc,
+          author: {
+            id: post.author.id,
+            ...post.author._doc.user
+          }
+        };
+      });
+
       res.status(200).send({
         authenticated: true,
         posts

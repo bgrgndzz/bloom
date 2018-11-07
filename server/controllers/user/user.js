@@ -14,6 +14,13 @@ module.exports = (req, res, next) => {
     .findById(req.params.user)
     .select('user')
     .exec((err, user) => {
+      if (!user) {
+        return res.status(422).send({
+          authenticated: true, 
+          error: 'Böyle bir kullanıcı yok'
+        });
+      }
+
       Post
         .find({author: req.params.user})
         .sort('-date')

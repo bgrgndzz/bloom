@@ -130,8 +130,11 @@ export default class Topic extends Component {
             <Post 
               key={index}
               text={post.text}
-              firstName={post.author.user.firstName}
-              lastName={post.author.user.lastName}
+              firstName={post.author.firstName}
+              lastName={post.author.lastName}
+              userId={post.author.id}
+              include={['user']}
+              changePage={this.props.changePage}
             />
           ))}
         </ScrollView>
