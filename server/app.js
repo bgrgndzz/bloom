@@ -1,6 +1,7 @@
 // require modules
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const cors = require('cors');
 const express = require('express');
 const expressBrute = require('express-brute');
 const helmet = require('helmet');
@@ -43,6 +44,7 @@ app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 // const store = new expressBrute.MemoryStore();
 // const bruteforce = new expressBrute(store);
 // app.use(bruteforce.prevent);
+app.use(cors());
 app.use(helmet());
 
 // routing
