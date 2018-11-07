@@ -1,5 +1,5 @@
 module.exports = (body, callback) => {
-  fetch('http://192.168.1.53:3000/auth/register', {
+  fetch('https://www.bloomapp.tk/auth/register', {
     method: 'POST', 
     mode: 'cors',
     headers: {

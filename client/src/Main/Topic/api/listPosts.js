@@ -1,5 +1,5 @@
 module.exports = (jwt, topic, callback) => {
-  fetch('http://192.168.1.53:3000/posts/list/' + topic, {
+  fetch('https://www.bloomapp.tk/posts/list/' + topic, {
     headers: {'x-access-token': jwt}
   })
   .then(response => response.json())
