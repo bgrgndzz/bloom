@@ -2,10 +2,11 @@ import React, {Component} from 'react';
 import {
   StyleSheet, 
   View,
-  Text,
   Image,
   TouchableOpacity
 } from 'react-native';
+
+import FontAwesome from '../../../shared/FontAwesome/FontAwesome';
 
 export default class BottomNavigation extends Component {
   render() {
@@ -15,20 +16,18 @@ export default class BottomNavigation extends Component {
           style={[styles.navItem, this.props.page === 'Feed' && styles.activeNavItem]}
           onPress={() => this.props.changePage('Feed')}
         >
-          <Image 
-            style={styles.navIcon}
-            resizeMode="contain"
-            source={require('../../../images/feed.png')}
+          <FontAwesome 
+            style={[styles.navIcon, this.props.page === 'Feed' && styles.activeNavIcon]}
+            icon="bookmark"
           />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.navItem, this.props.page === 'Profile' && styles.activeNavItem]}
           onPress={() => this.props.changePage('Profile', {user: 'self'})}
         >
-          <Image 
-            style={styles.navIcon}
-            resizeMode="contain"
-            source={require('../../../images/profile.png')}
+          <FontAwesome 
+            style={[styles.navIcon, this.props.page === 'Profile' && styles.activeNavIcon]}
+            icon="user"
           />
         </TouchableOpacity>
       </View>
@@ -47,11 +46,21 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   navItem: {
-    justifyContent: 'center'
+    justifyContent: 'center',
+    height: 50,
+    width: '15%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  activeNavItem: {
+    backgroundColor: '#16425B'
   },
   navIcon: {
-    width: 20,
-    height: 20
+    fontSize: 25,
+    color: '#16425B',
+  },
+  activeNavIcon: {
+    color: 'white'
   },
   navTitle: {
     fontSize: 12,

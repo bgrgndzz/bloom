@@ -71,7 +71,7 @@ export default class Main extends Component {
 
     return (
       <View style={styles.container}>
-        <Header />
+        <Header {...props} />
         <View style={styles.content}>
           {this.state.loading ? <ActivityIndicator /> : <Page {...props} />}
         </View>
