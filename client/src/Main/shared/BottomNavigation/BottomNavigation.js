@@ -20,7 +20,6 @@ export default class BottomNavigation extends Component {
             resizeMode="contain"
             source={require('../../../images/feed.png')}
           />
-          <Text style={styles.navTitle}>Feed</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.navItem, this.props.page === 'Profile' && styles.activeNavItem]}
@@ -31,7 +30,6 @@ export default class BottomNavigation extends Component {
             resizeMode="contain"
             source={require('../../../images/profile.png')}
           />
-          <Text style={styles.navTitle}>Profile</Text>
         </TouchableOpacity>
       </View>
     );
@@ -51,15 +49,9 @@ const styles = StyleSheet.create({
   navItem: {
     justifyContent: 'center'
   },
-  activeNavItem: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#16425B',
-    marginTop: 2
-  },
   navIcon: {
-    width: 'auto',
-    height: 20,
-    marginBottom: 2.5
+    width: 20,
+    height: 20
   },
   navTitle: {
     fontSize: 12,
