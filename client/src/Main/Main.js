@@ -12,11 +12,13 @@ import BottomNavigation from './shared/BottomNavigation/BottomNavigation.js';
 import Feed from './Feed/Feed.js';
 import Topic from './Topic/Topic.js';
 import Profile from './Profile/Profile.js';
+import CreateTopic from './CreateTopic/CreateTopic.js';
 
 const pages = {
   Feed,
   Topic,
-  Profile
+  Profile,
+  CreateTopic
 };
 
 export default class Main extends Component {

@@ -17,7 +17,7 @@ export default class Header extends Component {
           source={require('../../../images/logo.png')}
           resizeMode="contain"
         />
-        <TouchableOpacity onPress={() => this.props.changePage('Feed')}>
+        <TouchableOpacity onPress={() => this.props.changePage('CreateTopic')}>
           <FontAwesome 
             style={styles.newTopic}
             icon="plus"
