@@ -6,9 +6,10 @@ import {
   Text,
   Alert,
   RefreshControl,
-  TouchableOpacity,
-  Image
+  TouchableOpacity
 } from 'react-native';
+
+import { CachedImage } from 'react-native-cached-image';
 
 import Post from '../shared/Post/Post';
 
@@ -55,6 +56,10 @@ export default class Profile extends Component {
           }
         >
           <View style={styles.user}>
+            <CachedImage 
+              style={styles.profilepicture}
+              source={this.props.profilepicture ? {uri: this.props.profilepicture} : require('../../../src/images/defaultprofile.png')}
+            />
             <Text style={styles.name}>{this.state.user.firstName} {this.state.user.lastName}</Text>
             <Text style={styles.school}>{this.state.user.school}</Text>
           </View>
@@ -62,8 +67,9 @@ export default class Profile extends Component {
             <Post 
               key={index}
               text={post.text}
-              topic={post.topic}
-              include={['topic']}
+              {...this.state.user}
+              include={['user']}
+              changePage={this.props.changePage}
             />
           ))}
         </ScrollView>
@@ -88,7 +94,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1, 
     shadowRadius: 5, 
     elevation: 1,
-    padding: 15
+    padding: 15,
+    alignItems: 'center'
+  },
+  profilepicture: {
+    width: 150,
+    height: 150,
+    marginBottom: 15,
+    borderRadius: 75
   },
   name: {
     textAlign: 'center',

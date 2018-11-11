@@ -130,9 +130,7 @@ export default class Topic extends Component {
             <Post 
               key={index}
               text={post.text}
-              firstName={post.author.firstName}
-              lastName={post.author.lastName}
-              userId={post.author.id}
+              {...post.author}
               include={['user']}
               changePage={this.props.changePage}
             />
