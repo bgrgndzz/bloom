@@ -23,7 +23,11 @@ module.exports = (req, res, next) => {
             user: {
               id: user.id,
               ...user._doc.user,
-              posts
+              posts: posts.map(post => ({
+                id: post.id,
+                ...post._doc,
+                liked: post.likes.indexOf(req.user) !== -1
+              }))
             }
           });
         });
