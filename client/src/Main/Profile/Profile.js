@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   posts: {
-    padding: 15,
+    padding: 15
   },
   user: {
     backgroundColor: 'white',

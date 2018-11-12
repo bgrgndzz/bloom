@@ -13,12 +13,14 @@ import Feed from './Feed/Feed.js';
 import Topic from './Topic/Topic.js';
 import Profile from './Profile/Profile.js';
 import CreateTopic from './CreateTopic/CreateTopic.js';
+import Settings from './Settings/Settings.js';
 
 const pages = {
   Feed,
   Topic,
   Profile,
-  CreateTopic
+  CreateTopic,
+  Settings
 };
 
 export default class Main extends Component {

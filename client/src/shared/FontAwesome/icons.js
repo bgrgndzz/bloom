@@ -14,5 +14,9 @@ export default {
   user: {
     code: '\uf007',
     type: 'Solid'
+  },
+  cog: {
+    code: '\uf013',
+    type: 'Solid'
   }
 };
