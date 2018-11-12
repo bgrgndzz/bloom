@@ -24,13 +24,15 @@ module.exports = (req, res, next) => {
         post.save(err => {
           return res.status(200).send({
             authenticated: true,
-            liked: true
+            liked: true,
+            likes: post.likes
           });
         });
       } else {
         return res.status(200).send({
           authenticated: true,
-          liked: true
+          liked: true,
+          likes: post.likes
         });
       }
     });
