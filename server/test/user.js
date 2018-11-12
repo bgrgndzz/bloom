@@ -118,7 +118,7 @@ describe('/user/', () => {
           .set('x-access-token', jwt)
           .end((err, res) => {
             should.not.exist(err);
-            res.should.have.status(403);
+            res.should.have.status(422);
             should.exist(res.body);
             Object.keys(res.body).should.not.have.lengthOf(0);
             res.body.should.have.property('authenticated');

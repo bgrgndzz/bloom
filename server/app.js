@@ -16,6 +16,7 @@ dotenv.config({path: path.join(__dirname, '.env')});
 // require routes
 const authRoute = require('./routes/auth');
 const postsRoute = require('./routes/posts');
+const postRoute = require('./routes/post');
 const topicsRoute = require('./routes/topics');
 const userRoute = require('./routes/user');
 
@@ -50,6 +51,7 @@ app.use(helmet());
 // routing
 app.use('/auth', authRoute);
 app.use('/posts', postsRoute);
+app.use('/post', postRoute);
 app.use('/topics', topicsRoute);
 app.use('/user', userRoute);
 
