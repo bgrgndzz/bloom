@@ -67,8 +67,9 @@ export default class Profile extends Component {
             <Post 
               key={index}
               text={post.text}
+              topic={post.topic}
               {...this.state.user}
-              include={['user']}
+              include={['user', 'topic']}
               changePage={this.props.changePage}
             />
           ))}

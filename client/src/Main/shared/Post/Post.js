@@ -59,7 +59,8 @@ const styles = StyleSheet.create({
   },
   main: {
     width: '100%',
-    padding: 15
+    paddingVertical: 15,
+    paddingHorizontal: 20
   },
   authorContainer: {
     flexDirection: 'row',
@@ -77,6 +78,8 @@ const styles = StyleSheet.create({
   },
   topic: {
     fontWeight: '700',
+    fontSize: 16,
+    marginBottom: 5,
     color: 'rgba(0, 0, 0, 0.75)'
   },
   text: {
