@@ -12,12 +12,23 @@ export default class Header extends Component {
   render() {
     return (
       <View style={styles.header}>
+        <TouchableOpacity 
+          style={[styles.temp]}
+        >
+          <FontAwesome 
+            style={styles.newTopic}
+            icon="plus"
+          />
+        </TouchableOpacity>
         <Image 
           style={styles.logo}
           source={require('../../../images/logo.png')}
           resizeMode="contain"
         />
-        <TouchableOpacity onPress={() => this.props.changePage('CreateTopic')}>
+        <TouchableOpacity 
+          style={styles.newTopicContainer}
+          onPress={() => this.props.changePage('CreateTopic')}
+        >
           <FontAwesome 
             style={styles.newTopic}
             icon="plus"
@@ -33,21 +44,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#16425B',
     width: '100%',
     height: 70,
-    paddingTop: 15,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center'
   },
+  temp: {
+    opacity: 0,
+    marginRight: 'auto',
+    marginLeft: 20
+  },
   logo: {
     height: 35,
-    marginLeft: 70,
-    marginRight: 'auto'
+    marginHorizontal: 'auto'
+  },
+  newTopicContainer: {
+    marginLeft: 'auto',
+    marginRight: 20
   },
   newTopic: {
     color: 'white',
     fontFamily: 'FontAwesome5FreeRegular',
-    fontSize: 25,
-    marginLeft: 'auto',
-    marginRight: 20
+    fontSize: 25
   }
 });

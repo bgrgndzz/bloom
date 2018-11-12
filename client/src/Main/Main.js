@@ -3,8 +3,10 @@ import {
   StyleSheet, 
   View,
   AsyncStorage,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
+
+import StatusBarPaddingIOS from 'react-native-ios-status-bar-padding';
 
 import Header from './shared/Header/Header.js';
 import BottomNavigation from './shared/BottomNavigation/BottomNavigation.js';
@@ -75,6 +77,7 @@ export default class Main extends Component {
 
     return (
       <View style={styles.container}>
+        <StatusBarPaddingIOS style={{backgroundColor: '#16425B'}} />
         <Header {...props} />
         <View style={styles.content}>
           {this.state.loading ? <ActivityIndicator /> : <Page {...props} />}
