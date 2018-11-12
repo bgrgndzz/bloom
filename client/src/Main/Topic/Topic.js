@@ -129,10 +129,11 @@ export default class Topic extends Component {
           {this.state.posts.map((post, index) => (
             <Post 
               key={index}
-              text={post.text}
-              {...post.author}
+              {...post}
               include={['user']}
+              jwt={this.props.jwt}
               changePage={this.props.changePage}
+              goHome={this.props.goHome}
             />
           ))}
         </ScrollView>

@@ -18,5 +18,13 @@ export default {
   cog: {
     code: '\uf013',
     type: 'Solid'
+  },
+  heart: {
+    code: '\uf004',
+    type: 'Solid'
+  },
+  heartEmpty: {
+    code: '\uf004',
+    type: 'Regular'
   }
 };

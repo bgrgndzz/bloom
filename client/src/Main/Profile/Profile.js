@@ -66,11 +66,12 @@ export default class Profile extends Component {
           {Object.keys(this.state.user).length > 0 && this.state.user.posts.map((post, index) => (
             <Post 
               key={index}
-              text={post.text}
-              topic={post.topic}
-              {...this.state.user}
+              {...post}
+              author={this.state.user}
               include={['user', 'topic']}
+              jwt={this.props.jwt}
               changePage={this.props.changePage}
+              goHome={this.props.goHome}
             />
           ))}
         </ScrollView>

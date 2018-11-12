@@ -3,12 +3,45 @@ import {
   StyleSheet, 
   View,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from 'react-native';
 
 import { CachedImage } from 'react-native-cached-image';
 
+import FontAwesome from '../../../shared/FontAwesome/FontAwesome';
+
+import likePost from './api/likePost';
+
 export default class Post extends Component {
+  state = {
+    liked: this.props.liked,
+    likes: this.props.likes,
+    disabled: false
+  }
+
+  like = () => {
+    this.setState({disabled: true}, () => {
+      likePost(
+        this.props.jwt, 
+        this.props.id,
+        this.state.liked,
+        (err, res) => {
+          if (err && !res) {
+            if (err === 'unauthenticated') return this.props.goHome();
+            return Alert.alert(err);
+          }
+  
+          this.setState({
+            liked: res.liked,
+            likes: res.likes,
+            disabled: false
+          });
+        }
+      );
+    });
+  }
+
   render() {
     return (
       <View style={styles.post}>
@@ -16,13 +49,13 @@ export default class Post extends Component {
           <View style={styles.top}>
             <TouchableOpacity 
               style={styles.authorContainer}
-              onPress={() => this.props.changePage('Profile', {user: this.props.userId})}
+              onPress={() => this.props.changePage('Profile', {user: this.props.author.id})}
             >
               <CachedImage 
                 style={styles.profilepicture}
-                source={this.props.profilepicture ? {uri: this.props.profilepicture} : require('../../../images/defaultprofile.png')}
+                source={this.props.author.profilepicture ? {uri: this.props.author.profilepicture} : require('../../../images/defaultprofile.png')}
               />
-              <Text style={styles.author}>{this.props.firstName} {this.props.lastName}</Text>
+              <Text style={styles.author}>{this.props.author.firstName} {this.props.author.lastName}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -31,6 +64,19 @@ export default class Post extends Component {
             <Text style={styles.topic}>{this.props.topic}</Text>
           )}
           <Text style={styles.text}>{this.props.text}</Text>
+        </View>
+        <View style={styles.bottom}>
+          <TouchableOpacity 
+            style={styles.likesContainer}
+            onPress={this.like}
+            disabled={this.state.disabled}
+          >
+            <FontAwesome 
+              style={this.state.liked ? styles.likeIconActive : styles.likeIconInactive}
+              icon="heartEmpty"
+            />
+            <Text style={styles.likes}>{this.state.likes.length}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -55,12 +101,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     backgroundColor: '#fcfcfc',
     borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderTopRightRadius: 10
+  },
+  bottom: {
+    width: '100%',
+    padding: 15,
+    borderTopColor: 'rgba(0, 0, 0, 0.1)',
+    borderTopWidth: 1,
+    backgroundColor: '#fcfcfc',
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10
   },
   main: {
     width: '100%',
-    paddingVertical: 15,
-    paddingHorizontal: 20
+    padding: 15
   },
   authorContainer: {
     flexDirection: 'row',
@@ -83,6 +137,22 @@ const styles = StyleSheet.create({
     color: 'rgba(0, 0, 0, 0.75)'
   },
   text: {
+    fontWeight: '100'
+  },
+  likesContainer: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  likeIconActive: {
+    color: '#EA3546',
+    marginRight: 5
+  },
+  likeIconInactive: {
+    color: '#CBD5DE',
+    marginRight: 5
+  },
+  likes: {
+    color: 'rgba(0, 0, 0, 0.75)',
     fontWeight: '100'
   }
 });
