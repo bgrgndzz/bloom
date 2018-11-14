@@ -8,6 +8,7 @@ const isLoggedIn = require('../middleware/isLoggedIn');
 router.use(isLoggedIn);
 
 router.get('/list/:topic', listController);
+router.get('/list/:topic/:sort', listController);
 router.post('/create/:topic', createController);
 
 module.exports = router;
