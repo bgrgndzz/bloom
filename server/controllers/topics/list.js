@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
           topics[topicNames.indexOf(post.topic)].posts += 1;
         }
       });
-      topics = topics.sort((prev, cur) => prev.posts < cur.posts);
+      topics = topics.sort((prev, cur) => cur.posts - prev.posts);
 
       res.status(200).send({
         authenticated: true,
