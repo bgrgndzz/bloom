@@ -3,7 +3,12 @@ const Post = require('../../models/Post/Post');
 
 module.exports = (req, res, next) => {
   Post
-    .find()
+    .find({
+      date: {
+        $gt: new Date(Date.now() - 1000 * 60 * 60 * 24)
+      }
+    })
+    .sort('-date')
     .exec((err, posts) => {
       let topics = [];
       posts.forEach(post => {
@@ -17,7 +22,10 @@ module.exports = (req, res, next) => {
           topics[topicNames.indexOf(post.topic)].posts += 1;
         }
       });
-      topics = topics.sort((prev, cur) => cur.posts - prev.posts);
+      
+      if ((req.params && req.params.sort === 'popular') || (!req.params || !req.params.sort)) {
+        topics = topics.sort((prev, cur) => cur.posts - prev.posts);
+      }
 
       res.status(200).send({
         authenticated: true,

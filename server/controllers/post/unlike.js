@@ -21,6 +21,7 @@ module.exports = (req, res, next) => {
 
       if (post.likes.indexOf(req.user) !== -1) {
         post.likes.splice(post.likes.indexOf(req.user), 1);
+        post.likeCount -= 1;
         post.save(err => {
           return res.status(200).send({
             authenticated: true,
