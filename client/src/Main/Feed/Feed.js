@@ -56,7 +56,7 @@ export default class Feed extends Component {
       >
         {this.state.topics.map((topic, index) => (
           <TouchableOpacity 
-            key={index}
+            key={topic.topic}
             onPress={() => this.props.changePage('Topic', topic)}
           >
             <Topic

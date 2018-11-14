@@ -128,7 +128,7 @@ export default class Topic extends Component {
           </View>
           {this.state.posts.map((post, index) => (
             <Post 
-              key={index}
+              key={post.id}
               {...post}
               include={['user']}
               jwt={this.props.jwt}
