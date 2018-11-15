@@ -19,6 +19,7 @@ const postsRoute = require('./routes/posts');
 const postRoute = require('./routes/post');
 const topicsRoute = require('./routes/topics');
 const userRoute = require('./routes/user');
+const webRoute = require('./routes/web');
 
 // constants
 const {
@@ -54,6 +55,7 @@ app.use('/posts', postsRoute);
 app.use('/post', postRoute);
 app.use('/topics', topicsRoute);
 app.use('/user', userRoute);
+app.use('/web', webRoute);
 
 // listen to connections
 server.listen(PORT);
