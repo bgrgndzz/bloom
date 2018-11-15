@@ -1,5 +1,5 @@
-module.exports = (jwt, callback) => {
-  fetch('https://www.bloomapp.tk/topics/list', {
+module.exports = (jwt, sort, callback) => {
+  fetch('https://www.bloomapp.tk/topics/list/' + sort, {
     headers: {'x-access-token': jwt}
   })
   .then(response => response.json())

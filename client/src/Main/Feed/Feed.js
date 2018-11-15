@@ -9,17 +9,19 @@ import {
 } from 'react-native';
 
 import Topic from '../shared/Topic/Topic';
+import Sort from '../shared/Sort/Sort';
 
 import listTopics from './api/listTopics';
 
 export default class Feed extends Component {
   state = {
     topics: [],
+    sort: 'popular',
     refreshing: false
   }
 
   componentWillMount = () => {
-    listTopics(this.props.jwt, (err, res) => {
+    listTopics(this.props.jwt, this.state.sort, (err, res) => {
       if (err && !res) {
         if (err === 'unauthenticated') return this.props.goHome();
         return Alert.alert(err);
@@ -30,7 +32,7 @@ export default class Feed extends Component {
   
   onRefresh = () => {
     this.setState({refreshing: true});
-    listTopics(this.props.jwt, (err, res) => {
+    listTopics(this.props.jwt, this.state.sort, (err, res) => {
       if (err && !res) {
         if (err === 'unauthenticated') return this.props.goHome();
         return Alert.alert(err);
@@ -40,6 +42,9 @@ export default class Feed extends Component {
         refreshing: false
       });
     });
+  }
+  sort = (sort) => {
+    this.setState({sort}, this.onRefresh);
   }
 
   render() {
@@ -54,6 +59,10 @@ export default class Feed extends Component {
           />
         }
       >
+        <Sort 
+          sort={this.state.sort}
+          sortFunction={this.sort}
+        />
         {this.state.topics.map((topic, index) => (
           <TouchableOpacity 
             key={topic.topic}

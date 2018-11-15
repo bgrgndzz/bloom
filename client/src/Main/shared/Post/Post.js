@@ -7,7 +7,7 @@ import {
   Alert
 } from 'react-native';
 
-import { CachedImage } from 'react-native-cached-image';
+import {CachedImage} from 'react-native-cached-image';
 
 import FontAwesome from '../../../shared/FontAwesome/FontAwesome';
 
@@ -73,7 +73,7 @@ export default class Post extends Component {
           >
             <FontAwesome 
               style={this.state.liked ? styles.likeIconActive : styles.likeIconInactive}
-              icon="heartEmpty"
+              icon="heart"
             />
             <Text style={styles.likes}>{this.state.likes.length}</Text>
           </TouchableOpacity>

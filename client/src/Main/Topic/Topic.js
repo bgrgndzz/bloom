@@ -13,6 +13,7 @@ import {
 import Post from '../shared/Post/Post';
 import Input from '../../shared/Input/Input';
 import Button from '../../shared/Button/Button';
+import Sort from '../shared/Sort/Sort';
 
 import listPosts from './api/listPosts';
 import createPost from './api/createPost';
@@ -20,6 +21,7 @@ import createPost from './api/createPost';
 export default class Topic extends Component {
   state = {
     posts: [],
+    sort: 'popular',
     refreshing: false,
     post: ''
   }
@@ -27,7 +29,8 @@ export default class Topic extends Component {
   componentWillMount = () => {
     listPosts(
       this.props.jwt, 
-      this.props.topic, 
+      this.props.topic,
+      this.state.sort, 
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.goHome();
@@ -42,7 +45,8 @@ export default class Topic extends Component {
     this.setState({refreshing: true});
     listPosts(
       this.props.jwt, 
-      this.props.topic, 
+      this.props.topic,
+      this.state.sort,
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.goHome();
@@ -71,7 +75,8 @@ export default class Topic extends Component {
 
         listPosts(
           this.props.jwt, 
-          this.props.topic, 
+          this.props.topic,
+          this.state.sort, 
           (err, res) => {
             if (err && !res) {
               if (err === 'unauthenticated') return this.props.goHome();
@@ -83,6 +88,9 @@ export default class Topic extends Component {
       }
     );
   };
+  sort = (sort) => {
+    this.setState({sort}, this.onRefresh);
+  }
 
   render() {
     return (
@@ -126,6 +134,10 @@ export default class Topic extends Component {
               />
             </View>
           </View>
+          <Sort 
+            sort={this.state.sort}
+            sortFunction={this.sort}
+          />
           {this.state.posts.map((post, index) => (
             <Post 
               key={post.id}
