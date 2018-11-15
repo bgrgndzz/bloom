@@ -26,8 +26,32 @@ export default class Register extends Component {
 
   componentWillMount() {
     this.schools = [
+      'ALEV Lisesi',
+      'Alman Lisesi',
+      'Avusturya Lisesi',
+      'Bahçelievler Anadolu Lisesi',
+      'Beşiktaş Anadolu Lisesi',
+      'Cağaloğlu Anadolu Lisesi',
+      'Çapa Fen Lisesi',
+      'Çevre Koleji',
+      'FMV Işık Lisesi',
+      'Galatasaray Lisesi',
+      'Hacı Ömer Tarman Anadolu Lisesi',
+      'İstanbul Erkek Lisesi',
+      'Kabataş Erkek Lisesi',
+      'Kadıköy Anadolu Lisesi',
+      'Notre Dame de Sion',
       'Robert Kolej',
-      'Üsküdar Amerikan Lisesi'
+      'Saint Benoit',
+      'Saint Joseph',
+      'Saint Michel',
+      'Saint Pulcherie',
+      'Sakıp Sabancı Anadolu Lisesi',
+      'Terakki Lisesi',
+      'Ulus Özel Musevi Lisesi',
+      'Üsküdar Amerikan Lisesi',
+      'Vefa Lisesi',
+      'Yaşar Acar Fen Lisesi',
     ];
   }
 
