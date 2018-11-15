@@ -9,10 +9,10 @@ module.exports = (req, res, next) => {
     });
   }
 
-  const sort = (req.params.sort && req.params.sort === 'date') ? 'date' : 'popular';
+  const sort = (req.params.sort && req.params.sort === 'new') ? 'new' : 'popular';
   const query = Post.find({topic: req.params.topic}).populate('author', 'user');
 
-  query.sort(sort === 'date' ? '-date' : '-likeCount');
+  query.sort(sort === 'new' ? {date: -1} : {likeCount: -1, date: -1});
   query.exec((err, posts) => {
     if (posts.length === 0) {
       return res.status(422).send({
