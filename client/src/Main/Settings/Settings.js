@@ -3,12 +3,17 @@ import {
   StyleSheet, 
   ScrollView,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Linking
 } from 'react-native';
 
 export default class Settings extends Component {
   componentWillMount = () => {
     this.settings = [
+      {
+        title: 'Gizlilik Sözleşmesi',
+        onPress: () => Linking.openURL('https://www.bloomapp.tk/web/privacy-policy')
+      },
       {
         title: 'Çıkış Yap',
         onPress: this.props.goHome
