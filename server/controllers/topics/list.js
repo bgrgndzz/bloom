@@ -24,11 +24,10 @@ module.exports = (req, res, next) => {
       
       if ((req.params && req.params.sort === 'popular') || (!req.params || !req.params.sort)) {
         // Sorting algorithm 1:
-        // ((posts - 1) ^ .8)
+        // ((posts - 1) ^ 1.5)
         // divided by
-        // ((lastPost.minutesAge + 120) ^ 1.4)
-        
-        topics = topics.sort((prev, cur) => (((prev.posts - 1) ** .8) / ((moment(prev.last).diff(moment(), 'minutes') + 120) ** 1.4)) - ((cur.posts - 1) ** .8) / ((moment(cur.last).diff(moment(), 'minutes') + 120) ** 1.4));
+        // ((lastPost.minutesAge + 120) ^ .75)
+        topics = topics.sort((prev, cur) => (((cur.posts - 1) ** 1.5) / (((moment().diff(moment(cur.last), 'minutes')) + 120) ** .75)) - ((prev.posts - 1) ** 1.5) / (((moment().diff(moment(prev.last), 'minutes')) + 120) ** .75));
       }
 
       res.status(200).send({
