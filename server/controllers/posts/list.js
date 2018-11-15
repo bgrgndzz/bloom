@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
   const sort = (req.params.sort && req.params.sort === 'date') ? 'date' : 'popular';
   const query = Post.find({topic: req.params.topic}).populate('author', 'user');
 
-  query.sort(sort === 'date' ? '-date' : 'likeCount');
+  query.sort(sort === 'date' ? '-date' : '-likeCount');
   query.exec((err, posts) => {
     if (posts.length === 0) {
       return res.status(422).send({
