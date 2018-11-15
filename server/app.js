@@ -35,6 +35,8 @@ const app = express();
 const server = http.Server(app);
 
 app.set('trust proxy', true);
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, '/views'));
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
