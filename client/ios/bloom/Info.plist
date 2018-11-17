@@ -55,7 +55,9 @@
 	</array>
 	<key>UIStatusBarHidden</key>
 	<false/>
-	<key>UISupportedInterfaceOrientations</key>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
+        <key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
