@@ -53,6 +53,7 @@ export default class Topic extends Component {
           return Alert.alert(err);
         }
         this.setState({
+          post: '',
           posts: res.posts,
           refreshing: false
         });
