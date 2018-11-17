@@ -53,7 +53,6 @@ export default class Topic extends Component {
           return Alert.alert(err);
         }
         this.setState({
-          post: '',
           posts: res.posts,
           refreshing: false
         });
@@ -83,7 +82,11 @@ export default class Topic extends Component {
               if (err === 'unauthenticated') return this.props.goHome();
               return Alert.alert(err);
             }
-            this.setState({posts: res.posts});
+            this.setState({
+              sort: 'new',
+              post: '',
+              posts: res.posts
+            });
           }
         );
       }
