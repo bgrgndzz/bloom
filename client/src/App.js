@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {AsyncStorage} from 'react-native';
 
+import codePush from 'react-native-code-push';
 
 import Landing from './Landing/Landing';
 import Main from './Main/Main';
@@ -10,7 +11,7 @@ const pages = {
   Main
 };
 
-export default class App extends Component {
+class App extends Component {
   state = {
     page: '',
     jwt: ''
@@ -48,3 +49,5 @@ export default class App extends Component {
     return this.state.page ? <Page {...props} /> : null;
   }
 }
+
+export default codePush(App);

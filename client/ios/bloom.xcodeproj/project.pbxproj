@@ -47,6 +47,8 @@
 		DE3FAF742194E0DB0042D11A /* fa-brands-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE3FAF712194E0DB0042D11A /* fa-brands-400.ttf */; };
 		DE3FAF752194E0DB0042D11A /* fa-solid-900.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE3FAF722194E0DB0042D11A /* fa-solid-900.ttf */; };
 		DE3FAF762194E0DB0042D11A /* fa-regular-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE3FAF732194E0DB0042D11A /* fa-regular-400.ttf */; };
+		DE6C85DA219E21BE0030A699 /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DE6C85B1219E21A90030A699 /* libCodePush.a */; };
+		DE6C85DC219E21E40030A699 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = DE6C85DB219E21E40030A699 /* libz.tbd */; };
 		EBB332B9DED0698FF4F947D8 /* libPods-bloom.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA22F4057A6A5589C761B331 /* libPods-bloom.a */; };
 		ED0300AB5400CC0FD1215856 /* libPods-bloomTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EB6A709C6B3C922ED6913C5 /* libPods-bloomTests.a */; };
 		F89F0C71E627211EEC031341 /* libPods-bloom-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C891799211E431E0F140D56 /* libPods-bloom-tvOSTests.a */; };
@@ -354,6 +356,20 @@
 			remoteGlobalIDString = 5419C2701D824AA700DDF3A1;
 			remoteInfo = AppCenterReactNativeCrashes;
 		};
+		DE6C85B0219E21A90030A699 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DE6C85A8219E21A90030A699 /* CodePush.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = CodePush;
+		};
+		DE6C85B2219E21A90030A699 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DE6C85A8219E21A90030A699 /* CodePush.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F886647B1F4ADB500036D01B;
+			remoteInfo = "CodePush-tvOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -405,6 +421,8 @@
 		DE3FAF712194E0DB0042D11A /* fa-brands-400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "fa-brands-400.ttf"; sourceTree = "<group>"; };
 		DE3FAF722194E0DB0042D11A /* fa-solid-900.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "fa-solid-900.ttf"; sourceTree = "<group>"; };
 		DE3FAF732194E0DB0042D11A /* fa-regular-400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "fa-regular-400.ttf"; sourceTree = "<group>"; };
+		DE6C85A8219E21A90030A699 /* CodePush.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CodePush.xcodeproj; path = "../node_modules/react-native-code-push/ios/CodePush.xcodeproj"; sourceTree = "<group>"; };
+		DE6C85DB219E21E40030A699 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		E9DAFB2896A13517DCCCEACA /* Pods-bloom-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bloom-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-bloom-tvOS/Pods-bloom-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -422,6 +440,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DE6C85DC219E21E40030A699 /* libz.tbd in Frameworks */,
+				DE6C85DA219E21BE0030A699 /* libCodePush.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
@@ -588,6 +608,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DE6C85DB219E21E40030A699 /* libz.tbd */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 				AA22F4057A6A5589C761B331 /* libPods-bloom.a */,
 				B046D1178EC9394F28850327 /* libPods-bloom-tvOS.a */,
@@ -618,6 +639,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				DE6C85A8219E21A90030A699 /* CodePush.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
@@ -726,6 +748,15 @@
 			isa = PBXGroup;
 			children = (
 				DE6C853B219A2CA50030A699 /* libAppCenterReactNative.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DE6C85A9219E21A90030A699 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DE6C85B1219E21A90030A699 /* libCodePush.a */,
+				DE6C85B3219E21A90030A699 /* libCodePush.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -875,6 +906,10 @@
 				{
 					ProductGroup = DE6C8535219A2CA50030A699 /* Products */;
 					ProjectRef = 329E69BB469A40A3AA8D67EA /* AppCenterReactNativeCrashes.xcodeproj */;
+				},
+				{
+					ProductGroup = DE6C85A9219E21A90030A699 /* Products */;
+					ProjectRef = DE6C85A8219E21A90030A699 /* CodePush.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
@@ -1225,6 +1260,20 @@
 			fileType = archive.ar;
 			path = libAppCenterReactNativeCrashes.a;
 			remoteRef = DE6C853D219A2CA50030A699 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DE6C85B1219E21A90030A699 /* libCodePush.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCodePush.a;
+			remoteRef = DE6C85B0219E21A90030A699 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DE6C85B3219E21A90030A699 /* libCodePush.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCodePush.a;
+			remoteRef = DE6C85B2219E21A90030A699 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
