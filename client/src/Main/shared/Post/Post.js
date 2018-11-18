@@ -47,19 +47,36 @@ export default class Post extends Component {
       <View style={styles.post}>
         {this.props.include.includes('user') && (
           <View style={styles.top}>
-            <TouchableOpacity 
-              style={styles.authorContainer}
-              onPress={() => this.props.changePage('Profile', {user: this.props.author.id})}
-            >
-              <CachedImage 
-                style={styles.profilepicture}
-                source={this.props.author.profilepicture ? 
-                  {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.props.author.profilepicture} : 
-                  require('../../../images/defaultprofile.png')
-                }
-              />
-              <Text style={styles.author}>{this.props.author.firstName} {this.props.author.lastName}</Text>
-            </TouchableOpacity>
+            {
+              this.props.anonymous ? 
+              (
+                <TouchableOpacity 
+                  style={styles.authorContainer}
+                  onPress={() => {}}
+                >
+                  <CachedImage 
+                    style={styles.profilepicture}
+                    source={require('../../../images/defaultprofile.png')}
+                  />
+                  <Text style={styles.author}>Anonim</Text>
+                </TouchableOpacity>
+              ) :
+              (
+                <TouchableOpacity 
+                  style={styles.authorContainer}
+                  onPress={() => this.props.changePage('Profile', {user: this.props.author.id})}
+                >
+                  <CachedImage 
+                    style={styles.profilepicture}
+                    source={this.props.author.profilepicture ? 
+                      {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.props.author.profilepicture} : 
+                      require('../../../images/defaultprofile.png')
+                    }
+                  />
+                  <Text style={styles.author}>{this.props.author.firstName} {this.props.author.lastName}</Text>
+                </TouchableOpacity>
+              ) 
+            }
           </View>
         )}
         <View style={styles.main}>

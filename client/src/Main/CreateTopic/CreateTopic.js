@@ -3,18 +3,21 @@ import {
   StyleSheet,
   View,
   Text,
-  Alert
+  Alert,
+  TouchableOpacity
 } from 'react-native';
 
 import Input from '../../shared/Input/Input';
 import Button from '../../shared/Button/Button';
+import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
 import createTopic from './api/createTopic';
 
 export default class Feed extends Component {
   state = {
     topic: '',
-    post: ''
+    post: '',
+    anonymous: false
   }
 
   onChangeText = (key) => {
@@ -24,7 +27,10 @@ export default class Feed extends Component {
     createTopic(
       this.props.jwt, 
       this.state.topic, 
-      {text: this.state.post},
+      {
+        text: this.state.post,
+        anonymous: this.state.anonymous
+      },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.goHome();
@@ -55,6 +61,20 @@ export default class Feed extends Component {
               value={this.state.post}
               containerStyle={styles.input}
             />
+            <TouchableOpacity
+              style={styles.checkboxContainer}
+              onPress={() => this.setState({anonymous: !this.state.anonymous})}
+            >
+              <View style={[styles.checkbox, this.state.anonymous ? styles.checkboxActive : styles.checkboxInactive]}>
+                {this.state.anonymous &&
+                  <FontAwesome 
+                    style={styles.checkboxIcon}
+                    icon="check"
+                  />
+                }
+              </View>
+              <Text style={styles.checkboxText}>Anonim</Text>
+            </TouchableOpacity>
             <Button 
               text="Konu Aç"
               onPress={this.onPress}
@@ -89,4 +109,27 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   input: {marginBottom: 15},
+  checkboxContainer: {
+    marginBottom: 15,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    marginRight: 10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  checkboxActive: {
+    backgroundColor: '#16425B',
+  },
+  checkboxInactive: {
+    backgroundColor: 'rgba(0, 0, 0, 0.1)'
+  },
+  checkboxIcon: {
+    color: 'white',
+    fontSize: 12.5
+  }
 });
