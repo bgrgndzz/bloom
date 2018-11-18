@@ -11,6 +11,7 @@ import {
 
 import ImagePicker from 'react-native-image-crop-picker';
 import {CachedImage} from 'react-native-cached-image';
+import Permissions from 'react-native-permissions';
 
 import Input from '../../shared/Input/Input';
 import Button from '../../shared/Button/Button';
@@ -25,12 +26,27 @@ export default class EditProfile extends Component {
     profilepicture: {
       type: 'default'
     },
-    modalOpen: false,
-    err: {}
+    cameraPermission: 'undetermined',
+    photoPermission: 'undetermined',
+    modalOpen: false
   }
 
   onChangeText = (key) => {
     return (input) => this.setState({[key]: input});
+  }
+
+  requestPermission = item => {
+    Permissions.request(item).then(response => {
+      this.setState({[`${item}Permission`]: response});
+    });
+  }
+  checkCameraAndPhotoPermissions = () => {
+    Permissions.checkMultiple(['camera', 'photo']).then(response => {
+      this.setState({
+        cameraPermission: response.camera,
+        photoPermission: response.photo,
+      })
+    })
   }
 
   getUser = (state = {}) => {
@@ -68,29 +84,56 @@ export default class EditProfile extends Component {
       cropping: true
     };
 
-    let imagePicker;
-    if (type === 'camera') {
-      imagePicker = ImagePicker.openCamera;
-    } else if (type === 'cropper') {
-      imagePicker = ImagePicker.openPicker;
-    }
-
-    imagePicker(options)
-      .then(image => {
-        this.setState({
-          profilepicture: {
-            type: 'base64',
-            mime: image.mime,
-            data: image.data,
-            uri: `data:${image.mime};base64,${image.data}`
-          },
-          modalOpen: false
-        });
-      })
-      .catch(err => {
-        if (err && err.code !== 'E_PICKER_CANCELLED') Alert.alert('Bilinmeyen bir hata oluştu.');
-        this.setState({modalOpen: false});
-      });
+    (callback => {
+      let imagePicker;
+      if (type === 'camera') {
+        if (this.state.cameraPermission === 'authorized') {
+          imagePicker = ImagePicker.openCamera;
+          callback(imagePicker);
+        } else if (this.state.cameraPermission === 'undetermined') {
+          this.requestPermission('camera', () => {
+            imagePicker = ImagePicker.openCamera;
+            callback(imagePicker);
+          });
+        } else {
+          return Alert.alert('Lütfen ayarlardan kamera izinlerini ayarlayın.');
+        }
+      } else if (type === 'picker') {
+        if (this.state.photoPermission === 'authorized') {
+          imagePicker = ImagePicker.openPicker;
+          callback(imagePicker);
+        } else if (this.state.photoPermission === 'undetermined') {
+          this.requestPermission('picker', () => {
+            imagePicker = ImagePicker.openPicker;
+            callback(imagePicker);
+          });
+        } else {
+          return Alert.alert('Lütfen ayarlardan fotoğraf izinlerini ayarlayın.');
+        }
+      }
+    })(imagePicker => {
+      if (
+        (type === 'camera' && this.state.cameraPermission) ||
+        (type === 'picker' && this.state.photoPermission)
+      ) {
+        imagePicker(options)
+          .then(image => {
+            this.setState({
+              profilepicture: {
+                type: 'base64',
+                mime: image.mime,
+                data: image.data,
+                uri: `data:${image.mime};base64,${image.data}`
+              },
+              modalOpen: false
+            });
+          })
+          .catch(err => {
+            if (err && err.code !== 'E_PICKER_CANCELLED') Alert.alert('Bilinmeyen bir hata oluştu.');
+            this.setState({modalOpen: false});
+          });
+      }
+    });
   }
   submitProfileInfo = () => {
     editProfile(
@@ -111,6 +154,7 @@ export default class EditProfile extends Component {
   }
 
   componentWillMount = this.getUser;
+  componentDidMount = this.checkCameraAndPhotoPermissions;
 
   render() {
     let profilepicture;
@@ -174,7 +218,7 @@ export default class EditProfile extends Component {
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.imageModalItem}
-              onPress={() => this.openImagePicker('cropper')}
+              onPress={() => this.openImagePicker('picker')}
             >
               <Text style={styles.imageModalText}>Kütüphaneden Seç</Text>
             </TouchableOpacity>

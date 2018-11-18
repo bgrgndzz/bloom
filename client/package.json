@@ -19,6 +19,7 @@
     "react-native-image-crop-picker": "^0.21.3",
     "react-native-ios-status-bar-padding": "^1.2.0",
     "react-native-modal-dropdown": "^0.6.2",
+    "react-native-permissions": "^1.1.1",
     "rn-fetch-blob": "^0.10.13"
   },
   "devDependencies": {
