@@ -6,8 +6,6 @@ import {
   Image
 } from 'react-native';
 
-import {CachedImage} from 'react-native-cached-image';
-
 import FontAwesome from '../../../shared/FontAwesome/FontAwesome';
 
 export default class Header extends Component {
@@ -22,7 +20,7 @@ export default class Header extends Component {
             icon="plus"
           />
         </TouchableOpacity>
-        <CachedImage 
+        <Image 
           style={styles.logo}
           source={require('../../../images/logo.png')}
           resizeMode="contain"

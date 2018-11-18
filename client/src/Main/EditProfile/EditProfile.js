@@ -35,9 +35,9 @@ export default class EditProfile extends Component {
     return (input) => this.setState({[key]: input});
   }
 
-  requestPermission = item => {
+  requestPermission = (item, callback) => {
     Permissions.request(item).then(response => {
-      this.setState({[`${item}Permission`]: response});
+      this.setState({[`${item}Permission`]: response}, callback);
     });
   }
   checkCameraAndPhotoPermissions = () => {
@@ -103,7 +103,7 @@ export default class EditProfile extends Component {
           imagePicker = ImagePicker.openPicker;
           callback(imagePicker);
         } else if (this.state.photoPermission === 'undetermined') {
-          this.requestPermission('picker', () => {
+          this.requestPermission('photo', () => {
             imagePicker = ImagePicker.openPicker;
             callback(imagePicker);
           });
