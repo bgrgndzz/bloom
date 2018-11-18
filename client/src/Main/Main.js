@@ -16,13 +16,15 @@ import Topic from './Topic/Topic.js';
 import Profile from './Profile/Profile.js';
 import CreateTopic from './CreateTopic/CreateTopic.js';
 import Settings from './Settings/Settings.js';
+import EditProfile from './EditProfile/EditProfile.js';
 
 const pages = {
   Feed,
   Topic,
   Profile,
   CreateTopic,
-  Settings
+  Settings,
+  EditProfile
 };
 
 export default class Main extends Component {

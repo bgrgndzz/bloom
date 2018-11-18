@@ -14,6 +14,7 @@ import Post from '../shared/Post/Post';
 import Input from '../../shared/Input/Input';
 import Button from '../../shared/Button/Button';
 import Sort from '../shared/Sort/Sort';
+import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
 import listPosts from './api/listPosts';
 import createPost from './api/createPost';
@@ -76,7 +77,7 @@ export default class Topic extends Component {
         listPosts(
           this.props.jwt, 
           this.props.topic,
-          this.state.sort, 
+          'new', 
           (err, res) => {
             if (err && !res) {
               if (err === 'unauthenticated') return this.props.goHome();
@@ -116,10 +117,9 @@ export default class Topic extends Component {
                 style={styles.backButtonContainer}
                 onPress={() => this.props.changePage('Feed')}
               >
-                <Image 
+                <FontAwesome 
                   style={styles.backButton}
-                  resizeMode="contain"
-                  source={require('../../images/back--black.png')}
+                  icon="chevronLeft"
                 />
               </TouchableOpacity>
               <Text style={styles.topicName}>{this.props.topic}</Text>

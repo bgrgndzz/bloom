@@ -38,8 +38,9 @@ app.set('trust proxy', true);
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, '/views'));
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, '/public')));
+app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
+app.use(bodyParser.json({limit: '10mb', extended: true}));
 
 // logging
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));

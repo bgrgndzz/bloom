@@ -5,6 +5,8 @@ import {
   Image
 } from 'react-native';
 
+import FontAwesome from '../FontAwesome/FontAwesome';
+
 export default class Back extends Component {
   state = {
     disabled: false
@@ -20,10 +22,9 @@ export default class Back extends Component {
         onPress={this.onPress}
         disabled={this.state.disabled}
       >
-        <Image 
-          source={require('../../images/back--blue.png')}
-          style={[styles.back, this.props.style]}
-          resizeMode="contain"
+        <FontAwesome 
+          style={styles.back}
+          icon="chevronLeft"
         />
       </TouchableOpacity>
     )
@@ -32,8 +33,7 @@ export default class Back extends Component {
 
 const styles = StyleSheet.create({
   back: {
-    width: 20,
-    height: 20,
-    marginRight: 'auto'
+    fontSize: 25,
+    color: '#16425B'
   }
 });

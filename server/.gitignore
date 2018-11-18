@@ -71,3 +71,7 @@ typings/
 
 # Serverless directories
 .serverless
+
+# uploads
+public/uploads/*/*
+!.gitkeep

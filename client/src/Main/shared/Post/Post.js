@@ -53,7 +53,10 @@ export default class Post extends Component {
             >
               <CachedImage 
                 style={styles.profilepicture}
-                source={this.props.author.profilepicture ? {uri: this.props.author.profilepicture} : require('../../../images/defaultprofile.png')}
+                source={this.props.author.profilepicture ? 
+                  {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.props.author.profilepicture} : 
+                  require('../../../images/defaultprofile.png')
+                }
               />
               <Text style={styles.author}>{this.props.author.firstName} {this.props.author.lastName}</Text>
             </TouchableOpacity>

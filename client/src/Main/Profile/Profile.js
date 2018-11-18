@@ -5,15 +5,14 @@ import {
   View,
   Text,
   Alert,
-  RefreshControl,
-  TouchableOpacity
+  RefreshControl
 } from 'react-native';
 
-import { CachedImage } from 'react-native-cached-image';
+import {CachedImage} from 'react-native-cached-image';
 
 import Post from '../shared/Post/Post';
 
-import getUser from './api/getUser.js';
+import getUser from '../shared/api/getUser.js';
 export default class Profile extends Component {  
   state = {
     id: '',
@@ -22,7 +21,10 @@ export default class Profile extends Component {
   }
 
   loadUser = (state = {}) => {
-    getUser(this.props.jwt, (this.props.user === 'self' ? null : this.props.user), (err, res) => {
+    getUser(
+      this.props.jwt, 
+      (this.props.user === 'self' ? null : this.props.user), 
+      (err, res) => {
       if (err && !res) {
         if (err === 'unauthenticated') return this.props.goHome();
         return Alert.alert(err);
@@ -58,10 +60,17 @@ export default class Profile extends Component {
           <View style={styles.user}>
             <CachedImage 
               style={styles.profilepicture}
-              source={this.props.profilepicture ? {uri: this.props.profilepicture} : require('../../../src/images/defaultprofile.png')}
+              source={this.state.user.profilepicture ? 
+                {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.state.user.profilepicture} : 
+                require('../../../src/images/defaultprofile.png')
+              }
             />
             <Text style={styles.name}>{this.state.user.firstName} {this.state.user.lastName}</Text>
             <Text style={styles.school}>{this.state.user.school}</Text>
+            {
+              this.state.user.about && 
+              <Text style={styles.about}>{this.state.user.about}</Text>  
+            }
           </View>
           {Object.keys(this.state.user).length > 0 && this.state.user.posts.map((post, index) => (
             <Post 
@@ -114,9 +123,11 @@ const styles = StyleSheet.create({
   school: {
     textAlign: 'center',
     fontSize: 15,
+    marginBottom: 15,
     fontWeight: '300',
     color: 'rgba(0, 0, 0, 0.5)'
   },
+  about: {fontWeight: '400'},
   backButtonContainer: {
     width: 30,
     height: 30,

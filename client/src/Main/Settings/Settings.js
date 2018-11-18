@@ -11,6 +11,10 @@ export default class Settings extends Component {
   componentWillMount = () => {
     this.settings = [
       {
+        title: 'Profilini Düzenle',
+        onPress: () => this.props.changePage('EditProfile')
+      },
+      {
         title: 'Gizlilik Sözleşmesi',
         onPress: () => Linking.openURL('https://www.bloomapp.tk/web/privacy-policy')
       },

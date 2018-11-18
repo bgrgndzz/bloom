@@ -37,6 +37,8 @@ const UserSchema = new Schema({
       type: String, 
       required: true
     },
+    about: String,
+    profilepicture: String,
     hobbies: [String],
     clubs: [String]
   },

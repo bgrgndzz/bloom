@@ -8,9 +8,9 @@ export default class FontAwesome extends Component {
     return (
       <Text style={[
         this.props.style,
-        {fontFamily: 'FontAwesome5Free' + icons[this.props.icon].type}
+        {fontFamily: 'FontAwesome5FreeSolid'}
       ]}>
-        {icons[this.props.icon].code}
+        {icons[this.props.icon]}
       </Text>
     ); 
   }

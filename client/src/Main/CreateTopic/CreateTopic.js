@@ -82,10 +82,11 @@ const styles = StyleSheet.create({
     elevation: 1
   },
   formHeading: {
-    fontSize: 34,
+    fontSize: 25,
     fontWeight: '900',
     color: '#16425B',
-    marginBottom: 15
+    marginBottom: 15,
+    textAlign: 'center'
   },
   input: {marginBottom: 15},
 });

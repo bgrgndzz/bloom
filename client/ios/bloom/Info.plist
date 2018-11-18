@@ -43,9 +43,7 @@
 	<string></string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>fa-regular-400.ttf</string>
 		<string>fa-solid-900.ttf</string>
-		<string>fa-brands-400.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -63,5 +61,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string></string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string></string>
 </dict>
 </plist>
