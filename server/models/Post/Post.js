@@ -27,6 +27,10 @@ const PostSchema = new Schema({
   likeCount: {
     type: Number,
     default: 0
+  },
+  anonymous: {
+    type: Boolean,
+    default: false
   }
 });
 

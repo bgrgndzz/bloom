@@ -61,7 +61,7 @@ export default class Profile extends Component {
             <CachedImage 
               style={styles.profilepicture}
               source={this.state.user.profilepicture ? 
-                {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.state.user.profilepicture} : 
+                {uri: 'http://192.168.1.34:3000/uploads/profilepictures/' + this.state.user.profilepicture} : 
                 require('../../../src/images/defaultprofile.png')
               }
             />

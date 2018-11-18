@@ -1,5 +1,5 @@
 module.exports = (jwt, post, liked, callback) => {
-  fetch(`https://www.bloomapp.tk/post/${liked ? 'unlike' : 'like'}/${post}`, {
+  fetch(`http://192.168.1.34:3000/post/${liked ? 'unlike' : 'like'}/${post}`, {
     method: 'POST', 
     mode: 'cors',
     headers: {

@@ -1,5 +1,5 @@
 module.exports = (jwt, body, callback) => {
-  fetch('https://www.bloomapp.tk/user/edit/', {
+  fetch('http://192.168.1.34:3000/user/edit/', {
     method: 'POST', 
     mode: 'cors',
     headers: {

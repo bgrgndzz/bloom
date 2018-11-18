@@ -1,9 +1,9 @@
 module.exports = (jwt, user, callback) => {
   let url;
   if (user) {
-    url = 'https://www.bloomapp.tk/user/' + user;
+    url = 'http://192.168.1.34:3000/user/' + user;
   } else {
-    url = 'https://www.bloomapp.tk/user/';
+    url = 'http://192.168.1.34:3000/user/';
   }
 
   fetch(url, {

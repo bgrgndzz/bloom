@@ -6,5 +6,6 @@ export default {
   cog: '\uf013',
   heart: '\uf004',
   pen: '\uf304',
-  chevronLeft: '\uf053'
+  chevronLeft: '\uf053',
+  check: '\uf00c'
 };

@@ -116,7 +116,7 @@ export default class EditProfile extends Component {
     let profilepicture;
     switch (this.state.profilepicture.type) {
       case 'uri':
-        profilepicture = {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.state.profilepicture.uri};
+        profilepicture = {uri: 'http://192.168.1.34:3000/uploads/profilepictures/' + this.state.profilepicture.uri};
         break;
       case 'base64':
         profilepicture = {uri: `data:${this.state.profilepicture.mime};base64,${this.state.profilepicture.data}`};

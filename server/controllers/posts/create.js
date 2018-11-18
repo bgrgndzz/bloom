@@ -16,14 +16,30 @@ module.exports = (req, res, next) => {
     });
   }
 
-  const newPost = new Post({
-    text: req.body.text,
-    author: req.user,
-    topic: req.params.topic
-  });
-  newPost.save(err => {
-    return res.status(200).send({
-      authenticated: true
+  Post
+    .findOne({
+      text: req.body.text,
+      author: req.user,
+      topic: req.params.topic
+    })
+    .exec((err, user) => {
+      if (user) {
+        return res.status(422).send({
+          authenticated: true,
+          error: 'Bunu zaten paylaştınız'
+        });
+      }
+
+      const newPost = new Post({
+        text: req.body.text,
+        author: req.user,
+        topic: req.params.topic,
+        anonymous: req.body.anonymous
+      });
+      newPost.save(err => {
+        return res.status(200).send({
+          authenticated: true
+        });
+      });
     });
-  });
 };

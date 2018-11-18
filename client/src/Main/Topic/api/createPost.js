@@ -1,5 +1,5 @@
 module.exports = (jwt, topic, body, callback) => {
-  fetch('https://www.bloomapp.tk/posts/create/' + topic, {
+  fetch('http://192.168.1.34:3000/posts/create/' + topic, {
     method: 'POST', 
     mode: 'cors',
     headers: {

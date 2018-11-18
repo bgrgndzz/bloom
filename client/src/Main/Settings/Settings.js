@@ -16,7 +16,7 @@ export default class Settings extends Component {
       },
       {
         title: 'Gizlilik Sözleşmesi',
-        onPress: () => Linking.openURL('https://www.bloomapp.tk/web/privacy-policy')
+        onPress: () => Linking.openURL('http://192.168.1.34:3000/web/privacy-policy')
       },
       {
         title: 'Çıkış Yap',
