@@ -40,7 +40,25 @@ const UserSchema = new Schema({
     about: String,
     profilepicture: String,
     hobbies: [String],
-    clubs: [String]
+    clubs: [String],
+    following: [{
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      default: []
+    }],
+    followingCount: {
+      type: Number,
+      default: 0
+    },
+    followers: [{
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      default: []
+    }],
+    followersCount: {
+      type: Number,
+      default: 0
+    }
   },
   passwordReset: {
     hash: String
