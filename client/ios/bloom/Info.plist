@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>5</string>
 	<key>CodePushDeploymentKey</key>
 	<string>ohPFB5shbDLnHPmMYWiEysXTFCn1r1xaUPjp7</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -39,12 +39,20 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Bu uygulama bazı işlemleri için Apple Music iznine ihtiyaç duyuyor.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Bu uygulama bazı işlemleri için bluetooth iznine ihtiyaç duyuyor.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Bu uygulama bazı işlemleri için takvim iznine ihtiyaç duyuyor.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Bu uygulama bazı işlemleri için kamera iznine ihtiyaç duyuyor.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<key>NSMotionUsageDescription</key>
+	<string>Bu uygulama bazı işlemleri için hareket sensörü iznine ihtiyaç duyuyor.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Bu uygulama bazı işlemleri için fotoğraf iznine ihtiyaç duyuyor.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Bu uygulama bazı işlemleri için ses tanıma iznine ihtiyaç duyuyor.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>fa-solid-900.ttf</string>
