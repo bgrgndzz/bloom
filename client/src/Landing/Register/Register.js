@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {
-  StyleSheet, 
-  Text, 
+  StyleSheet,
+  Text,
   View,
   Alert,
   AsyncStorage
@@ -36,8 +36,17 @@ export default class Register extends Component {
       'Çevre Koleji',
       'FMV Işık Lisesi',
       'Galatasaray Lisesi',
+      'Galileo Galilei Lisesi',
       'Hacı Ömer Tarman Anadolu Lisesi',
       'İstanbul Erkek Lisesi',
+      'İstek Özel Bilge Kağan Lisesi',
+      'İstek Özel Atanur Oğuz Lisesi',
+      'İstek Özel Acıbadem Lisesi',
+      'İstek Özel Semiha Şakir Lisesi',
+      'İstek Özel Uluğbey Lisesi',
+      'İstek Özel Kemal Atatürk Lisesi',
+      'İstek Özel Belde Lisesi',
+      'İtalyan Lisesi',
       'Kabataş Erkek Lisesi',
       'Kadıköy Anadolu Lisesi',
       'Notre Dame de Sion',
@@ -76,46 +85,46 @@ export default class Register extends Component {
           <Text style={styles.heading}>Kayıt Ol</Text>
         </View>
         <View style={styles.halfInputs}>
-          <Input 
-            onChangeText={this.onChangeText('firstName')} 
+          <Input
+            onChangeText={this.onChangeText('firstName')}
             type="firstName"
             placeholder="Ad"
             width="45%"
             value={this.state.firstName}
           />
-          <Input 
-            onChangeText={this.onChangeText('lastName')} 
+          <Input
+            onChangeText={this.onChangeText('lastName')}
             type="lastName"
             placeholder="Soyad"
             width="45%"
             value={this.state.lastName}
           />
         </View>
-        <Dropdown 
+        <Dropdown
           defaultValue={this.state.school || 'Okul'}
           onSelect={this.onSelect('school')}
-          options={this.schools} 
+          options={this.schools}
         />
-        <Input 
-          onChangeText={this.onChangeText('email')} 
+        <Input
+          onChangeText={this.onChangeText('email')}
           type='email'
           placeholder='E-posta'
           value={this.state.email}
         />
-        <Input 
-          onChangeText={this.onChangeText('password')} 
+        <Input
+          onChangeText={this.onChangeText('password')}
           type='password'
           placeholder='Şifre'
           value={this.state.password}
         />
-        <Input 
-          onChangeText={this.onChangeText('password2')} 
+        <Input
+          onChangeText={this.onChangeText('password2')}
           type='password'
           placeholder="Şifre Doğrulama"
           value={this.state.password2}
         />
-        <Button 
-          text="Kayıt Ol" 
+        <Button
+          text="Kayıt Ol"
           onPress={this.register}
         />
       </View>
