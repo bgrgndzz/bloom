@@ -22,10 +22,7 @@ module.exports = (req, res, next) => {
       }
 
       Post
-        .find({
-          author: req.params.user,
-          anonymous: false
-        })
+        .find({author: req.params.user})
         .sort('-date')
         .exec((err, posts) => {
           res.status(200).send({
@@ -33,11 +30,13 @@ module.exports = (req, res, next) => {
             user: {
               id: user.id,
               ...user._doc.user,
-              posts: posts.map(post => ({
-                id: post.id,
-                ...post._doc,
-                liked: post.likes.indexOf(req.user) !== -1
-              })),
+              posts: posts
+                .filter(post => !post.anonymous)
+                .map(post => ({
+                  id: post.id,
+                  ...post._doc,
+                  liked: post.likes.indexOf(req.user) !== -1
+                })),
               postCount: posts.length,
               likeCount: posts.reduce((reducer, post) => reducer += post.likeCount, 0),
               followersCount: user.user.followersCount
