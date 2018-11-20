@@ -39,8 +39,8 @@ module.exports = (req, res, next) => {
                 liked: post.likes.indexOf(req.user) !== -1
               })),
               postCount: posts.length,
-              likeCount: posts.reduce((reducer, post) => reducer += post.likeCount),
-              followerCount: user.user.followers
+              likeCount: posts.reduce((reducer, post) => reducer += post.likeCount, 0),
+              followersCount: user.user.followersCount
             }
           });
         });
