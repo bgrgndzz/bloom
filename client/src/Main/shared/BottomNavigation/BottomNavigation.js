@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   View,
   TouchableOpacity
 } from 'react-native';
@@ -15,16 +15,16 @@ export default class BottomNavigation extends Component {
           style={[styles.navItem, this.props.page === 'Feed' && styles.activeNavItem]}
           onPress={() => this.props.changePage('Feed')}
         >
-          <FontAwesome 
+          <FontAwesome
             style={[styles.navIcon, this.props.page === 'Feed' && styles.activeNavIcon]}
-            icon="bookmark"
+            icon="home"
           />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.navItem, this.props.page === 'Profile' && styles.activeNavItem]}
           onPress={() => this.props.changePage('Profile', {user: 'self'})}
         >
-          <FontAwesome 
+          <FontAwesome
             style={[styles.navIcon, this.props.page === 'Profile' && styles.activeNavIcon]}
             icon="user"
           />
@@ -33,7 +33,7 @@ export default class BottomNavigation extends Component {
           style={[styles.navItem, this.props.page === 'Settings' && styles.activeNavItem]}
           onPress={() => this.props.changePage('Settings', {user: 'self'})}
         >
-          <FontAwesome 
+          <FontAwesome
             style={[styles.navIcon, this.props.page === 'Settings' && styles.activeNavIcon]}
             icon="cog"
           />
