@@ -108,7 +108,7 @@ export default class Post extends Component {
           {this.props.include.includes('topic') && (
             <TouchableOpacity 
               style={styles.topicContainer}
-              onPress={() => this.props.changePage('Topic', this.props.topic)}
+              onPress={() => this.props.changePage('Topic', {topic: this.props.topic})}
             >
               <Text style={styles.topic}>{this.props.topic}</Text>
             </TouchableOpacity>

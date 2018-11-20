@@ -71,6 +71,20 @@ export default class Profile extends Component {
               this.state.user.about && 
               <Text style={styles.about}>{this.state.user.about}</Text>  
             }
+            <View style={styles.stats}>
+              <View style={styles.stat}>
+                <Text style={styles.statNumber}>{this.state.user.postCount}</Text>
+                <Text style={styles.statName}>Paylaşım</Text>
+              </View>
+              <View style={styles.stat}>
+                <Text style={styles.statNumber}>{this.state.user.followersCount}</Text>
+                <Text style={styles.statName}>Takipçi</Text>
+              </View>
+              <View style={styles.stat}>
+                <Text style={styles.statNumber}>{this.state.user.likeCount}</Text>
+                <Text style={styles.statName}>Beğeni</Text>
+              </View>
+            </View>
           </View>
           {Object.keys(this.state.user).length > 0 && this.state.user.posts.map((post, index) => (
             <Post 
@@ -138,5 +152,19 @@ const styles = StyleSheet.create({
   backButton: {
     width: 12.5,
     height: 12.5
+  },
+  stats: {
+    flexDirection: 'row',
+    marginTop: 15
+  },
+  stat: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  statNumber: {
+    color: '#16425B',
+    fontWeight: '900',
+    fontSize: 30
   }
 });
