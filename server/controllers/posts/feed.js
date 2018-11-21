@@ -18,7 +18,8 @@ module.exports = (req, res, next) => {
         .find({
           author: {
             $in: user.user.following
-          }
+          },
+          anonymous: false
         })
         .populate('author', 'user')
         .sort({date: -1})
