@@ -67,6 +67,11 @@ export default class Feed extends Component {
             />
           ))}
         </ScrollView>
+        {this.state.posts.length === 0 && !this.state.refreshing && (
+          <View style={styles.emptyFeedContainer}>
+            <Text style={styles.emptyFeed}>Takip ettiklerin burada görünür</Text>
+          </View>
+        )}
       </View>
     );
   }
@@ -78,5 +83,18 @@ const styles = StyleSheet.create({
   },
   posts: {
     padding: 15
+  },
+  emptyFeedContainer: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  emptyFeed: {
+    fontSize: 20,
+    fontWeight: '300',
+    color: 'rgba(0, 0, 0, 0.5)'
   }
 });

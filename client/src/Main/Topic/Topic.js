@@ -119,7 +119,7 @@ export default class Topic extends Component {
             <View style={styles.topic}>
               <TouchableOpacity
                 style={styles.backButtonContainer}
-                onPress={() => this.props.changePage('Topics')}
+                onPress={() => this.props.changePage('Feed')}
               >
                 <FontAwesome 
                   style={styles.backButton}

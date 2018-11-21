@@ -461,6 +461,7 @@
 		DE06014921A20B0800E8E2EB /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE06014C21A20B0800E8E2EB /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE14E365247E4EC793F1B690 /* libRNFetchBlob.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFetchBlob.a; sourceTree = "<group>"; };
+		DE496DBF21A59C0500080C74 /* bloom.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = bloom.entitlements; path = bloom/bloom.entitlements; sourceTree = "<group>"; };
 		E3C0B3D81CD7E84C88D22068 /* Pods-bloom-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bloom-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-bloom-tvOS/Pods-bloom-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		E437B55E2EBE4D16A2D78415 /* libReactNativePermissions.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libReactNativePermissions.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -615,6 +616,7 @@
 		13B07FAE1A68108700A75B9A /* bloom */ = {
 			isa = PBXGroup;
 			children = (
+				DE496DBF21A59C0500080C74 /* bloom.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -937,6 +939,14 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 8DVKCD9DV6;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1672,6 +1682,7 @@
 			baseConfigurationReference = A3C5FFE423E150D03E644CA4 /* Pods-bloom.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = bloom/bloom.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 8DVKCD9DV6;
@@ -1703,6 +1714,7 @@
 			baseConfigurationReference = 1A609DED7712ACE8EB82AA4F /* Pods-bloom.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = bloom/bloom.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8DVKCD9DV6;
 				HEADER_SEARCH_PATHS = (
