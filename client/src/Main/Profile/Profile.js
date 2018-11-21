@@ -54,7 +54,7 @@ export default class Profile extends Component {
             user: {
               ...this.state.user,
               followed: res.followed,
-              followers: res.followers
+              followersCount: res.followersCount
             },
             followDisabled: false
           });
@@ -116,7 +116,7 @@ export default class Profile extends Component {
                 style={styles.followButton}
                 onPress={this.followUser}
                 disabled={this.state.followDisabled}
-                text="Takip Et"
+                text={this.state.user.followed ? 'Takipten Çık' : 'Takip Et'}
               />
             )}
           </View>

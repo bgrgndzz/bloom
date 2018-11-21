@@ -40,17 +40,19 @@ module.exports = (req, res, next) => {
             followUser.user.followers.splice(followUser.user.followers.indexOf(user.id), 1);
             followUser.user.followersCount -= 1;
             user.save(err => {
-              return res.status(200).send({
-                authenticated: true,
-                followed: false,
-                followers: followUser.user.followers
-              });
+              followUser.save(err => {
+                return res.status(200).send({
+                  authenticated: true,
+                  followed: false,
+                  followersCount: followUser.user.followersCount
+                });
+              })
             });
           } else {
             return res.status(200).send({
               authenticated: true,
               followed: false,
-              followers: followUser.user.followers
+              followersCount: followUser.user.followersCount
             });
           }
         });
