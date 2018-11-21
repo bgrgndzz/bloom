@@ -11,13 +11,15 @@ import {
 import {CachedImage} from 'react-native-cached-image';
 
 import Post from '../shared/Post/Post';
+import Button from '../../shared/Button/Button';
 
 import getUser from '../shared/api/getUser.js';
+import followUser from './api/followUser.js';
 export default class Profile extends Component {  
   state = {
-    id: '',
     user: {},
-    refreshing: false
+    refreshing: false,
+    followDisabled: false
   }
 
   loadUser = (state = {}) => {
@@ -34,6 +36,30 @@ export default class Profile extends Component {
         user: res.user,
         ...state
       });
+    });
+  }
+  followUser = () => {
+    this.setState({followDisabled: true}, () => {
+      followUser(
+        this.props.jwt, 
+        this.props.user,
+        this.state.user.followed,
+        (err, res) => {
+          if (err && !res) {
+            if (err === 'unauthenticated') return this.props.goHome();
+            return Alert.alert(err);
+          }
+  
+          this.setState({
+            user: {
+              ...this.state.user,
+              followed: res.followed,
+              followers: res.followers
+            },
+            followDisabled: false
+          });
+        }
+      );
     });
   }
 
@@ -85,6 +111,14 @@ export default class Profile extends Component {
                 <Text style={styles.statName}>Beğeni</Text>
               </View>
             </View>
+            {this.props.user !== 'self' && (
+              <Button 
+                style={styles.followButton}
+                onPress={this.followUser}
+                disabled={this.state.followDisabled}
+                text="Takip Et"
+              />
+            )}
           </View>
           {Object.keys(this.state.user).length > 0 && this.state.user.posts.map((post, index) => (
             <Post 
@@ -112,7 +146,7 @@ const styles = StyleSheet.create({
   },
   user: {
     backgroundColor: 'white',
-    marginBottom: 15,
+    marginBottom: 45,
     borderRadius: 10,
     shadowColor: '#000', 
     shadowOffset: {width: 0, height: 0}, 
@@ -120,6 +154,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5, 
     elevation: 1,
     padding: 15,
+    paddingBottom: 30,
     alignItems: 'center'
   },
   profilepicture: {
@@ -166,5 +201,16 @@ const styles = StyleSheet.create({
     color: '#16425B',
     fontWeight: '900',
     fontSize: 30
+  },
+  statName: {
+    fontWeight: '300',
+    color: 'rgba(0, 0, 0, 0.75)',
+    fontSize: 12,
+    marginTop: -5
+  },
+  followButton: {
+    width: '50%',
+    position: 'absolute',
+    bottom: -20
   }
 });

@@ -8,6 +8,12 @@ module.exports = (req, res, next) => {
       error: 'Lütfen bir kullanıcı seçtiğinizden emin olun'
     });
   }
+  if (req.params.user === req.user) {
+    return res.status(422).send({
+      authenticated: true, 
+      error: 'Kendinizi takip edemezsiniz'
+    });
+  }
 
   User
     .findById(req.user)
@@ -36,13 +42,15 @@ module.exports = (req, res, next) => {
             user.save(err => {
               return res.status(200).send({
                 authenticated: true,
-                followed: true
+                followed: true,
+                followers: followUser.user.followers
               });
             });
           } else {
             return res.status(200).send({
               authenticated: true,
-              followed: true
+              followed: true,
+              followers: followUser.user.followers
             });
           }
         });
