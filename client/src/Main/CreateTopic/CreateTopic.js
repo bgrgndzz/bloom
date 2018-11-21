@@ -13,7 +13,7 @@ import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
 import createTopic from './api/createTopic';
 
-export default class Feed extends Component {
+export default class CreateTopic extends Component {
   state = {
     topic: '',
     post: '',

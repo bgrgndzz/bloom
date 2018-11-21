@@ -7,5 +7,6 @@ export default {
   heart: '\uf004',
   pen: '\uf304',
   chevronLeft: '\uf053',
-  check: '\uf00c'
+  check: '\uf00c',
+  home: '\uf015'
 };

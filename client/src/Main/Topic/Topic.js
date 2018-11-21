@@ -96,7 +96,7 @@ export default class Topic extends Component {
         );
       }
     );
-  };
+  }
   sort = (sort) => {
     this.setState({sort}, this.onRefresh);
   }
@@ -119,7 +119,7 @@ export default class Topic extends Component {
             <View style={styles.topic}>
               <TouchableOpacity
                 style={styles.backButtonContainer}
-                onPress={() => this.props.changePage('Feed')}
+                onPress={() => this.props.changePage('Topics')}
               >
                 <FontAwesome 
                   style={styles.backButton}

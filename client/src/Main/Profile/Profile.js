@@ -49,7 +49,7 @@ export default class Profile extends Component {
             if (err === 'unauthenticated') return this.props.goHome();
             return Alert.alert(err);
           }
-  
+
           this.setState({
             user: {
               ...this.state.user,

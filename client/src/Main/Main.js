@@ -12,6 +12,7 @@ import Header from './shared/Header/Header.js';
 import BottomNavigation from './shared/BottomNavigation/BottomNavigation.js';
 
 import Feed from './Feed/Feed.js';
+import Topics from './Topics/Topics.js';
 import Topic from './Topic/Topic.js';
 import Profile from './Profile/Profile.js';
 import CreateTopic from './CreateTopic/CreateTopic.js';
@@ -20,6 +21,7 @@ import EditProfile from './EditProfile/EditProfile.js';
 
 const pages = {
   Feed,
+  Topics,
   Topic,
   Profile,
   CreateTopic,

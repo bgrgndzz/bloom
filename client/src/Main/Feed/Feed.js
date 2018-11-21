@@ -2,85 +2,81 @@ import React, {Component} from 'react';
 import {
   StyleSheet, 
   ScrollView,
+  View,
   Text,
   Alert,
   RefreshControl,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native';
 
-import Topic from '../shared/Topic/Topic';
-import Sort from '../shared/Sort/Sort';
+import Post from '../shared/Post/Post';
 
-import listTopics from './api/listTopics';
+import listFeedPosts from './api/listFeedPosts';
 
 export default class Feed extends Component {
   state = {
-    topics: [],
-    sort: 'popular',
+    posts: [],
     refreshing: false
   }
 
-  componentWillMount = () => {
-    listTopics(this.props.jwt, this.state.sort, (err, res) => {
-      if (err && !res) {
-        if (err === 'unauthenticated') return this.props.goHome();
-        return Alert.alert(err);
+  listFeedPosts = (state = {}) => {
+    listFeedPosts(
+      this.props.jwt,
+      (err, res) => {
+        if (err && !res) {
+          if (err === 'unauthenticated') return this.props.goHome();
+          return Alert.alert(err);
+        }
+        this.setState({
+          ...state,
+          posts: res.posts
+        });
       }
-      this.setState({topics: res.topics});
-    });
+    );
   }
-  
   onRefresh = () => {
-    this.setState({refreshing: true});
-    listTopics(this.props.jwt, this.state.sort, (err, res) => {
-      if (err && !res) {
-        if (err === 'unauthenticated') return this.props.goHome();
-        return Alert.alert(err);
-      }
-      this.setState({
-        topics: res.topics,
-        refreshing: false
-      });
+    this.setState({refreshing: true}, () => {
+      this.listFeedPosts({refreshing: false});
     });
   }
-  sort = (sort) => {
-    this.setState({sort}, this.onRefresh);
-  }
+
+  componentWillMount = this.onRefresh;
 
   render() {
     return (
-      <ScrollView 
-        style={styles.topics}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this.onRefresh}
-          />
-        }
-      >
-        <Sort 
-          sort={this.state.sort}
-          sortFunction={this.sort}
-        />
-        {this.state.topics.map((topic, index) => (
-          <TouchableOpacity 
-            key={topic.topic}
-            onPress={() => this.props.changePage('Topic', topic)}
-          >
-            <Topic
-              topic={topic.topic}
-              posts={topic.posts}
+      <View style={styles.container}>
+        <ScrollView 
+          style={styles.posts}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this.onRefresh}
             />
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+          }
+        >
+          {this.state.posts.map((post, index) => (
+            <Post 
+              key={post.id}
+              {...post}
+              include={['user', 'topic']}
+              jwt={this.props.jwt}
+              changePage={this.props.changePage}
+              goHome={this.props.goHome}
+            />
+          ))}
+        </ScrollView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  topics: {
+  container: {
+    flex: 1
+  },
+  posts: {
     padding: 15
   }
 });

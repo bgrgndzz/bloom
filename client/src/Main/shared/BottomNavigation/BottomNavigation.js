@@ -17,6 +17,15 @@ export default class BottomNavigation extends Component {
         >
           <FontAwesome 
             style={[styles.navIcon, this.props.page === 'Feed' && styles.activeNavIcon]}
+            icon="home"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.navItem, this.props.page === 'Topics' && styles.activeNavItem]}
+          onPress={() => this.props.changePage('Topics')}
+        >
+          <FontAwesome 
+            style={[styles.navIcon, this.props.page === 'Topics' && styles.activeNavIcon]}
             icon="bookmark"
           />
         </TouchableOpacity>
