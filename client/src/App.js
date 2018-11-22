@@ -1,53 +1,51 @@
-import React, {Component} from 'react';
-import {AsyncStorage} from 'react-native';
-
+import {
+  createSwitchNavigator,
+  createStackNavigator,
+  createAppContainer
+} from 'react-navigation';
 import codePush from 'react-native-code-push';
 
+import AuthLoading from './AuthLoading/AuthLoading';
 import Landing from './Landing/Landing';
-import Main from './Main/Main';
+import Page from './Main/shared/hoc/Page/Page';
 
-const pages = {
-  Landing,
-  Main
-};
+import Feed from './Main/Feed/Feed.js';
+import Topics from './Main/Topics/Topics.js';
+import Topic from './Main/Topic/Topic.js';
+import Profile from './Main/Profile/Profile.js';
+import CreateTopic from './Main/CreateTopic/CreateTopic.js';
+import Settings from './Main/Settings/Settings.js';
+import EditProfile from './Main/EditProfile/EditProfile.js';
 
-class App extends Component {
-  state = {
-    page: '',
-    jwt: ''
+const LandingStack = createStackNavigator({Landing}, {headerMode: 'none'});
+const MainStack = createStackNavigator(
+  {
+    Feed: Page(Feed),
+    Topics: Page(Topics),
+    Topic: Page(Topic),
+    Profile: Page(Profile),
+    CreateTopic: Page(CreateTopic),
+    Settings: Page(Settings),
+    EditProfile: Page(EditProfile)
+  }, 
+  {
+    initialRouteName: 'Feed',
+    headerMode: 'none'
   }
+);
 
-  componentWillMount = () => {
-    AsyncStorage.getItem('jwt').then(jwt => {
-      if (jwt) {
-        this.setState({
-          page: 'Main',
-          jwt
-        });
-      } else {
-        this.setState({page: 'Landing'});
-      }
-    });
-  }
-
-  changePage = (page, state={}) => {
-    this.setState({
-      ...state,
-      page
-    });
-  }
-
-  render() {
-    let props = {
-      changePage: this.changePage
-    };
-    if (this.state.jwt) {
-      props.jwt = this.state.jwt;
+const AppContainer = createAppContainer(
+  createSwitchNavigator(
+    {
+      AuthLoading: AuthLoading,
+      MainStack: MainStack,
+      LandingStack: LandingStack,
+    },
+    {
+      initialRouteName: 'AuthLoading',
+      headerMode: 'none'
     }
-  
-    const Page = pages[this.state.page];
-    return this.state.page ? <Page {...props} /> : null;
-  }
-}
+  )
+);
 
-export default codePush(App);
+export default codePush(AppContainer);

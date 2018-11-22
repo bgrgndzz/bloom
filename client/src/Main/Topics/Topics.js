@@ -19,33 +19,26 @@ export default class Topics extends Component {
     sort: 'popular',
     refreshing: false
   }
-
-  componentWillMount = () => {
-    listTopics(this.props.jwt, this.state.sort, (err, res) => {
-      if (err && !res) {
-        if (err === 'unauthenticated') return this.props.goHome();
-        return Alert.alert(err);
-      }
-      this.setState({topics: res.topics});
-    });
-  }
   
   onRefresh = () => {
-    this.setState({refreshing: true});
-    listTopics(this.props.jwt, this.state.sort, (err, res) => {
-      if (err && !res) {
-        if (err === 'unauthenticated') return this.props.goHome();
-        return Alert.alert(err);
-      }
-      this.setState({
-        topics: res.topics,
-        refreshing: false
+    this.setState({refreshing: true}, () => {
+      listTopics(this.props.navigation.getParam('jwt', ''), this.state.sort, (err, res) => {
+        if (err && !res) {
+          if (err === 'unauthenticated') return this.props.logout();
+          return Alert.alert(err);
+        }
+        this.setState({
+          topics: res.topics,
+          refreshing: false
+        });
       });
     });
   }
   sort = (sort) => {
     this.setState({sort}, this.onRefresh);
   }
+
+  componentDidMount = this.onRefresh;
 
   render() {
     return (
@@ -66,7 +59,7 @@ export default class Topics extends Component {
         {this.state.topics.map((topic, index) => (
           <TouchableOpacity 
             key={topic.topic}
-            onPress={() => this.props.changePage('Topic', topic)}
+            onPress={() => this.props.navigation.navigate('Topic', {topic: topic.topic, jwt: this.props.navigation.getParam('jwt', ''), back: true})}
           >
             <Topic
               topic={topic.topic}

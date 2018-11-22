@@ -12,7 +12,7 @@ export default class Settings extends Component {
     this.settings = [
       {
         title: 'Profilini Düzenle',
-        onPress: () => this.props.changePage('EditProfile')
+        onPress: () => this.props.navigation.navigate('EditProfile', {jwt: this.props.navigation.getParam('jwt', ''), back: true})
       },
       {
         title: 'Gizlilik Sözleşmesi',
@@ -20,7 +20,7 @@ export default class Settings extends Component {
       },
       {
         title: 'Çıkış Yap',
-        onPress: this.props.goHome
+        onPress: this.props.logout
       }
     ];
   }

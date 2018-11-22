@@ -15,6 +15,7 @@ import Button from '../../shared/Button/Button';
 
 import getUser from '../shared/api/getUser.js';
 import followUser from './api/followUser.js';
+
 export default class Profile extends Component {  
   state = {
     user: {},
@@ -24,15 +25,14 @@ export default class Profile extends Component {
 
   loadUser = (state = {}) => {
     getUser(
-      this.props.jwt, 
-      (this.props.user === 'self' ? null : this.props.user), 
+      this.props.navigation.getParam('jwt', ''), 
+      this.props.navigation.getParam('user', ''),
       (err, res) => {
       if (err && !res) {
-        if (err === 'unauthenticated') return this.props.goHome();
+        if (err === 'unauthenticated') return this.props.logout();
         return Alert.alert(err);
       }
       this.setState({
-        id: this.props.user,
         user: res.user,
         ...state
       });
@@ -41,12 +41,12 @@ export default class Profile extends Component {
   followUser = () => {
     this.setState({followDisabled: true}, () => {
       followUser(
-        this.props.jwt, 
-        this.props.user,
+        this.props.navigation.getParam('jwt', ''), 
+        this.props.navigation.getParam('user', ''),
         this.state.user.followed,
         (err, res) => {
           if (err && !res) {
-            if (err === 'unauthenticated') return this.props.goHome();
+            if (err === 'unauthenticated') return this.props.logout();
             return Alert.alert(err);
           }
 
@@ -62,13 +62,13 @@ export default class Profile extends Component {
       );
     });
   }
-
-  componentWillMount = this.loadUser;
-  
   onRefresh = () => {
-    this.setState({refreshing: true});
-    this.loadUser({refreshing: false});
+    this.setState({refreshing: true}, () => {
+      this.loadUser({refreshing: false});
+    });
   }
+
+  componentDidMount = this.onRefresh;
 
   render() {
     return (
@@ -83,52 +83,52 @@ export default class Profile extends Component {
             />
           }
         >
-          <View style={styles.user}>
-            <CachedImage 
-              style={styles.profilepicture}
-              source={this.state.user.profilepicture ? 
-                {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.state.user.profilepicture} : 
-                require('../../../src/images/defaultprofile.png')
-              }
-            />
-            <Text style={styles.name}>{this.state.user.firstName} {this.state.user.lastName}</Text>
-            <Text style={styles.school}>{this.state.user.school}</Text>
-            {
-              this.state.user.about && 
-              <Text style={styles.about}>{this.state.user.about}</Text>  
-            }
-            <View style={styles.stats}>
-              <View style={styles.stat}>
-                <Text style={styles.statNumber}>{this.state.user.postCount}</Text>
-                <Text style={styles.statName}>Paylaşım</Text>
-              </View>
-              <View style={styles.stat}>
-                <Text style={styles.statNumber}>{this.state.user.followersCount}</Text>
-                <Text style={styles.statName}>Takipçi</Text>
-              </View>
-              <View style={styles.stat}>
-                <Text style={styles.statNumber}>{this.state.user.likeCount}</Text>
-                <Text style={styles.statName}>Beğeni</Text>
-              </View>
-            </View>
-            {this.props.user !== 'self' && (
-              <Button 
-                style={styles.followButton}
-                onPress={this.followUser}
-                disabled={this.state.followDisabled}
-                text={this.state.user.followed ? 'Takipten Çık' : 'Takip Et'}
+          {Object.keys(this.state.user).length > 0 && (
+            <View style={styles.user}>
+              <CachedImage 
+                style={styles.profilepicture}
+                source={this.state.user.profilepicture ? 
+                  {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.state.user.profilepicture} : 
+                  require('../../../src/images/defaultprofile.png')
+                }
               />
-            )}
-          </View>
+              <Text style={styles.name}>{this.state.user.firstName} {this.state.user.lastName}</Text>
+              <Text style={styles.school}>{this.state.user.school}</Text>
+              {this.state.user.about && (
+                <Text style={styles.about}>{this.state.user.about}</Text>
+              )}
+              <View style={styles.stats}>
+                <View style={styles.stat}>
+                  <Text style={styles.statNumber}>{this.state.user.postCount}</Text>
+                  <Text style={styles.statName}>Paylaşım</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Text style={styles.statNumber}>{this.state.user.followersCount}</Text>
+                  <Text style={styles.statName}>Takipçi</Text>
+                </View>
+                <View style={styles.stat}>
+                  <Text style={styles.statNumber}>{this.state.user.likeCount}</Text>
+                  <Text style={styles.statName}>Beğeni</Text>
+                </View>
+              </View>
+              {this.props.navigation.getParam('user', '') ? (
+                <Button 
+                  style={styles.followButton}
+                  onPress={this.followUser}
+                  disabled={this.state.followDisabled}
+                  text={this.state.user.followed ? 'Takipten Çık' : 'Takip Et'}
+                />
+              ) : null}
+            </View>
+          )}
           {Object.keys(this.state.user).length > 0 && this.state.user.posts.map((post, index) => (
             <Post 
               key={post.id}
               {...post}
               author={this.state.user}
               include={['user', 'topic']}
-              jwt={this.props.jwt}
-              changePage={this.props.changePage}
-              goHome={this.props.goHome}
+              navigation={this.props.navigation}
+              logout={this.props.logout}
             />
           ))}
         </ScrollView>

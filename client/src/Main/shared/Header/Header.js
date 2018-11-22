@@ -12,25 +12,38 @@ export default class Header extends Component {
   render() {
     return (
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={[styles.temp]}
-        >
-          <FontAwesome 
-            style={styles.newTopic}
-            icon="plus"
-          />
-        </TouchableOpacity>
+        {this.props.navigation.getParam('back', '') ? (
+          <TouchableOpacity 
+            style={styles.leftIconContainer}
+            onPress={() => this.props.navigation.goBack()}
+          >
+            <FontAwesome 
+              style={styles.icon}
+              icon="chevronLeft"
+            />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity 
+            style={[styles.leftIconContainer, styles.temp]}
+            onPress={() => {}}
+          >
+            <FontAwesome 
+              style={styles.icon}
+              icon="plus"
+            />
+          </TouchableOpacity>
+        )}
         <Image 
           style={styles.logo}
           source={require('../../../images/logo.png')}
           resizeMode="contain"
         />
         <TouchableOpacity 
-          style={styles.newTopicContainer}
-          onPress={() => this.props.changePage('CreateTopic')}
+          style={styles.rightIconContainer}
+          onPress={() => this.props.navigation.navigate('CreateTopic', {jwt: this.props.navigation.getParam('jwt', ''), back: true})}
         >
           <FontAwesome 
-            style={styles.newTopic}
+            style={styles.icon}
             icon="plus"
           />
         </TouchableOpacity>
@@ -48,20 +61,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  temp: {
-    opacity: 0,
+  leftIconContainer: {
     marginRight: 'auto',
     marginLeft: 20
+  },
+  temp: {
+    opacity: 0
   },
   logo: {
     height: 35,
     marginHorizontal: 'auto'
   },
-  newTopicContainer: {
+  rightIconContainer: {
     marginLeft: 'auto',
     marginRight: 20
   },
-  newTopic: {
+  icon: {
     color: 'white',
     fontFamily: 'FontAwesome5FreeRegular',
     fontSize: 25

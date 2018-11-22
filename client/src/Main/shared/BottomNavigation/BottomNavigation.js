@@ -5,48 +5,35 @@ import {
   TouchableOpacity
 } from 'react-native';
 
+import {NavigationActions} from 'react-navigation';
+
 import FontAwesome from '../../../shared/FontAwesome/FontAwesome';
 
+const pages = {
+  Feed: 'home',
+  Topics: 'bookmark',
+  Profile: 'user',
+  Settings: 'cog'
+}
 export default class BottomNavigation extends Component {
   render() {
+    const routeName = this.props.navigation.state.routeName;
+    const jwt = this.props.navigation.getParam('jwt', '');
+
     return (
       <View style={styles.bottomNavigation}>
-        <TouchableOpacity
-          style={[styles.navItem, this.props.page === 'Feed' && styles.activeNavItem]}
-          onPress={() => this.props.changePage('Feed')}
-        >
-          <FontAwesome 
-            style={[styles.navIcon, this.props.page === 'Feed' && styles.activeNavIcon]}
-            icon="home"
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.navItem, this.props.page === 'Topics' && styles.activeNavItem]}
-          onPress={() => this.props.changePage('Topics')}
-        >
-          <FontAwesome 
-            style={[styles.navIcon, this.props.page === 'Topics' && styles.activeNavIcon]}
-            icon="bookmark"
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.navItem, this.props.page === 'Profile' && styles.activeNavItem]}
-          onPress={() => this.props.changePage('Profile', {user: 'self'})}
-        >
-          <FontAwesome 
-            style={[styles.navIcon, this.props.page === 'Profile' && styles.activeNavIcon]}
-            icon="user"
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.navItem, this.props.page === 'Settings' && styles.activeNavItem]}
-          onPress={() => this.props.changePage('Settings', {user: 'self'})}
-        >
-          <FontAwesome 
-            style={[styles.navIcon, this.props.page === 'Settings' && styles.activeNavIcon]}
-            icon="cog"
-          />
-        </TouchableOpacity>
+        {Object.keys(pages).map(page => (
+          <TouchableOpacity
+            style={[styles.navItem, routeName === page && styles.activeNavItem]}
+            onPress={() => {this.props.navigation.reset([NavigationActions.navigate({routeName: page, params: {jwt}})], 0)}}
+            key={page}
+          >
+            <FontAwesome 
+              style={[styles.navIcon, routeName === page && styles.activeNavIcon]}
+              icon={pages[page]}
+            />
+          </TouchableOpacity>
+        ))}
       </View>
     );
   }

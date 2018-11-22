@@ -45,12 +45,12 @@ export default class Post extends Component {
   like = () => {
     this.setState({disabled: true}, () => {
       likePost(
-        this.props.jwt, 
+        this.props.navigation.getParam('jwt', ''), 
         this.props.id,
         this.state.liked,
         (err, res) => {
           if (err && !res) {
-            if (err === 'unauthenticated') return this.props.goHome();
+            if (err === 'unauthenticated') return this.props.logout();
             return Alert.alert(err);
           }
   
@@ -86,7 +86,7 @@ export default class Post extends Component {
               (
                 <TouchableOpacity 
                   style={styles.authorContainer}
-                  onPress={() => this.props.changePage('Profile', {user: this.props.author.id})}
+                  onPress={() => this.props.navigation.navigate('Profile', {user: this.props.author.id, jwt: this.props.navigation.getParam('jwt', ''), back: true})}
                 >
                   <CachedImage 
                     style={styles.profilepicture}
@@ -108,7 +108,7 @@ export default class Post extends Component {
           {this.props.include.includes('topic') && (
             <TouchableOpacity 
               style={styles.topicContainer}
-              onPress={() => this.props.changePage('Topic', {topic: this.props.topic})}
+              onPress={() => this.props.navigation.navigate('Topic', {topic: this.props.topic, jwt: this.props.navigation.getParam('jwt', ''), back: true})}
             >
               <Text style={styles.topic}>{this.props.topic}</Text>
             </TouchableOpacity>

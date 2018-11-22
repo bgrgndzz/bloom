@@ -51,11 +51,11 @@ export default class EditProfile extends Component {
 
   getUser = (state = {}) => {
     getUser(
-      this.props.jwt,
+      this.props.navigation.getParam('jwt', ''),
       null,
       (err, res) => {
         if (err && !res) {
-          if (err === 'unauthenticated') return this.props.goHome();
+          if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
 
@@ -137,18 +137,18 @@ export default class EditProfile extends Component {
   }
   submitProfileInfo = () => {
     editProfile(
-      this.props.jwt,
+      this.props.navigation.getParam('jwt', ''),
       {
         profilepicture: this.state.profilepicture.type === 'base64' ? this.state.profilepicture : null,
         about: this.state.about
       },
       (err, res) => {
         if (err && !res) {
-          if (err === 'unauthenticated') return this.props.goHome();
+          if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
 
-        this.props.changePage('Profile', {user: 'self'});
+        this.props.navigation.navigate('Profile', {jwt: this.props.navigation.getParam('jwt', '')});
       }
     );
   }

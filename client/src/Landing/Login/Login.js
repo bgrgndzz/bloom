@@ -11,7 +11,7 @@ import Back from '../../shared/Back/Back';
 import Button from '../../shared/Button/Button';
 import Input from '../../shared/Input/Input';
 
-import loginPOST from './api/login';
+import login from './api/login';
 
 export default class Login extends Component {
   state = {
@@ -23,10 +23,10 @@ export default class Login extends Component {
     return (input) => this.setState({[key]: input});
   }
 
-  login = () => loginPOST(this.state, (err, jwt) => {
+  login = () => login(this.state, (err, jwt) => {
     if (err && !jwt) return Alert.alert(err);
     AsyncStorage.setItem('jwt', jwt);
-    this.props.changePage('Main', {jwt});
+    this.props.navigation.navigate('Feed', {jwt});
   });
 
   render() {

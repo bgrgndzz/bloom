@@ -219,7 +219,7 @@ export default class Landing extends Component {
               ]}
             >
               <Login 
-                changePage={this.props.changePage}
+                navigation={this.props.navigation}
                 animationPresets={this.animationPresets} 
               />
             </Animated.View>
@@ -234,7 +234,7 @@ export default class Landing extends Component {
               ]}
             >
               <Register 
-                changePage={this.props.changePage}
+                navigation={this.props.navigation}
                 animationPresets={this.animationPresets} 
               />
             </Animated.View>

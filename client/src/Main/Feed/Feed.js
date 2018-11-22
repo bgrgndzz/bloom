@@ -22,10 +22,10 @@ export default class Feed extends Component {
 
   listFeedPosts = (state = {}) => {
     listFeedPosts(
-      this.props.jwt,
+      this.props.navigation.getParam('jwt', ''),
       (err, res) => {
         if (err && !res) {
-          if (err === 'unauthenticated') return this.props.goHome();
+          if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
         this.setState({
@@ -61,9 +61,8 @@ export default class Feed extends Component {
               key={post.id}
               {...post}
               include={['user', 'topic']}
-              jwt={this.props.jwt}
-              changePage={this.props.changePage}
-              goHome={this.props.goHome}
+              navigation={this.props.navigation}
+              logout={this.props.logout}
             />
           ))}
         </ScrollView>

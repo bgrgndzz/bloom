@@ -25,7 +25,7 @@ export default class CreateTopic extends Component {
   }
   onPress = () => {
     createTopic(
-      this.props.jwt, 
+      this.props.navigation.getParam('jwt', ''), 
       this.state.topic, 
       {
         text: this.state.post,
@@ -33,11 +33,11 @@ export default class CreateTopic extends Component {
       },
       (err, res) => {
         if (err && !res) {
-          if (err === 'unauthenticated') return this.props.goHome();
+          if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
 
-        this.props.changePage('Topic', {topic: this.state.topic});
+        this.props.navigation.navigate('Topic', {topic: this.state.topic, jwt: this.props.navigation.getParam('jwt', '')});
       }
     );
   }

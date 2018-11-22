@@ -27,79 +27,53 @@ export default class Topic extends Component {
     post: '',
     anonymous: false
   }
-
-  componentWillMount = () => {
-    listPosts(
-      this.props.jwt, 
-      this.props.topic,
-      this.state.sort, 
-      (err, res) => {
-        if (err && !res) {
-          if (err === 'unauthenticated') return this.props.goHome();
-          return Alert.alert(err);
-        }
-        this.setState({posts: res.posts});
-      }
-    );
-  }
   
   onRefresh = () => {
-    this.setState({refreshing: true});
-    listPosts(
-      this.props.jwt, 
-      this.props.topic,
-      this.state.sort,
-      (err, res) => {
-        if (err && !res) {
-          if (err === 'unauthenticated') return this.props.goHome();
-          return Alert.alert(err);
+    this.setState({refreshing: true}, () => {
+      listPosts(
+        this.props.navigation.getParam('jwt', ''), 
+        this.props.navigation.getParam('topic', ''),
+        this.state.sort,
+        (err, res) => {
+          if (err && !res) {
+            if (err === 'unauthenticated') return this.props.logout();
+            return Alert.alert(err);
+          }
+          this.setState({
+            posts: res.posts,
+            refreshing: false
+          });
         }
-        this.setState({
-          posts: res.posts,
-          refreshing: false
-        });
-      }
-    );
+      );
+    });
   }
-  onChangeText = (post) => {
-    this.setState({post})
-  }
+
   onPress = () => {
     createPost(
-      this.props.jwt, 
-      this.props.topic, 
+      this.props.navigation.getParam('jwt', ''), 
+      this.props.navigation.getParam('topic', ''), 
       {
         text: this.state.post,
         anonymous: this.state.anonymous
       },
       (err, res) => {
         if (err && !res) {
-          if (err === 'unauthenticated') return this.props.goHome();
+          if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
 
-        listPosts(
-          this.props.jwt, 
-          this.props.topic,
-          'new', 
-          (err, res) => {
-            if (err && !res) {
-              if (err === 'unauthenticated') return this.props.goHome();
-              return Alert.alert(err);
-            }
-            this.setState({
-              sort: 'new',
-              post: '',
-              posts: res.posts
-            });
-          }
-        );
+        this.setState({
+          sort: 'new',
+          post: ''
+        }, this.onRefresh);
       }
     );
   }
   sort = (sort) => {
     this.setState({sort}, this.onRefresh);
   }
+
+  componentDidMount = this.onRefresh;
 
   render() {
     return (
@@ -117,25 +91,14 @@ export default class Topic extends Component {
         >
           <View style={styles.topicContainer}>
             <View style={styles.topic}>
-              <TouchableOpacity
-                style={styles.backButtonContainer}
-                onPress={() => this.props.changePage('Feed')}
-              >
-                <FontAwesome 
-                  style={styles.backButton}
-                  icon="chevronLeft"
-                />
-              </TouchableOpacity>
-              <View style={styles.topicNameContainer}>
-                <Text style={styles.topicName}>{this.props.topic}</Text>
-              </View>
+              <Text style={styles.topicName}>{this.props.navigation.getParam('topic', '')}</Text>
             </View>
           </View>
           <View style={styles.form}>
             <Input 
               placeholder="Fikrini paylaş"
               multiline={true}
-              onChangeText={this.onChangeText}
+              onChangeText={(post) => this.setState({post})}
               value={this.state.post}
               containerStyle={{marginBottom: 15}}
             />
@@ -167,9 +130,8 @@ export default class Topic extends Component {
               key={post.id}
               {...post}
               include={['user']}
-              jwt={this.props.jwt}
-              changePage={this.props.changePage}
-              goHome={this.props.goHome}
+              navigation={this.props.navigation}
+              logout={this.props.logout}
             />
           ))}
         </ScrollView>
@@ -190,8 +152,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 15,
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'white',
     marginBottom: 15,
     borderRadius: 10,
@@ -201,12 +164,10 @@ const styles = StyleSheet.create({
     shadowRadius: 5, 
     elevation: 1
   },
-  topicNameContainer: {
-    flex: 1
-  },
   topicName: {
     color: '#202020',
-    fontWeight: '100'
+    fontWeight: '100',
+    textAlign: 'center'
   },
   form: {
     padding: 15,
@@ -218,17 +179,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1, 
     shadowRadius: 5, 
     elevation: 1
-  },
-  backButtonContainer: {
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: -12.5
-  },
-  backButton: {
-    fontSize: 15,
-    color: 'rgba(0, 0, 0, 0.75)'
   },
   checkboxContainer: {
     marginBottom: 15,
