@@ -16,7 +16,6 @@ export default Page = (BaseComponent) => {
     logout = async () => {
       const jwt = await AsyncStorage.getItem('jwt');
       if (jwt) await AsyncStorage.removeItem('jwt');
-      
       this.props.navigation.navigate('Landing');
     }
 
@@ -29,7 +28,10 @@ export default Page = (BaseComponent) => {
             {...this.props}
           />
           <View style={styles.content}>
-            <BaseComponent {...this.props} />
+            <BaseComponent 
+              {...this.props}
+              logout={this.logout} 
+            />
           </View>
           <BottomNavigation 
             logout={this.logout}
