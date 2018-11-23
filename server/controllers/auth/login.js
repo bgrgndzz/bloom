@@ -39,7 +39,7 @@ module.exports = (req, res, next) => {
         userRes.auth.loginCount += 1;
         userRes.save(err => {
           const token = jwt.sign({user: userRes.id}, process.env.JWT_SECRET, {
-            expiresIn: 86400 // 24 hours
+            expiresIn: 60 * 60 * 24 * 365 // a year
           });
           
           res.status(200).send({
