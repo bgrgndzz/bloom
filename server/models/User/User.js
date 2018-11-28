@@ -1,4 +1,6 @@
-const mongoose = require("mongoose");
+const mongoosastic = require('mongoosastic');
+
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 // functions
@@ -27,11 +29,13 @@ const UserSchema = new Schema({
   user: {
     firstName: {
       type: String, 
-      required: true
+      required: true,
+      es_indexed: true
     },
     lastName: {
       type: String, 
-      required: true
+      required: true,
+      es_indexed: true
     },
     school: {
       type: String, 
@@ -39,8 +43,6 @@ const UserSchema = new Schema({
     },
     about: String,
     profilepicture: String,
-    hobbies: [String],
-    clubs: [String],
     following: [{
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -72,4 +74,8 @@ const UserSchema = new Schema({
 UserSchema.pre('save', hashPassword);
 UserSchema.methods.verifyPassword = verifyPassword;
 
-module.exports = mongoose.model('User', UserSchema);
+UserSchema.plugin(mongoosastic);
+
+const User = mongoose.model('User', UserSchema);
+
+module.exports = User;

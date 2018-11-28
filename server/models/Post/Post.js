@@ -1,3 +1,5 @@
+const mongoosastic = require('mongoosastic');
+
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -13,7 +15,8 @@ const PostSchema = new Schema({
   },
   topic: {
     type: String,
-    required: true
+    required: true,
+    es_indexed: true
   },
   date: {
     type: Date,
@@ -34,4 +37,8 @@ const PostSchema = new Schema({
   }
 });
 
-module.exports = mongoose.model('Post', PostSchema);
+PostSchema.plugin(mongoosastic);
+
+const Post = mongoose.model('Post', PostSchema);
+
+module.exports = Post;
