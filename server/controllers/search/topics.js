@@ -17,7 +17,8 @@ module.exports = (req, res, next) => {
     {
       query_string: {
         query: `*${search}*`,
-        allow_leading_wildcard: true
+        allow_leading_wildcard: true,
+        fields: ['topic']
       }
     },
     {
