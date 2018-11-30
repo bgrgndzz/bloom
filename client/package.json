@@ -23,7 +23,8 @@
     "react-native-modal-dropdown": "^0.6.2",
     "react-native-permissions": "^1.1.1",
     "react-navigation": "^3.0.0",
-    "rn-fetch-blob": "^0.10.13"
+    "rn-fetch-blob": "^0.10.13",
+    "throttle-debounce": "^2.0.1"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",

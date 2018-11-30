@@ -12,7 +12,7 @@ export default class Settings extends Component {
     this.settings = [
       {
         title: 'Profilini Düzenle',
-        onPress: () => this.props.navigation.navigate('EditProfile', {jwt: this.props.navigation.getParam('jwt', ''), back: true})
+        onPress: () => this.props.navigation.push('EditProfile', {jwt: this.props.navigation.getParam('jwt', ''), back: true})
       },
       {
         title: 'Gizlilik Sözleşmesi',

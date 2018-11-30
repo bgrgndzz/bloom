@@ -86,7 +86,7 @@ export default class Post extends Component {
               (
                 <TouchableOpacity 
                   style={styles.authorContainer}
-                  onPress={() => this.props.navigation.navigate('Profile', {user: this.props.author.id, jwt: this.props.navigation.getParam('jwt', ''), back: true})}
+                  onPress={() => this.props.navigation.push('Profile', {user: this.props.author.id, jwt: this.props.navigation.getParam('jwt', ''), back: true})}
                 >
                   <CachedImage 
                     style={styles.profilepicture}
@@ -108,7 +108,7 @@ export default class Post extends Component {
           {this.props.include.includes('topic') && (
             <TouchableOpacity 
               style={styles.topicContainer}
-              onPress={() => this.props.navigation.navigate('Topic', {topic: this.props.topic, jwt: this.props.navigation.getParam('jwt', ''), back: true})}
+              onPress={() => this.props.navigation.push('Topic', {topic: this.props.topic, jwt: this.props.navigation.getParam('jwt', ''), back: true})}
             >
               <Text style={styles.topic}>{this.props.topic}</Text>
             </TouchableOpacity>

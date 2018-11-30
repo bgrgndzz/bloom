@@ -2,8 +2,11 @@ import React, {Component} from 'react';
 import {
   StyleSheet, 
   View,
+  Image,
   Text
 } from 'react-native';
+
+import {CachedImage} from 'react-native-cached-image';
 
 const highlight = (string, search) => {
   return string && string.split(new RegExp(search, 'gi')).map((splitName, index, array) => [
@@ -26,25 +29,38 @@ const highlight = (string, search) => {
   ]);
 };
 
-export default class Topic extends Component {
+export default class User extends Component {
   render() {
-    return (
-      <View style={styles.topic}>
+    return (this.props.user && this.props.user.user) ? (
+      <View style={styles.user}>
+        {this.props.user.user.profilepicture ? (
+          <CachedImage 
+            style={styles.profilepicture}
+            source={{uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.props.user.user.profilepicture}}
+            resizeMode="contain"
+          />
+        ) : (
+          <Image 
+            style={styles.profilepicture}
+            source={require('../../../images/defaultprofile.png')}
+            resizeMode="contain"
+          />
+        )}
+        
         <Text style={styles.name}>
           {
             this.props.search ? 
-            highlight(this.props.topic, this.props.search) :
-            this.props.topic
+            highlight(`${this.props.user.user.firstName} ${this.props.user.user.lastName}`, this.props.search) :
+            `${this.props.user.user.firstName} ${this.props.user.user.lastName}`
           }
         </Text>
-        <Text style={styles.posts}>{this.props.posts}</Text>
       </View>
-    );
+    ) : null;
   }
 }
 
 const styles = StyleSheet.create({
-  topic: {
+  user: {
     backgroundColor: 'white',
     padding: 15,
     marginBottom: 15,
@@ -56,18 +72,17 @@ const styles = StyleSheet.create({
     elevation: 1,
     flexDirection: 'row'
   },
-  posts: {
-    width: '15%',
-    textAlign: 'right',
-    color: '#707070',
-    fontWeight: '500'
+  profilepicture: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginRight: 15
   },
   name: {
     flex: 1,
     color: '#202020',
     fontWeight: '100',
-    flexDirection: 'row',
-    alignItems: 'center'
+    lineHeight: 30
   },
   highlighted: {
     fontWeight: '600'

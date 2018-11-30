@@ -40,7 +40,7 @@ export default class Header extends Component {
         />
         <TouchableOpacity 
           style={styles.rightIconContainer}
-          onPress={() => this.props.navigation.navigate('CreateTopic', {jwt: this.props.navigation.getParam('jwt', ''), back: true})}
+          onPress={() => this.props.navigation.push('CreateTopic', {jwt: this.props.navigation.getParam('jwt', ''), back: true})}
         >
           <FontAwesome 
             style={styles.icon}

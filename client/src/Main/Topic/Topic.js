@@ -13,7 +13,7 @@ import {
 import Post from '../shared/Post/Post';
 import Input from '../../shared/Input/Input';
 import Button from '../../shared/Button/Button';
-import Sort from '../shared/Sort/Sort';
+import DoubleSelect from '../shared/DoubleSelect/DoubleSelect';
 import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
 import listPosts from './api/listPosts';
@@ -121,11 +121,15 @@ export default class Topic extends Component {
               onPress={this.onPress}
             />
           </View>
-          <Sort 
-            sort={this.state.sort}
-            sortFunction={this.sort}
+          <DoubleSelect 
+            options={{
+              popular: 'Popüler',
+              new: 'Yeni'
+            }}
+            option={this.state.sort}
+            onChangeOption={this.sort}
           />
-          {this.state.posts.map((post, index) => (
+          {this.state.posts.map(post => (
             <Post 
               key={post.id}
               {...post}

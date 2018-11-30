@@ -6,22 +6,18 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-export default class Sort extends Component {
+export default class DoubleSelect extends Component {
   render() {
-    const sortOptions = this.props.sortOptions || {
-      popular: 'Popüler',
-      new: 'Yeni'
-    };
 
     return (
-      <View style={styles.sortContainer}>
-        {Object.keys(sortOptions).map(sortOption => (
+      <View style={styles.container}>
+        {Object.keys(this.props.options).map(option => (
           <TouchableOpacity 
-            style={this.props.sort === sortOption ? styles.activeSort : styles.sort}
-            onPress={() => this.props.sortFunction(sortOption)}
-            key={sortOption}
+            style={this.props.option === option ? styles.active : styles.inactive}
+            onPress={() => this.props.onChangeOption(option)}
+            key={option}
           >
-            <Text style={this.props.sort === sortOption ? styles.activeSortText : styles.sortText}>{sortOptions[sortOption]}</Text>
+            <Text style={this.props.option === option ? styles.activeText : styles.inactiveText}>{this.props.options[option]}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -30,12 +26,12 @@ export default class Sort extends Component {
 }
 
 const styles = StyleSheet.create({
-  sortContainer: {
+  container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  sort: {
+  inactive: {
     width: '45%',
     backgroundColor: 'white',
     padding: 10,
@@ -47,7 +43,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5, 
     elevation: 1,
   },
-  activeSort: {
+  active: {
     width: '45%',
     backgroundColor: '#16425B',
     padding: 10,
@@ -59,12 +55,12 @@ const styles = StyleSheet.create({
     shadowRadius: 5, 
     elevation: 1,
   },
-  sortText: {
+  inactiveText: {
     color: 'rgba(0, 0, 0, 0.75)',
     textAlign: 'center',
     fontSize: 15
   },
-  activeSortText: {
+  activeText: {
     color: 'white',
     textAlign: 'center',
     fontSize: 15
