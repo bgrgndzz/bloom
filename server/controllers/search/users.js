@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('../../models/User/User');
 
-const elasticSearchSanitize = require('../../util/elasticsearch-sanitize');
-
 module.exports = (req, res, next) => {
   if (!req.params || !req.params.search) {
     res.status(422).send({
@@ -11,35 +9,33 @@ module.exports = (req, res, next) => {
     });
   }
 
-  const search = elasticSearchSanitize(req.params.search);
+  const search = new RegExp(req.params.search.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&'), 'gi');
 
-  User.search(
-    {
-      query_string: {
-        query: `*${search}*`,
-        allow_leading_wildcard: true,
-        fields: ['user.firstName', 'user.lastName']
-      }
-    },
-    {
-      from: 0,
-      size: 10000,
-      hydrate: true
-    },
-    (err, results) => {
+  User
+    .aggregate([
+      {$project: {
+        auth: 0,
+        preSave: 0
+      }},
+      {$addFields: { 
+        user: {
+          fullName: {$concat: ['$user.firstName', ' ', '$user.lastName']}
+        }
+      }},
+      {$match: {'user.fullName': search}}
+    ])
+    .exec((err, results) => {
+      console.log(results);
       if (!results) {
         return res.status(200).send({
           authenticated: true,
           users: []
         });
       }
-
-      const users = results.hits.hits;
       
       res.status(200).send({
         authenticated: true,
-        users
+        users: results
       });
-    }
-  );
+    });
 };

@@ -1,33 +1,27 @@
 const moment = require('moment');
 
 const mongoose = require('mongoose');
-const Post = require('../../models/Post/Post');
+const Topic = require('../../models/Topic/Topic');
 
 module.exports = (req, res, next) => {
-  Post
+  Topic
     .find()
     .sort('-date')
-    .exec((err, posts) => {
-      let topics = [];
-      posts.forEach(post => {
-        const topicNames = topics.map(topic => topic.topic);
-        if (topicNames.indexOf(post.topic) === -1) {
-          topics.push({
-            topic: post.topic,
-            posts: 1,
-            last: post.date
-          });
-        } else {
-          topics[topicNames.indexOf(post.topic)].posts += 1;
-        }
-      });
+    .populate('author')
+    .exec((err, topics) => {
+      topics = topics.map(topic => ({
+        id: topic.id,
+        postCount: topic.posts.length,
+        ...topic._doc
+      }));
       
       if ((req.params && req.params.sort === 'popular') || (!req.params || !req.params.sort)) {
         // Sorting algorithm 1:
-        // ((posts - 1) ^ 1.5)
+        // (posts ^ 1.5) * (likes ^ .5)
         // divided by
         // ((lastPost.minutesAge + 120) ^ .75)
-        topics = topics.sort((prev, cur) => (((cur.posts - 1) ** 1.5) / (((moment().diff(moment(cur.last), 'minutes')) + 120) ** .75)) - ((prev.posts - 1) ** 1.5) / (((moment().diff(moment(prev.last), 'minutes')) + 120) ** .75));
+        const rank = topic => (topic.postCount ** 1.5) * (topic.likeCount ** 0.5) / (((moment().diff(moment(topic.posts[topic.posts.length - 1]), 'minutes')) + 120) ** .75);
+        topics = topics.sort((prev, cur) => rank(cur) - rank(prev));
       }
 
       res.status(200).send({

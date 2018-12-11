@@ -39,8 +39,7 @@ module.exports = (req, res, next) => {
       const newUser = new User({
         auth: {
           email: req.body.email,
-          password: req.body.password,
-          loginCount: 1
+          password: req.body.password
         },
         user: {
           firstName: req.body.firstName,

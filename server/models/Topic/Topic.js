@@ -3,8 +3,8 @@ const mongoosePaginate = require('mongoose-paginate');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const PostSchema = new Schema({
-  text: {
+const TopicSchema = new Schema({
+  topic: {
     type: String,
     required: true
   },
@@ -13,31 +13,23 @@ const PostSchema = new Schema({
     ref: 'User',
     required: true
   },
-  topic: {
-    type: Schema.Types.ObjectId,
-    ref: 'Topic'
-  },
   date: {
     type: Date,
     default: Date.now
   },
-  likes: [{
+  posts: [{
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Post',
     default: []
   }],
   likeCount: {
     type: Number,
     default: 0
-  },
-  anonymous: {
-    type: Boolean,
-    default: false
   }
 });
 
-PostSchema.plugin(mongoosePaginate);
+TopicSchema.plugin(mongoosePaginate);
 
-const Post = mongoose.model('Post', PostSchema);
+const Topic = mongoose.model('Topic', TopicSchema);
 
-module.exports = Post;
+module.exports = Topic;

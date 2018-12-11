@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/bgrgndzz/bloom#readme",
   "dependencies": {
+    "apn": "^2.2.0",
     "async": "^2.6.1",
     "bcrypt": "^3.0.1",
     "body-parser": "^1.18.3",
@@ -32,6 +33,7 @@
     "moment": "^2.22.2",
     "mongoosastic": "^4.4.1",
     "mongoose": "^5.3.1",
+    "mongoose-paginate": "^5.0.3",
     "morgan": "^1.9.1",
     "pug": "^2.0.3"
   }

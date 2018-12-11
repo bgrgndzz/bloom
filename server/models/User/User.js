@@ -1,5 +1,3 @@
-const mongoosastic = require('mongoosastic');
-
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -20,22 +18,16 @@ const UserSchema = new Schema({
     active: {
       type: Boolean,
       default: true
-    },
-    loginCount: {
-      type: Number,
-      default: 0
-    } 
+    }
   },
   user: {
     firstName: {
       type: String, 
-      required: true,
-      es_indexed: true
+      required: true
     },
     lastName: {
       type: String, 
-      required: true,
-      es_indexed: true
+      required: true
     },
     school: {
       type: String, 
@@ -60,6 +52,15 @@ const UserSchema = new Schema({
     followersCount: {
       type: Number,
       default: 0
+    },
+    posts: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Post',
+      default: []
+    }],
+    likeCount: {
+      type: Number,
+      default: 0
     }
   },
   passwordReset: {
@@ -73,8 +74,6 @@ const UserSchema = new Schema({
 
 UserSchema.pre('save', hashPassword);
 UserSchema.methods.verifyPassword = verifyPassword;
-
-UserSchema.plugin(mongoosastic);
 
 const User = mongoose.model('User', UserSchema);
 
