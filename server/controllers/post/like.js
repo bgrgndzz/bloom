@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Post = require('../../models/Post/Post');
+const Topic = require('../../models/Topic/Topic');
 
 module.exports = (req, res, next) => {
   if (!req.params || !req.params.post) {
@@ -23,11 +24,16 @@ module.exports = (req, res, next) => {
         post.likes.push(req.user);
         post.likeCount += 1;
         post.save(err => {
-          return res.status(200).send({
-            authenticated: true,
-            liked: true,
-            likes: post.likes
-          });
+          Topic
+            .findById(post.topic)
+            .exec((err, topic) => {
+              topic.likeCount += 1;
+              return res.status(200).send({
+                authenticated: true,
+                liked: true,
+                likes: post.likes
+              });
+            });
         });
       } else {
         return res.status(200).send({

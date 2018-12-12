@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Post = require('../../models/Post/Post');
+const Topic = require('../../models/Topic/Topic');
 
 module.exports = (req, res, next) => {
   if (!req.params || !req.params.topic) {
@@ -22,14 +23,13 @@ module.exports = (req, res, next) => {
       author: req.user,
       topic: req.params.topic
     })
-    .exec((err, user) => {
-      if (user) {
+    .exec((err, post) => {
+      if (post) {
         return res.status(422).send({
           authenticated: true,
           error: 'Bunu zaten paylaştınız'
         });
       }
-
       const newPost = new Post({
         text: req.body.text,
         author: req.user,
@@ -37,9 +37,29 @@ module.exports = (req, res, next) => {
         anonymous: req.body.anonymous
       });
       newPost.save(err => {
-        return res.status(200).send({
-          authenticated: true
-        });
+        Topic
+          .findOne({topic: topic})
+          .exec((err, topic) => {
+            if (topic) {
+              topic.posts.push(newPost._id);
+              topic.lastDate = Date.now();
+              topic.save(err => {
+                return res.status(200).send({
+                  authenticated: true
+                });
+              });
+            } else {
+              const newTopic = new Topic({
+                topic: req.params.topic,
+                author: req.user
+              });
+              newTopic.save(err => {
+                return res.status(200).send({
+                  authenticated: true
+                });
+              });
+            }
+          });
       });
     });
 };

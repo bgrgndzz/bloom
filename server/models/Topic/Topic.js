@@ -17,6 +17,10 @@ const TopicSchema = new Schema({
     type: Date,
     default: Date.now
   },
+  lastDate: {
+    type: Date,
+    default: Date.now
+  },
   posts: [{
     type: Schema.Types.ObjectId,
     ref: 'Post',
