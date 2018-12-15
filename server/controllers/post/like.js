@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Post = require('../../models/Post/Post');
 const Topic = require('../../models/Topic/Topic');
+const Notification = require('../../models/Notification/Notification');
 
 module.exports = (req, res, next) => {
   if (!req.params || !req.params.post) {
@@ -25,13 +26,22 @@ module.exports = (req, res, next) => {
         post.likeCount += 1;
         post.save(err => {
           Topic
-            .findById(post.topic)
+            .find({topic: post.topic})
             .exec((err, topic) => {
               topic.likeCount += 1;
-              return res.status(200).send({
-                authenticated: true,
-                liked: true,
-                likes: post.likes
+
+              const newNotification = new Notification({
+                from: req.user,
+                to: post.author,
+                type: 'like',
+                link: post.id
+              });
+              newNotification.save(err => {
+                return res.status(200).send({
+                  authenticated: true,
+                  liked: true,
+                  likes: post.likes
+                });
               });
             });
         });

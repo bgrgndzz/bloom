@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Topic = require('../../models/Post/Post');
+const Topic = require('../../models/Topic/Topic');
 
 module.exports = (req, res, next) => {
   if (!req.params || !req.params.search) {
@@ -23,7 +23,7 @@ module.exports = (req, res, next) => {
       
       res.status(200).send({
         authenticated: true,
-        topics: results
+        topics: results.map(topic => ({...topic._doc, posts: topic.posts.length}))
       });
     });
 }

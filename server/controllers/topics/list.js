@@ -6,7 +6,7 @@ const Topic = require('../../models/Topic/Topic');
 module.exports = (req, res, next) => {
   Topic
     .find()
-    .sort('-date')
+    .sort('-lastDate')
     .exec((err, topics) => {
       topics = topics.map(topic => ({
         id: topic.id,

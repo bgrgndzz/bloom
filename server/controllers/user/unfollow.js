@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('../../models/User/User');
+const Notification = require('../../models/Notification/Notification');
 
 module.exports = (req, res, next) => {
   if (!req.params || !req.params.user) {
@@ -41,11 +42,21 @@ module.exports = (req, res, next) => {
             followUser.user.followersCount -= 1;
             user.save(err => {
               followUser.save(err => {
-                return res.status(200).send({
-                  authenticated: true,
-                  followed: false,
-                  followersCount: followUser.user.followersCount
-                });
+                Notification
+                  .findOneAndRemove({
+                    from: req.user,
+                    to: followUser.id,
+                    type: 'follow'
+                  })
+                  .exec((err, notification) => {
+                    if (notification) {
+                      return res.status(200).send({
+                        authenticated: true,
+                        followed: false,
+                        followersCount: followUser.user.followersCount
+                      });
+                    }
+                  });
               })
             });
           } else {

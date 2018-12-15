@@ -14,8 +14,7 @@ const PostSchema = new Schema({
     required: true
   },
   topic: {
-    type: Schema.Types.ObjectId,
-    ref: 'Topic'
+    type: String
   },
   date: {
     type: Date,

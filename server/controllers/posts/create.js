@@ -38,7 +38,7 @@ module.exports = (req, res, next) => {
       });
       newPost.save(err => {
         Topic
-          .findOne({topic: topic})
+          .findOne({topic: req.params.topic})
           .exec((err, topic) => {
             if (topic) {
               topic.posts.push(newPost._id);
@@ -51,7 +51,8 @@ module.exports = (req, res, next) => {
             } else {
               const newTopic = new Topic({
                 topic: req.params.topic,
-                author: req.user
+                author: req.user,
+                posts: [newPost._id]
               });
               newTopic.save(err => {
                 return res.status(200).send({
