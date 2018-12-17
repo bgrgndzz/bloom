@@ -7,7 +7,8 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-import {throttle} from 'throttle-debounce';
+import {debounce} from 'throttle-debounce';
+import jwt_decode from 'jwt-decode';
 
 import Topic from '../shared/Topic/Topic';
 import User from '../shared/User/User';
@@ -29,8 +30,8 @@ export default class Topics extends Component {
       search: '',
       refreshing: false
     };
-    this.listTopicsThrottled = throttle(100, this.listTopics);
-    this.searchThrottled = throttle(100, this.search);
+    this.listTopicsDebounced = debounce(100, this.listTopics);
+    this.searchDebounced = debounce(100, this.search);
   }
   
   listTopics = () => listTopics(this.props.navigation.getParam('jwt', ''), this.state.sort, (err, res) => {
@@ -55,7 +56,7 @@ export default class Topics extends Component {
   });
 
   onRefresh = () => {
-    this.setState({refreshing: true}, this.state.optionType === 'sort' ? this.listTopicsThrottled : this.searchThrottled);
+    this.setState({refreshing: true}, this.state.optionType === 'sort' ? this.listTopicsDebounced : this.searchDebounced);
   }
   onChangeOption = option => {
     this.setState({[this.state.optionType === 'sort' ? 'sort' : 'searchOption']: option}, this.onRefresh);
@@ -134,7 +135,10 @@ export default class Topics extends Component {
               return this.state.searchResults.map(user => (
                 <TouchableOpacity 
                   key={user._id}
-                  onPress={() => this.props.navigation.push('Profile', {user: user._id, jwt: this.props.navigation.getParam('jwt', '')})}
+                  onPress={() => this.props.navigation.push('Profile', {
+                    user: user._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : user._id,
+                    jwt: this.props.navigation.getParam('jwt', '')})
+                  }
                 >
                   <User 
                     user={user} 
