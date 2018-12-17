@@ -8,5 +8,6 @@ export default {
   pen: '\uf304',
   chevronLeft: '\uf053',
   check: '\uf00c',
-  home: '\uf015'
+  home: '\uf015',
+  bell: '\uf0f3'
 };

@@ -9,6 +9,7 @@ import {
 
 import {CachedImage} from 'react-native-cached-image';
 import moment from 'moment';
+import jwt_decode from 'jwt-decode';
 
 import FontAwesome from '../../../shared/FontAwesome/FontAwesome';
 import likePost from './api/likePost';
@@ -46,7 +47,7 @@ export default class Post extends Component {
     this.setState({disabled: true}, () => {
       likePost(
         this.props.navigation.getParam('jwt', ''), 
-        this.props.id,
+        this.props._id,
         this.state.liked,
         (err, res) => {
           if (err && !res) {
@@ -86,7 +87,14 @@ export default class Post extends Component {
               (
                 <TouchableOpacity 
                   style={styles.authorContainer}
-                  onPress={() => this.props.navigation.push('Profile', {user: this.props.author.id, jwt: this.props.navigation.getParam('jwt', ''), back: true})}
+                  onPress={
+                    () => {
+                      this.props.navigation.push('Profile', {
+                        user: this.props.author._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : this.props.author._id, 
+                        jwt: this.props.navigation.getParam('jwt', '')
+                      })
+                    }
+                  }
                 >
                   <CachedImage 
                     style={styles.profilepicture}
@@ -108,7 +116,7 @@ export default class Post extends Component {
           {this.props.include.includes('topic') && (
             <TouchableOpacity 
               style={styles.topicContainer}
-              onPress={() => this.props.navigation.push('Topic', {topic: this.props.topic, jwt: this.props.navigation.getParam('jwt', ''), back: true})}
+              onPress={() => this.props.navigation.push('Topic', {topic: this.props.topic, jwt: this.props.navigation.getParam('jwt', '')})}
             >
               <Text style={styles.topic}>{this.props.topic}</Text>
             </TouchableOpacity>

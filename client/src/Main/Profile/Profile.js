@@ -121,9 +121,9 @@ export default class Profile extends Component {
               ) : null}
             </View>
           )}
-          {Object.keys(this.state.user).length > 0 && this.state.user.posts.map((post, index) => (
+          {Object.keys(this.state.user).length > 0 && this.state.user.posts.map(post => (
             <Post 
-              key={post.id}
+              key={post._id}
               {...post}
               author={this.state.user}
               include={['user', 'topic']}

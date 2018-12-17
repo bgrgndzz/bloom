@@ -13,6 +13,7 @@ import Feed from './Main/Feed/Feed.js';
 import Topics from './Main/Topics/Topics.js';
 import Topic from './Main/Topic/Topic.js';
 import Profile from './Main/Profile/Profile.js';
+import Notifications from './Main/Notifications/Notifications.js';
 import CreateTopic from './Main/CreateTopic/CreateTopic.js';
 import Settings from './Main/Settings/Settings.js';
 import EditProfile from './Main/EditProfile/EditProfile.js';
@@ -26,7 +27,8 @@ const MainStack = createStackNavigator(
     Profile: Page(Profile),
     CreateTopic: Page(CreateTopic),
     Settings: Page(Settings),
-    EditProfile: Page(EditProfile)
+    EditProfile: Page(EditProfile),
+    Notifications: Page(Notifications)
   }, 
   {
     initialRouteName: 'Feed',

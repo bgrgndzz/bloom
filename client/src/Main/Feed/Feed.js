@@ -56,9 +56,9 @@ export default class Feed extends Component {
             />
           }
         >
-          {this.state.posts.map((post, index) => (
+          {this.state.posts.map(post => (
             <Post 
-              key={post.id}
+              key={post._id}
               {...post}
               include={['user', 'topic']}
               navigation={this.props.navigation}

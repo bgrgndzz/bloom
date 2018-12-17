@@ -131,7 +131,7 @@ export default class Topic extends Component {
           />
           {this.state.posts.map(post => (
             <Post 
-              key={post.id}
+              key={post._id}
               {...post}
               include={['user']}
               navigation={this.props.navigation}

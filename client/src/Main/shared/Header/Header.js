@@ -3,7 +3,8 @@ import {
   StyleSheet, 
   View,
   TouchableOpacity,
-  Image
+  Image,
+  Text
 } from 'react-native';
 
 import FontAwesome from '../../../shared/FontAwesome/FontAwesome';
@@ -12,7 +13,7 @@ export default class Header extends Component {
   render() {
     return (
       <View style={styles.header}>
-        {this.props.navigation.getParam('back', '') ? (
+        {this.props.navigation.dangerouslyGetParent().state.routes.length > 1 ? (
           <TouchableOpacity 
             style={styles.leftIconContainer}
             onPress={() => this.props.navigation.goBack()}
@@ -24,13 +25,19 @@ export default class Header extends Component {
           </TouchableOpacity>
         ) : (
           <TouchableOpacity 
-            style={[styles.leftIconContainer, styles.temp]}
-            onPress={() => {}}
+            style={styles.leftIconContainer}
+            onPress={() => this.props.navigation.push('Notifications', {jwt: this.props.navigation.getParam('jwt', '')})}
           >
             <FontAwesome 
               style={styles.icon}
-              icon="plus"
+              icon="bell"
             />
+            {this.props.notifications ? (
+              <View style={styles.notificationCountContainer}>
+                <Text style={styles.notificationCount}>{this.props.notifications}</Text>
+              </View>
+            ) : null}
+            
           </TouchableOpacity>
         )}
         <Image 
@@ -40,7 +47,7 @@ export default class Header extends Component {
         />
         <TouchableOpacity 
           style={styles.rightIconContainer}
-          onPress={() => this.props.navigation.push('CreateTopic', {jwt: this.props.navigation.getParam('jwt', ''), back: true})}
+          onPress={() => this.props.navigation.push('CreateTopic', {jwt: this.props.navigation.getParam('jwt', '')})}
         >
           <FontAwesome 
             style={styles.icon}
@@ -80,5 +87,22 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'FontAwesome5FreeRegular',
     fontSize: 25
+  },
+  notificationCountContainer: {
+    width: 15,
+    height: 15,
+    borderRadius: 10,
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: '#EA3546',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  notificationCount: {
+    color: 'white',
+    fontSize: 10,
+    textAlign: 'center',
+    fontWeight: '900'
   }
 });

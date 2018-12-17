@@ -108,7 +108,7 @@ export default class Topics extends Component {
             return this.state.topics.map(topic => (
               <TouchableOpacity 
                 key={topic.topic}
-                onPress={() => this.props.navigation.push('Topic', {topic: topic.topic, jwt: this.props.navigation.getParam('jwt', ''), back: true})}
+                onPress={() => this.props.navigation.push('Topic', {topic: topic.topic, jwt: this.props.navigation.getParam('jwt', '')})}
               >
                 <Topic
                   topic={topic.topic}
@@ -121,7 +121,7 @@ export default class Topics extends Component {
               return this.state.searchResults.map(topic => (
                 <TouchableOpacity 
                   key={topic.topic}
-                  onPress={() => this.props.navigation.push('Topic', {topic: topic.topic, jwt: this.props.navigation.getParam('jwt', ''), back: true})}
+                  onPress={() => this.props.navigation.push('Topic', {topic: topic.topic, jwt: this.props.navigation.getParam('jwt', '')})}
                 >
                   <Topic
                     topic={topic.topic}
@@ -134,7 +134,7 @@ export default class Topics extends Component {
               return this.state.searchResults.map(user => (
                 <TouchableOpacity 
                   key={user._id}
-                  onPress={() => this.props.navigation.push('Profile', {user: user._id, jwt: this.props.navigation.getParam('jwt', ''), back: true})}
+                  onPress={() => this.props.navigation.push('Profile', {user: user._id, jwt: this.props.navigation.getParam('jwt', '')})}
                 >
                   <User 
                     user={user} 
