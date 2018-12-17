@@ -37,13 +37,11 @@ module.exports = (req, res, next) => {
                   type: 'like'
                 })
                 .exec((err, notification) => {
-                  if (notification) {
-                    return res.status(200).send({
-                      authenticated: true,
-                      liked: false,
-                      likes: post.likes
-                    });
-                  }
+                  return res.status(200).send({
+                    authenticated: true,
+                    liked: false,
+                    likes: post.likes
+                  });
                 });
             });
         });

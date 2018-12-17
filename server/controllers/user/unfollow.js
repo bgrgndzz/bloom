@@ -49,13 +49,11 @@ module.exports = (req, res, next) => {
                     type: 'follow'
                   })
                   .exec((err, notification) => {
-                    if (notification) {
-                      return res.status(200).send({
-                        authenticated: true,
-                        followed: false,
-                        followersCount: followUser.user.followersCount
-                      });
-                    }
+                    return res.status(200).send({
+                      authenticated: true,
+                      followed: false,
+                      followersCount: followUser.user.followersCount
+                    });
                   });
               })
             });
