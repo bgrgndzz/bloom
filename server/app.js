@@ -20,6 +20,7 @@ const postRoute = require('./routes/post');
 const topicsRoute = require('./routes/topics');
 const userRoute = require('./routes/user');
 const searchRoute = require('./routes/search');
+const notificationsRoute = require('./routes/notifications');
 const webRoute = require('./routes/web');
 
 // constants
@@ -60,6 +61,7 @@ app.use('/post', postRoute);
 app.use('/topics', topicsRoute);
 app.use('/user', userRoute);
 app.use('/search', searchRoute);
+app.use('/notifications', notificationsRoute);
 app.use('/web', webRoute);
 
 // listen to connections

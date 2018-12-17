@@ -34,7 +34,7 @@ module.exports = (req, res, next) => {
                 from: req.user,
                 to: post.author,
                 type: 'like',
-                link: post.id
+                topic: post.topic
               });
               newNotification.save(err => {
                 return res.status(200).send({

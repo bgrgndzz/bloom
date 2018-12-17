@@ -20,7 +20,9 @@ const NotificationSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  link: {type: String},
+  topic: {
+    type: String
+  },
   seen: {
     type: Boolean,
     default: false

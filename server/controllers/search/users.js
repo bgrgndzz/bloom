@@ -25,7 +25,6 @@ module.exports = (req, res, next) => {
       {$match: {'user.fullName': search}}
     ])
     .exec((err, results) => {
-      console.log(results);
       if (!results) {
         return res.status(200).send({
           authenticated: true,

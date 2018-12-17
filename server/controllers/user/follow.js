@@ -45,8 +45,7 @@ module.exports = (req, res, next) => {
                 const newNotification = new Notification({
                   from: req.user,
                   to: followUser.id,
-                  type: 'follow',
-                  link: followUser.id
+                  type: 'follow'
                 });
                 newNotification.save(err => {
                   return res.status(200).send({
