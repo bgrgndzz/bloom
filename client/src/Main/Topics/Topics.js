@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {
   StyleSheet, 
+  View,
   ScrollView,
   Alert,
   RefreshControl,
@@ -77,49 +78,38 @@ export default class Topics extends Component {
 
   render() {
     return (
-      <ScrollView 
-        style={styles.topics}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this.onRefresh}
+      <View style={styles.container}>
+        <ScrollView 
+          style={styles.topics}
+          contentContainerStyle={styles.topicsContent}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this.onRefresh}
+            />
+          }
+        >
+          <Input 
+            placeholder="Kişi veya konu ara"
+            value={this.state.search}
+            onChangeText={this.onChangeText}
+            containerStyle={{marginBottom: 15}}
           />
-        }
-      >
-        <Input 
-          placeholder="Kişi veya konu ara"
-          value={this.state.search}
-          onChangeText={this.onChangeText}
-          containerStyle={{marginBottom: 15}}
-        />
-        <DoubleSelect 
-          options={this.state.optionType === 'sort' ? {
-            popular: 'Popüler',
-            new: 'Yeni'
-          } : {
-            topics: 'Konular',
-            users: 'Kullanıcılar'
-          }}
-          option={this.state.optionType === 'sort' ? this.state.sort : this.state.searchOption}
-          onChangeOption={this.onChangeOption}
-        />
-        {(() => {
-          if (this.state.optionType === 'sort') {
-            return this.state.topics.map(topic => (
-              <TouchableOpacity 
-                key={topic.topic}
-                onPress={() => this.props.navigation.push('Topic', {topic: topic.topic, jwt: this.props.navigation.getParam('jwt', '')})}
-              >
-                <Topic
-                  topic={topic.topic}
-                  posts={topic.posts}
-                />
-              </TouchableOpacity>
-            ))
-          } else if (this.state.optionType === 'search'){
-            if (this.state.searchOption === 'topics') {
-              return this.state.searchResults.map(topic => (
+          <DoubleSelect 
+            options={this.state.optionType === 'sort' ? {
+              popular: 'Popüler',
+              new: 'Yeni'
+            } : {
+              topics: 'Konular',
+              users: 'Kullanıcılar'
+            }}
+            option={this.state.optionType === 'sort' ? this.state.sort : this.state.searchOption}
+            onChangeOption={this.onChangeOption}
+          />
+          {(() => {
+            if (this.state.optionType === 'sort') {
+              return this.state.topics.map(topic => (
                 <TouchableOpacity 
                   key={topic.topic}
                   onPress={() => this.props.navigation.push('Topic', {topic: topic.topic, jwt: this.props.navigation.getParam('jwt', '')})}
@@ -127,35 +117,57 @@ export default class Topics extends Component {
                   <Topic
                     topic={topic.topic}
                     posts={topic.posts}
-                    search={this.state.search}
                   />
                 </TouchableOpacity>
               ))
-            } else if (this.state.searchOption === 'users') {
-              return this.state.searchResults.map(user => (
-                <TouchableOpacity 
-                  key={user._id}
-                  onPress={() => this.props.navigation.push('Profile', {
-                    user: user._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : user._id,
-                    jwt: this.props.navigation.getParam('jwt', '')})
-                  }
-                >
-                  <User 
-                    user={user} 
-                    search={this.state.search}
-                  />
-                </TouchableOpacity>
-              ))
+            } else if (this.state.optionType === 'search'){
+              if (this.state.searchOption === 'topics') {
+                return this.state.searchResults.map(topic => (
+                  <TouchableOpacity 
+                    key={topic.topic}
+                    onPress={() => this.props.navigation.push('Topic', {topic: topic.topic, jwt: this.props.navigation.getParam('jwt', '')})}
+                  >
+                    <Topic
+                      topic={topic.topic}
+                      posts={topic.posts}
+                      search={this.state.search}
+                    />
+                  </TouchableOpacity>
+                ))
+              } else if (this.state.searchOption === 'users') {
+                return this.state.searchResults.map(user => (
+                  <TouchableOpacity 
+                    key={user._id}
+                    onPress={() => this.props.navigation.push('Profile', {
+                      user: user._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : user._id,
+                      jwt: this.props.navigation.getParam('jwt', '')})
+                    }
+                  >
+                    <User 
+                      user={user} 
+                      search={this.state.search}
+                    />
+                  </TouchableOpacity>
+                ))
+              }
             }
-          }
-        })()}
-      </ScrollView>
+          })()}
+        </ScrollView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 15
+  },
   topics: {
-    padding: 15
+    flex: 1
+  },
+  topicsContent: {
+    marginTop: 15,
+    paddingBottom: 15
   }
 });

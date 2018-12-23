@@ -46,6 +46,7 @@ export default class Notifications extends Component {
       <View style={styles.container}>
         <ScrollView 
           style={styles.notifications}
+          contentContainerStyle={styles.notificationsContent}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -74,10 +75,15 @@ export default class Notifications extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    paddingHorizontal: 15
   },
   notifications: {
-    padding: 15
+    flex: 1
+  },
+  notificationsContent: {
+    marginTop: 15,
+    paddingBottom: 15
   },
   emptyNotificationsContainer: {
     position: 'absolute',

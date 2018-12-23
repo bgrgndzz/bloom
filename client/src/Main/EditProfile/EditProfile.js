@@ -238,7 +238,8 @@ export default class EditProfile extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 15
+    padding: 15,
+    paddingBottom: 0
   },
   formContainer: {
     backgroundColor: 'white',

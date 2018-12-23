@@ -4,7 +4,8 @@ import {
   View,
   Text,
   Alert,
-  TouchableOpacity
+  TouchableOpacity,
+  ScrollView
 } from 'react-native';
 
 import Input from '../../shared/Input/Input';
@@ -44,7 +45,7 @@ export default class CreateTopic extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.formContainer}>
           <Text style={styles.formHeading}>Bir konu aç</Text>
           <View style={styles.form}>
@@ -81,15 +82,15 @@ export default class CreateTopic extends Component {
             />
           </View>
         </View>
-      </View>
+      </ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 15
+    padding: 15,
+    paddingBottom: 0
   },
   formContainer: {
     backgroundColor: 'white',

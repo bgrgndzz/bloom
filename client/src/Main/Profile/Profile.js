@@ -75,6 +75,7 @@ export default class Profile extends Component {
       <View style={styles.container}>
         <ScrollView 
           style={styles.posts}
+          contentContainerStyle={styles.postsContent}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -139,10 +140,15 @@ export default class Profile extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    paddingHorizontal: 15
   },
   posts: {
-    padding: 15
+    flex: 1
+  },
+  postsContent: {
+    marginTop: 15,
+    paddingBottom: 15
   },
   user: {
     backgroundColor: 'white',
