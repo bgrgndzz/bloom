@@ -3,6 +3,8 @@ const User = require('../../models/User/User');
 
 const jwt = require('jsonwebtoken');
 
+const trim = str => str.replace(/\s+/g,' ').trim();
+
 module.exports = (req, res, next) => {
   if (
     !req.body ||
@@ -25,6 +27,9 @@ module.exports = (req, res, next) => {
       error: 'Lütfen girdiğiniz şifrelerin eşleştiğinden emin olun'
     });
   }
+
+  req.body.firstName = trim(req.body.firstName);
+  req.body.lastName = trim(req.body.lastName);
 
   User
     .findOne({'auth.email': req.body.email})

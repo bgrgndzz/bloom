@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const Post = require('../../models/Post/Post');
 const Topic = require('../../models/Topic/Topic');
 
+const trim = str => str.replace(/\s+/g,' ').trim();
+
 module.exports = (req, res, next) => {
   if (!req.params || !req.params.topic) {
     return res.status(422).send({
@@ -16,6 +18,9 @@ module.exports = (req, res, next) => {
       error: 'Lütfen bir yazı gönderdiğinizden emin olun'
     });
   }
+
+  req.params.topic = trim(req.params.topic);
+  req.body.text = trim(req.body.text);
 
   Post
     .findOne({
