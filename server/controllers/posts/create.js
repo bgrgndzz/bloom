@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
     });
   }
 
-  if (!req.body || !req.body.text) {
+  if (!req.body || !req.body.text || trim(req.body.text) === '') {
     return res.status(422).send({
       authenticated: true,
       error: 'Lütfen bir yazı gönderdiğinizden emin olun'
@@ -20,7 +20,6 @@ module.exports = (req, res, next) => {
   }
 
   req.params.topic = trim(req.params.topic);
-  req.body.text = trim(req.body.text);
 
   Post
     .findOne({
