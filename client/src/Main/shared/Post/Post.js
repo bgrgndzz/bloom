@@ -13,6 +13,7 @@ import jwt_decode from 'jwt-decode';
 
 import FontAwesome from '../../../shared/FontAwesome/FontAwesome';
 import likePost from './api/likePost';
+import reportPost from './api/reportPost';
 
 const translateDate = (date) => {
   date = date.replace('a few seconds ago', 'şimdi');
@@ -58,6 +59,26 @@ export default class Post extends Component {
           this.setState({
             liked: res.liked,
             likes: res.likes,
+            disabled: false
+          });
+        }
+      );
+    });
+  }
+
+  report = () => {
+    this.setState({disabled: true}, () => {
+      reportPost(
+        this.props.navigation.getParam('jwt', ''), 
+        this.props._id,
+        (err, res) => {
+          if (err && !res) {
+            if (err === 'unauthenticated') return this.props.logout();
+            return Alert.alert(err);
+          }
+          
+          Alert.alert('Şikayetiniz alındı');
+          this.setState({
             disabled: false
           });
         }
@@ -135,6 +156,16 @@ export default class Post extends Component {
             />
             <Text style={styles.likes}>{this.state.likes.length}</Text>
           </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.reportContainer}
+            onPress={this.report}
+            disabled={this.state.disabled}
+          >
+            <FontAwesome 
+              style={styles.reportIcon}
+              icon="exclamation"
+            />
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -171,7 +202,9 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     backgroundColor: '#fcfcfc',
     borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10
+    borderBottomRightRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   main: {
     width: '100%',
@@ -211,6 +244,12 @@ const styles = StyleSheet.create({
   likeIconInactive: {
     color: '#CBD5DE',
     marginRight: 5
+  },
+  reportContainer: {
+    marginLeft: 'auto'
+  },
+  reportIcon: {
+    color: '#CBD5DE'
   },
   likes: {
     color: 'rgba(0, 0, 0, 0.75)',

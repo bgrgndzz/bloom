@@ -20,14 +20,28 @@ module.exports = (req, res, next) => {
         });
       }
 
-      const newReport = new Report({
-        from: req.user,
-        post: req.params.post,
-      });
-      newReport.save(err => {
-        return res.status(200).send({
-          authenticated: true
+      Report
+        .findOne({
+          from: req.user,
+          post: req.params.post
+        })
+        .exec((err, report) => {
+          if (report) {
+            return res.status(422).send({
+              authenticated: true,
+              error: 'Bu paylaşımı zaten şikayet ettiniz'
+            });
+          }
+
+          const newReport = new Report({
+            from: req.user,
+            post: req.params.post,
+          });
+          newReport.save(err => {
+            return res.status(200).send({
+              authenticated: true
+            });
+          });
         });
-      });
     });
 };

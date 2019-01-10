@@ -5,6 +5,7 @@ const Report = require('../../models/Report/Report');
 const Post = require('../../models/Post/Post');
 const Notification = require('../../models/Notification/Notification');
 
+const moment = require('moment');
 const {exec} = require('child_process');
 
 module.exports = (req, res, next) => {
@@ -21,21 +22,35 @@ module.exports = (req, res, next) => {
       User.find((err, users) => {
         const userCount = users.length;
 
-        res.render('admin/panel', {
-          data: {
-            postCount: {
-              title: 'Toplam Paylaşım',
-              value: postCount
-            },
-            topicCount: {
-              title: 'Toplam Konu',
-              value: topicCount
-            },
-            userCount: {
-              title: 'Toplam Kullanıcı',
-              value: userCount
-            }
-          }
+        Report
+          .find()
+          .populate('from')
+          .populate('post')
+          .exec((err, reports) => {
+            reports.forEach(report => {report.fromNow = moment(report.date).fromNow()});
+
+            res.render('admin/panel', {
+              numericData: {
+                postCount: {
+                  title: 'Toplam Paylaşım',
+                  value: postCount
+                },
+                topicCount: {
+                  title: 'Toplam Konu',
+                  value: topicCount
+                },
+                userCount: {
+                  title: 'Toplam Kullanıcı',
+                  value: userCount
+                }
+              },
+              tabularData: {
+                reports: {
+                  title: 'Şikayetler',
+                  value: reports
+                }
+              }
+            });
         });
       });
     });

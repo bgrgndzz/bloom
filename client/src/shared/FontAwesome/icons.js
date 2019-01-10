@@ -9,5 +9,6 @@ export default {
   chevronLeft: '\uf053',
   check: '\uf00c',
   home: '\uf015',
-  bell: '\uf0f3'
+  bell: '\uf0f3',
+  exclamation: '\uf12a'
 };

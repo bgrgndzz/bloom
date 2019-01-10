@@ -8,7 +8,16 @@ html(lang="en")
     title Admin Panel
   body
     .data-wrapper
-      for i in Object.keys(data)
+      for i in Object.keys(numericData)
         .data
-          span.title= data[i].title
-          span.value= data[i].value
+          span.title= numericData[i].title
+          span.value= numericData[i].value
+      .data.tableData
+        span.title= tabularData.reports.title
+        .table
+          for report in tabularData.reports.value
+            .tableCell
+              span.tableValue #{report.from.user.firstName} #{report.from.user.lastName}
+              span.tableValue= report.post.topic
+              span.tableValue= report.post.text
+              span.tableValue= report.fromNow

@@ -26,10 +26,28 @@ body {
 }
 .data .title {
   color: rgba(0, 0, 0, 0.75);
+  display: block;
+  margin-bottom: 10px;
 }
 .data .value {
   display: block;
   color: #16425B;
   font-size: 4rem;
   font-weight: 900;
+}
+.tableData {
+  width: 100%;
+  flex-basis: 100%;
+}
+.table {
+  max-height: 300px;
+  overflow-y: scroll;
+}
+.tableCell {
+  padding: 15px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.tableValue {
+  width: 100%;
+  display: block;
 }
