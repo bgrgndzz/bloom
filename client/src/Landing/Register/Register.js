@@ -12,7 +12,7 @@ import Button from '../../shared/Button/Button';
 import Input from '../../shared/Input/Input';
 import Dropdown from '../../shared/Dropdown/Dropdown';
 
-import register from './api/register';
+import api from '../../shared/api';
 
 export default class Register extends Component {
   state = {
@@ -60,13 +60,22 @@ export default class Register extends Component {
   }
   onSelect = (key) => {
     return (index, input) => this.setState({[key]: input});
-  };
+  }
 
-  register = () => register(this.state, (err, jwt) => {
-    if (err && !jwt) return Alert.alert(err);
-    AsyncStorage.setItem('jwt', jwt);
-    this.props.navigation.navigate('Feed', {jwt});
-  });
+  register = () => {
+    api(
+      {
+        path: 'auth/register',
+        method: 'POST',
+        body: this.state
+      },
+      (err, res) => {
+        if (err && !res.jwt) return Alert.alert(err);
+        AsyncStorage.setItem('jwt', res.jwt);
+        this.props.navigation.navigate('Feed', {jwt: res.jwt});
+      }
+    );
+  }
 
   render() {
     return (

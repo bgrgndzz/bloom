@@ -6,8 +6,7 @@ import {
   Text,
   Alert,
   RefreshControl,
-  TouchableOpacity,
-  Image
+  TouchableOpacity
 } from 'react-native';
 
 import Post from '../shared/Post/Post';
@@ -16,8 +15,7 @@ import Button from '../../shared/Button/Button';
 import DoubleSelect from '../shared/DoubleSelect/DoubleSelect';
 import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
-import listPosts from './api/listPosts';
-import createPost from './api/createPost';
+import api from '../../shared/api';
 
 export default class Topic extends Component {
   state = {
@@ -30,15 +28,18 @@ export default class Topic extends Component {
   
   onRefresh = () => {
     this.setState({refreshing: true}, () => {
-      listPosts(
-        this.props.navigation.getParam('jwt', ''), 
-        this.props.navigation.getParam('topic', ''),
-        this.state.sort,
+      api(
+        {
+          path: `posts/list/${this.props.navigation.getParam('topic', '')}/${this.state.sort}`,
+          method: 'GET',
+          jwt: this.props.navigation.getParam('jwt', ''),
+        },
         (err, res) => {
           if (err && !res) {
             if (err === 'unauthenticated') return this.props.logout();
             return Alert.alert(err);
           }
+          
           this.setState({
             posts: res.posts,
             refreshing: false
@@ -49,19 +50,22 @@ export default class Topic extends Component {
   }
 
   onPress = () => {
-    createPost(
-      this.props.navigation.getParam('jwt', ''), 
-      this.props.navigation.getParam('topic', ''), 
+    api(
       {
-        text: this.state.post,
-        anonymous: this.state.anonymous
+        path: 'posts/create/' + this.props.navigation.getParam('topic', ''),
+        method: 'POST',
+        jwt: this.props.navigation.getParam('jwt', ''),
+        body: {
+          text: this.state.post,
+          anonymous: this.state.anonymous
+        }
       },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
-
+        
         this.setState({
           sort: 'new',
           post: ''

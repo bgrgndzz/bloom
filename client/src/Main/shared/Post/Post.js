@@ -12,8 +12,7 @@ import moment from 'moment';
 import jwt_decode from 'jwt-decode';
 
 import FontAwesome from '../../../shared/FontAwesome/FontAwesome';
-import likePost from './api/likePost';
-import reportPost from './api/reportPost';
+import api from '../../../shared/api';
 
 const translateDate = (date) => {
   date = date.replace('a few seconds ago', 'şimdi');
@@ -46,16 +45,18 @@ export default class Post extends Component {
 
   like = () => {
     this.setState({disabled: true}, () => {
-      likePost(
-        this.props.navigation.getParam('jwt', ''), 
-        this.props._id,
-        this.state.liked,
+      api(
+        {
+          path: `post/${this.state.liked ? 'unlike' : 'like'}/${this.props._id}`,
+          method: 'POST',
+          jwt: this.props.navigation.getParam('jwt', ''),
+        },
         (err, res) => {
           if (err && !res) {
             if (err === 'unauthenticated') return this.props.logout();
             return Alert.alert(err);
           }
-  
+          
           this.setState({
             liked: res.liked,
             likes: res.likes,
@@ -68,9 +69,12 @@ export default class Post extends Component {
 
   report = () => {
     this.setState({disabled: true}, () => {
-      reportPost(
-        this.props.navigation.getParam('jwt', ''), 
-        this.props._id,
+      api(
+        {
+          path: 'post/report/' + this.props._id,
+          method: 'POST',
+          jwt: this.props.navigation.getParam('jwt', ''),
+        },
         (err, res) => {
           if (err && !res) {
             if (err === 'unauthenticated') return this.props.logout();

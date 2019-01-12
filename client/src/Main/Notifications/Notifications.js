@@ -10,7 +10,7 @@ import {
 
 import Notification from '../shared/Notification/Notification';
 
-import listNotifications from './api/listNotifications';
+import api from '../../shared/api';
 
 export default class Notifications extends Component {
   state = {
@@ -19,13 +19,18 @@ export default class Notifications extends Component {
   }
 
   listNotifications = (state = {}) => {
-    listNotifications(
-      this.props.navigation.getParam('jwt', ''),
+    api(
+      {
+        path: 'notifications/list',
+        method: 'GET',
+        jwt: this.props.navigation.getParam('jwt', '')
+      },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
+        
         this.setState({
           ...state,
           notifications: res.notifications

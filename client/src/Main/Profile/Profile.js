@@ -13,8 +13,7 @@ import {CachedImage} from 'react-native-cached-image';
 import Post from '../shared/Post/Post';
 import Button from '../../shared/Button/Button';
 
-import getUser from '../shared/api/getUser.js';
-import followUser from './api/followUser.js';
+import api from '../../shared/api';
 
 export default class Profile extends Component {  
   state = {
@@ -24,32 +23,40 @@ export default class Profile extends Component {
   }
 
   loadUser = (state = {}) => {
-    getUser(
-      this.props.navigation.getParam('jwt', ''), 
-      this.props.navigation.getParam('user', ''),
+    const path = 'user/' + (this.props.navigation.getParam('user', '') || '')
+    api(
+      {
+        path,
+        method: 'GET',
+        jwt: this.props.navigation.getParam('jwt', ''),
+      },
       (err, res) => {
-      if (err && !res) {
-        if (err === 'unauthenticated') return this.props.logout();
-        return Alert.alert(err);
+        if (err && !res) {
+          if (err === 'unauthenticated') return this.props.logout();
+          return Alert.alert(err);
+        }
+        
+        this.setState({
+          ...state,
+          user: res.user
+        });
       }
-      this.setState({
-        user: res.user,
-        ...state
-      });
-    });
+    );
   }
   followUser = () => {
     this.setState({followDisabled: true}, () => {
-      followUser(
-        this.props.navigation.getParam('jwt', ''), 
-        this.props.navigation.getParam('user', ''),
-        this.state.user.followed,
+      api(
+        {
+          path: `user/${this.state.user.followed ? 'unfollow' : 'follow'}/${this.props.navigation.getParam('user', '')}`,
+          method: 'POST',
+          jwt: this.props.navigation.getParam('jwt', ''),
+        },
         (err, res) => {
           if (err && !res) {
             if (err === 'unauthenticated') return this.props.logout();
             return Alert.alert(err);
           }
-
+          
           this.setState({
             user: {
               ...this.state.user,

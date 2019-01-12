@@ -5,14 +5,12 @@ import {
   View,
   Text,
   Alert,
-  RefreshControl,
-  TouchableOpacity,
-  Image
+  RefreshControl
 } from 'react-native';
 
 import Post from '../shared/Post/Post';
 
-import listFeedPosts from './api/listFeedPosts';
+import api from '../../shared/api';
 
 export default class Feed extends Component {
   state = {
@@ -21,13 +19,18 @@ export default class Feed extends Component {
   }
 
   listFeedPosts = (state = {}) => {
-    listFeedPosts(
-      this.props.navigation.getParam('jwt', ''),
+    api(
+      {
+        path: 'posts/list/feed',
+        method: 'GET',
+        jwt: this.props.navigation.getParam('jwt', ''),
+      },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
+        
         this.setState({
           ...state,
           posts: res.posts

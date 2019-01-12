@@ -10,7 +10,7 @@ import StatusBarPaddingIOS from 'react-native-ios-status-bar-padding';
 import Header from '../../Header/Header.js';
 import BottomNavigation from '../../BottomNavigation/BottomNavigation.js';
 
-import countNotifications from '../../api/countNotifications';
+import api from '../../../../shared/api';
 
 export default Page = (BaseComponent) => {
   return class extends Component {
@@ -24,18 +24,19 @@ export default Page = (BaseComponent) => {
       this.props.navigation.navigate('Landing');
     }
 
-    countNotifications = (state = {}) => {
-      countNotifications(
-        this.props.navigation.getParam('jwt', ''),
+    countNotifications = () => {
+      api(
+        {
+          path: 'notifications/count',
+          method: 'GET',
+          jwt: this.props.navigation.getParam('jwt', ''),
+        },
         (err, res) => {
           if (err && !res) {
             if (err === 'unauthenticated') return this.props.logout();
             return Alert.alert(err);
           }
-          this.setState({
-            ...state,
-            notifications: res.notifications
-          });
+          this.setState({notifications: res.notifications});
         }
       );
     }

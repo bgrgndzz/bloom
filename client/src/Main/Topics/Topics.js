@@ -16,8 +16,7 @@ import User from '../shared/User/User';
 import DoubleSelect from '../shared/DoubleSelect/DoubleSelect';
 import Input from '../../shared/Input/Input';
 
-import listTopics from './api/listTopics';
-import search from './api/search';
+import api from '../../shared/api';
 
 export default class Topics extends Component {
   constructor (props) {
@@ -35,26 +34,46 @@ export default class Topics extends Component {
     this.searchDebounced = debounce(100, this.search);
   }
   
-  listTopics = () => listTopics(this.props.navigation.getParam('jwt', ''), this.state.sort, (err, res) => {
-    if (err && !res) {
-      if (err === 'unauthenticated') return this.props.logout();
-      return Alert.alert(err);
-    }
-    this.setState({
-      topics: res.topics,
-      refreshing: false
-    });
-  });
-  search = () => search(this.props.navigation.getParam('jwt', ''), this.state.searchOption, this.state.search, (err, res) => {
-    if (err && !res) {
-      if (err === 'unauthenticated') return this.props.logout();
-      return Alert.alert(err);
-    }
-    this.setState({
-      searchResults: res[this.state.searchOption],
-      refreshing: false
-    });
-  });
+  listTopics = () => {
+    api(
+      {
+        path: 'topics/list/' + this.state.sort,
+        method: 'GET',
+        jwt: this.props.navigation.getParam('jwt', ''),
+      },
+      (err, res) => {
+        if (err && !res) {
+          if (err === 'unauthenticated') return this.props.logout();
+          return Alert.alert(err);
+        }
+        
+        this.setState({
+          topics: res.topics,
+          refreshing: false
+        });
+      }
+    );
+  }
+  search = () => {
+    api(
+      {
+        path: `search/${this.state.searchOption}/${this.state.search}`,
+        method: 'GET',
+        jwt: this.props.navigation.getParam('jwt', ''),
+      },
+      (err, res) => {
+        if (err && !res) {
+          if (err === 'unauthenticated') return this.props.logout();
+          return Alert.alert(err);
+        }
+        
+        this.setState({
+          searchResults: res[this.state.searchOption],
+          refreshing: false
+        });
+      }
+    );
+  }
 
   onRefresh = () => {
     this.setState({refreshing: true}, this.state.optionType === 'sort' ? this.listTopicsDebounced : this.searchDebounced);

@@ -4,7 +4,6 @@ import {
   View,
   Text,
   Alert,
-  Image,
   TouchableOpacity,
   Modal
 } from 'react-native';
@@ -17,8 +16,7 @@ import Input from '../../shared/Input/Input';
 import Button from '../../shared/Button/Button';
 import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
-import getUser from '../shared/api/getUser';
-import editProfile from './api/editProfile';
+import api from '../../shared/api';
 
 export default class EditProfile extends Component {
   state = {
@@ -49,16 +47,19 @@ export default class EditProfile extends Component {
     })
   }
 
-  getUser = (state = {}) => {
-    getUser(
-      this.props.navigation.getParam('jwt', ''),
-      null,
+  getUser = () => {
+    api(
+      {
+        path: 'user/',
+        method: 'GET',
+        jwt: this.props.navigation.getParam('jwt', ''),
+      },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
-
+        
         this.setState({
           about: res.user.about || '',
           profilepicture: res.user.profilepicture ? {
@@ -136,18 +137,22 @@ export default class EditProfile extends Component {
     });
   }
   submitProfileInfo = () => {
-    editProfile(
-      this.props.navigation.getParam('jwt', ''),
+    api(
       {
-        profilepicture: this.state.profilepicture.type === 'base64' ? this.state.profilepicture : null,
-        about: this.state.about
+        path: 'user/edit/',
+        method: 'POST',
+        jwt: this.props.navigation.getParam('jwt', ''),
+        body: {
+          profilepicture: this.state.profilepicture.type === 'base64' ? this.state.profilepicture : null,
+          about: this.state.about
+        }
       },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
-
+        
         this.props.navigation.navigate('Profile', {jwt: this.props.navigation.getParam('jwt', '')});
       }
     );

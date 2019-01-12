@@ -12,7 +12,7 @@ import Input from '../../shared/Input/Input';
 import Button from '../../shared/Button/Button';
 import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
-import createTopic from './api/createTopic';
+import api from '../../shared/api';
 
 export default class CreateTopic extends Component {
   state = {
@@ -25,19 +25,22 @@ export default class CreateTopic extends Component {
     return (input) => this.setState({[key]: input});
   }
   onPress = () => {
-    createTopic(
-      this.props.navigation.getParam('jwt', ''), 
-      this.state.topic, 
+    api(
       {
-        text: this.state.post,
-        anonymous: this.state.anonymous
+        path: 'posts/create/' + this.state.topic,
+        method: 'POST',
+        jwt: this.props.navigation.getParam('jwt', ''),
+        body: {
+          text: this.state.post,
+          anonymous: this.state.anonymous
+        }
       },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
-
+        
         this.props.navigation.navigate('Topic', {topic: this.state.topic, jwt: this.props.navigation.getParam('jwt', '')});
       }
     );
