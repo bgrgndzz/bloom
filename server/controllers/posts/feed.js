@@ -3,6 +3,8 @@ const Post = require('../../models/Post/Post');
 const User = require('../../models/User/User');
 
 module.exports = (req, res, next) => {
+  const page = parseInt(req.params.page);
+  
   User
     .findById(req.user)
     .select('user')
@@ -14,24 +16,26 @@ module.exports = (req, res, next) => {
         });
       }
 
-      Post
-        .find({
+      Post.paginate(
+        {
           author: {
             $in: user.user.following
           },
           anonymous: false
-        })
-        .populate('author', 'user')
-        .sort({date: -1})
-        .exec((err, posts) => {
-          posts = posts.map(post => ({
-            id: post.id,
-            ...post._doc,
+        },
+        {
+          sort: '-date',
+          populate: 'author',
+          limit: 10,
+          page
+        },
+        (err, posts) => {
+          posts = posts.docs.map(post => ({
+            ...post,
             liked: post.likes.indexOf(req.user) !== -1,
             author: {
               _id: post.author.id,
-              id: post.author.id,
-              ...post.author._doc.user
+              ...post.author.user
             }
           }));
           res.status(200).send({

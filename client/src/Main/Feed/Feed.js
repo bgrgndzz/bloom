@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
 import {
   StyleSheet, 
-  ScrollView,
+  FlatList,
   View,
   Text,
-  Alert,
-  RefreshControl
+  Alert
 } from 'react-native';
 
 import Post from '../shared/Post/Post';
@@ -15,13 +14,15 @@ import api from '../../shared/api';
 export default class Feed extends Component {
   state = {
     posts: [],
-    refreshing: false
+    page: 1,
+    refreshing: false,
+    dataEnd: false
   }
 
   listFeedPosts = (state = {}) => {
     api(
       {
-        path: 'posts/list/feed',
+        path: 'posts/list/feed/' + this.state.page,
         method: 'GET',
         jwt: this.props.navigation.getParam('jwt', ''),
       },
@@ -33,15 +34,28 @@ export default class Feed extends Component {
         
         this.setState({
           ...state,
-          posts: res.posts
+          posts: this.state.posts.concat(res.posts),
+          dataEnd: res.posts.length < 10
         });
       }
     );
   }
   onRefresh = () => {
-    this.setState({refreshing: true}, () => {
+    this.setState({
+      refreshing: true,
+      dataEnd: false,
+      posts: [],
+      page: 1
+    }, () => {
       this.listFeedPosts({refreshing: false});
     });
+  }
+  nextPage = () => {
+    if (!this.state.dataEnd && this.direction === 'down' && this.offset > 0) {
+      this.setState({
+        page: this.state.page + 1
+      }, this.listFeedPosts);
+    }
   }
 
   componentWillMount = this.onRefresh;
@@ -49,27 +63,31 @@ export default class Feed extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView 
+        <FlatList               
           style={styles.posts}
           contentContainerStyle={styles.postsContent}
           showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh}
-            />
-          }
-        >
-          {this.state.posts.map(post => (
+          refreshing={this.state.refreshing}
+          onRefresh={this.onRefresh}
+          data={this.state.posts}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item}) => (
             <Post 
-              key={post._id}
-              {...post}
+              {...item}
               include={['user', 'topic']}
               navigation={this.props.navigation}
               logout={this.props.logout}
             />
-          ))}
-        </ScrollView>
+          )}
+          initialNumToRender={10}
+          onEndReachedThreshold={0.5}
+          onEndReached={this.nextPage}
+          onScroll={(event) => {
+            const currentOffset = event.nativeEvent.contentOffset.y;
+            this.direction = currentOffset > this.offset ? 'down' : 'up';
+            this.offset = currentOffset;
+          }}
+        />
         {this.state.posts.length === 0 && !this.state.refreshing && (
           <View style={styles.emptyFeedContainer}>
             <Text style={styles.emptyFeed}>Takip ettiklerin burada görünür</Text>
@@ -82,14 +100,14 @@ export default class Feed extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingHorizontal: 15
+    flex: 1
   },
   posts: {
     flex: 1
   },
   postsContent: {
     marginTop: 15,
+    paddingHorizontal: 15,
     paddingBottom: 15
   },
   emptyFeedContainer: {

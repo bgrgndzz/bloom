@@ -1,5 +1,4 @@
 const mongoosePaginate = require('mongoose-paginate');
-
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -35,6 +34,11 @@ const PostSchema = new Schema({
   }
 });
 
+mongoosePaginate.paginate.options = { 
+  lean: true,
+  limit: 10,
+  populate: 'author'
+};
 PostSchema.plugin(mongoosePaginate);
 
 const Post = mongoose.model('Post', PostSchema);

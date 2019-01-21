@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const Topic = require('../../models/Topic/Topic');
 
 module.exports = (req, res, next) => {
+  const page = parseInt(req.params.page);
+
   Topic
     .find()
     .sort('-lastDate')
@@ -25,7 +27,7 @@ module.exports = (req, res, next) => {
 
       res.status(200).send({
         authenticated: true,
-        topics
+        topics: topics.slice((page - 1) * 10, page * 10)
       });
     });
 };

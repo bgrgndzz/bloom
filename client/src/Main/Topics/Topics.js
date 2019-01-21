@@ -2,9 +2,8 @@ import React, {Component} from 'react';
 import {
   StyleSheet, 
   View,
-  ScrollView,
+  FlatList,
   Alert,
-  RefreshControl,
   TouchableOpacity
 } from 'react-native';
 
@@ -24,20 +23,22 @@ export default class Topics extends Component {
     this.state = {
       topics: [],
       searchResults: [],
+      page: 1,
       sort: 'popular',
       searchOption: 'topics',
       optionType: 'sort',
       search: '',
-      refreshing: false
+      refreshing: false,
+      dataEnd: false
     };
     this.listTopicsDebounced = debounce(100, this.listTopics);
     this.searchDebounced = debounce(100, this.search);
   }
   
-  listTopics = () => {
+  listTopics = (state = {}) => {
     api(
       {
-        path: 'topics/list/' + this.state.sort,
+        path: `topics/list/${this.state.sort}/${this.state.page}`,
         method: 'GET',
         jwt: this.props.navigation.getParam('jwt', ''),
       },
@@ -48,13 +49,14 @@ export default class Topics extends Component {
         }
         
         this.setState({
-          topics: res.topics,
-          refreshing: false
+          ...state,
+          topics: this.state.topics.concat(res.topics),
+          dataEnd: res.topics.length < 10
         });
       }
     );
   }
-  search = () => {
+  search = (state = {}) => {
     api(
       {
         path: `search/${this.state.searchOption}/${this.state.search}`,
@@ -68,15 +70,31 @@ export default class Topics extends Component {
         }
         
         this.setState({
+          ...state,
           searchResults: res[this.state.searchOption],
-          refreshing: false
         });
       }
     );
   }
+  nextPage = () => {
+    if (!this.state.dataEnd && this.direction === 'down' && this.offset > 0 && this.state.optionType === 'sort') {
+      this.setState({
+        page: this.state.page + 1
+      }, this.listTopicsDebounced);
+    }
+  }
 
   onRefresh = () => {
-    this.setState({refreshing: true}, this.state.optionType === 'sort' ? this.listTopicsDebounced : this.searchDebounced);
+    this.setState(
+      {
+        refreshing: true,
+        dataEnd: false,
+        topics: [],
+        searchResults: [],
+        page: 1
+      }, 
+      () => this.state.optionType === 'sort' ? this.listTopicsDebounced({refreshing: false}) : this.searchDebounced({refreshing: false})
+    );
   }
   onChangeOption = option => {
     this.setState({[this.state.optionType === 'sort' ? 'sort' : 'searchOption']: option}, this.onRefresh);
@@ -96,82 +114,97 @@ export default class Topics extends Component {
   componentDidMount = this.onRefresh;
 
   render() {
+    let renderItem;
+    let data;
+
+    if (this.state.optionType === 'sort') {
+      data = this.state.topics;
+      renderItem = ({item}) => (
+        <TouchableOpacity 
+          key={item.topic}
+          onPress={() => this.props.navigation.push('Topic', {topic: item.topic, jwt: this.props.navigation.getParam('jwt', '')})}
+        >
+          <Topic
+            topic={item.topic}
+            posts={item.posts}
+          />
+        </TouchableOpacity>
+      );
+    } else if (this.state.optionType === 'search'){
+      if (this.state.searchOption === 'topics') {
+        data = this.state.searchResults;
+        renderItem = ({item}) => (
+          <TouchableOpacity 
+            key={item.topic}
+            onPress={() => this.props.navigation.push('Topic', {topic: item.topic, jwt: this.props.navigation.getParam('jwt', '')})}
+          >
+            <Topic
+              topic={item.topic}
+              posts={item.posts}
+              search={this.state.search}
+            />
+          </TouchableOpacity>
+        );
+      } else if (this.state.searchOption === 'users') {
+        data = this.state.searchResults;
+        renderItem = ({item}) => (
+          <TouchableOpacity 
+            key={item._id}
+            onPress={() => this.props.navigation.push('Profile', {
+              user: item._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : item._id,
+              jwt: this.props.navigation.getParam('jwt', '')})
+            }
+          >
+            <User 
+              user={item} 
+              search={this.state.search}
+            />
+          </TouchableOpacity>
+        );
+      }
+    }
+
     return (
       <View style={styles.container}>
-        <ScrollView 
+        <FlatList               
           style={styles.topics}
           contentContainerStyle={styles.topicsContent}
           showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh}
+          refreshing={this.state.refreshing}
+          onRefresh={this.onRefresh}
+          data={data}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderItem}
+          initialNumToRender={10}
+          onEndReachedThreshold={0.5}
+          onEndReached={this.nextPage}
+          onScroll={(event) => {
+            const currentOffset = event.nativeEvent.contentOffset.y;
+            this.direction = currentOffset > this.offset ? 'down' : 'up';
+            this.offset = currentOffset;
+          }}
+          ListHeaderComponent={() => [
+            <Input 
+              key="Input"
+              placeholder="Kişi veya konu ara"
+              value={this.state.search}
+              onChangeText={this.onChangeText}
+              containerStyle={{marginBottom: 15}}
+            />,
+            <DoubleSelect 
+              key="DoubleSelect"
+              options={this.state.optionType === 'sort' ? {
+                popular: 'Popüler',
+                new: 'Yeni'
+              } : {
+                topics: 'Konular',
+                users: 'Kullanıcılar'
+              }}
+              option={this.state.optionType === 'sort' ? this.state.sort : this.state.searchOption}
+              onChangeOption={this.onChangeOption}
             />
-          }
-        >
-          <Input 
-            placeholder="Kişi veya konu ara"
-            value={this.state.search}
-            onChangeText={this.onChangeText}
-            containerStyle={{marginBottom: 15}}
-          />
-          <DoubleSelect 
-            options={this.state.optionType === 'sort' ? {
-              popular: 'Popüler',
-              new: 'Yeni'
-            } : {
-              topics: 'Konular',
-              users: 'Kullanıcılar'
-            }}
-            option={this.state.optionType === 'sort' ? this.state.sort : this.state.searchOption}
-            onChangeOption={this.onChangeOption}
-          />
-          {(() => {
-            if (this.state.optionType === 'sort') {
-              return this.state.topics.map(topic => (
-                <TouchableOpacity 
-                  key={topic.topic}
-                  onPress={() => this.props.navigation.push('Topic', {topic: topic.topic, jwt: this.props.navigation.getParam('jwt', '')})}
-                >
-                  <Topic
-                    topic={topic.topic}
-                    posts={topic.posts}
-                  />
-                </TouchableOpacity>
-              ))
-            } else if (this.state.optionType === 'search'){
-              if (this.state.searchOption === 'topics') {
-                return this.state.searchResults.map(topic => (
-                  <TouchableOpacity 
-                    key={topic.topic}
-                    onPress={() => this.props.navigation.push('Topic', {topic: topic.topic, jwt: this.props.navigation.getParam('jwt', '')})}
-                  >
-                    <Topic
-                      topic={topic.topic}
-                      posts={topic.posts}
-                      search={this.state.search}
-                    />
-                  </TouchableOpacity>
-                ))
-              } else if (this.state.searchOption === 'users') {
-                return this.state.searchResults.map(user => (
-                  <TouchableOpacity 
-                    key={user._id}
-                    onPress={() => this.props.navigation.push('Profile', {
-                      user: user._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : user._id,
-                      jwt: this.props.navigation.getParam('jwt', '')})
-                    }
-                  >
-                    <User 
-                      user={user} 
-                      search={this.state.search}
-                    />
-                  </TouchableOpacity>
-                ))
-              }
-            }
-          })()}
-        </ScrollView>
+          ]}
+        />
       </View>
     );
   }
@@ -179,14 +212,14 @@ export default class Topics extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingHorizontal: 15
+    flex: 1
   },
   topics: {
     flex: 1
   },
   topicsContent: {
     marginTop: 15,
-    paddingBottom: 15
+    paddingBottom: 15,
+    paddingHorizontal: 15
   }
 });

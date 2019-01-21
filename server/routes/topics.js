@@ -6,7 +6,6 @@ router.use(isLoggedIn);
 
 const listController = require('../controllers/topics/list');
 
-router.get('/list', listController);
-router.get('/list/:sort', listController);
+router.get('/list/:sort/:page', listController);
 
 module.exports = router;
