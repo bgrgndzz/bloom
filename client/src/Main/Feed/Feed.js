@@ -70,6 +70,7 @@ export default class Feed extends Component {
           refreshing={this.state.refreshing}
           onRefresh={this.onRefresh}
           data={this.state.posts}
+          extraData={this.state.refreshing}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) => (
             <Post 
@@ -79,7 +80,6 @@ export default class Feed extends Component {
               logout={this.props.logout}
             />
           )}
-          initialNumToRender={10}
           onEndReachedThreshold={0.5}
           onEndReached={this.nextPage}
           onScroll={(event) => {

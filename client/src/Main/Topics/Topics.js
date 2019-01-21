@@ -173,9 +173,9 @@ export default class Topics extends Component {
           refreshing={this.state.refreshing}
           onRefresh={this.onRefresh}
           data={data}
+          extraData={this.state.refreshing}
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderItem}
-          initialNumToRender={10}
           onEndReachedThreshold={0.5}
           onEndReached={this.nextPage}
           onScroll={(event) => {

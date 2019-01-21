@@ -34,7 +34,7 @@ module.exports = (req, res, next) => {
             ...post,
             liked: post.likes.indexOf(req.user) !== -1,
             author: {
-              _id: post.author.id,
+              _id: post.author._id,
               ...post.author.user
             }
           }));
