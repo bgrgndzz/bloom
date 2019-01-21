@@ -6,7 +6,9 @@ const unlikeController = require('../controllers/post/unlike');
 const reportController = require('../controllers/post/report');
 
 const isLoggedIn = require('../middleware/isLoggedIn');
+const log = require('../middleware/log');
 router.use(isLoggedIn);
+router.use(log);
 
 router.post('/like/:post', likeController);
 router.post('/unlike/:post', unlikeController);

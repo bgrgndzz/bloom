@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const isLoggedIn = require('../middleware/isLoggedIn');
+const log = require('../middleware/log');
 router.use(isLoggedIn);
+router.use(log);
 
 const selfController = require('../controllers/user/self');
 const userController = require('../controllers/user/user');

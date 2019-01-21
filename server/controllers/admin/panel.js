@@ -3,10 +3,9 @@ const User = require('../../models/User/User');
 const Topic = require('../../models/Topic/Topic');
 const Report = require('../../models/Report/Report');
 const Post = require('../../models/Post/Post');
-const Notification = require('../../models/Notification/Notification');
+const Log = require('../../models/Log/Log');
 
 const moment = require('moment');
-const {exec} = require('child_process');
 
 module.exports = (req, res, next) => {
   if (!req.session.admin) {
@@ -29,28 +28,40 @@ module.exports = (req, res, next) => {
           .exec((err, reports) => {
             reports.forEach(report => {report.fromNow = moment(report.date).fromNow()});
 
-            res.render('admin/panel', {
-              numericData: {
-                postCount: {
-                  title: 'Toplam Paylaşım',
-                  value: postCount
-                },
-                topicCount: {
-                  title: 'Toplam Konu',
-                  value: topicCount
-                },
-                userCount: {
-                  title: 'Toplam Kullanıcı',
-                  value: userCount
-                }
-              },
-              tabularData: {
-                reports: {
-                  title: 'Şikayetler',
-                  value: reports
-                }
-              }
-            });
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            Log
+              .find({date: {$gte: today}})
+              .exec((err, logs) => {
+                const logCount = logs.length;
+
+                res.render('admin/panel', {
+                  numericData: {
+                    postCount: {
+                      title: 'Toplam Paylaşım',
+                      value: postCount
+                    },
+                    topicCount: {
+                      title: 'Toplam Konu',
+                      value: topicCount
+                    },
+                    userCount: {
+                      title: 'Toplam Kullanıcı',
+                      value: userCount
+                    },
+                    logCount: {
+                      title: 'Görüntülenme',
+                      value: logCount
+                    }
+                  },
+                  tabularData: {
+                    reports: {
+                      title: 'Şikayetler',
+                      value: reports
+                    }
+                  }
+                });
+              });
         });
       });
     });
