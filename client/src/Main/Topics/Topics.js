@@ -17,6 +17,30 @@ import Input from '../../shared/Input/Input';
 
 import api from '../../shared/api';
 
+const ListHeader = props => {
+  return (
+    <React.Fragment>
+      <Input
+        placeholder="Kişi veya konu ara"
+        value={props.search}
+        onChangeText={props.onChangeText}
+        containerStyle={{marginBottom: 15}}
+      />
+      <DoubleSelect
+        options={props.optionType === 'sort' ? {
+          popular: 'Popüler',
+          new: 'Yeni'
+        } : {
+          topics: 'Konular',
+          users: 'Kullanıcılar'
+        }}
+        option={props.optionType === 'sort' ? props.sort : props.searchOption}
+        onChangeOption={props.onChangeOption}
+      />
+    </React.Fragment>
+  );
+};
+
 export default class Topics extends Component {
   constructor (props) {
     super(props);
@@ -183,27 +207,16 @@ export default class Topics extends Component {
             this.direction = currentOffset > this.offset ? 'down' : 'up';
             this.offset = currentOffset;
           }}
-          ListHeaderComponent={() => [
-            <Input 
-              key="Input"
-              placeholder="Kişi veya konu ara"
-              value={this.state.search}
-              onChangeText={this.onChangeText}
-              containerStyle={{marginBottom: 15}}
-            />,
-            <DoubleSelect 
-              key="DoubleSelect"
-              options={this.state.optionType === 'sort' ? {
-                popular: 'Popüler',
-                new: 'Yeni'
-              } : {
-                topics: 'Konular',
-                users: 'Kullanıcılar'
-              }}
-              option={this.state.optionType === 'sort' ? this.state.sort : this.state.searchOption}
+          ListHeaderComponent={(
+            <ListHeader 
+              search={this.state.search}
+              optionType={this.state.optionType}
+              sort={this.state.sort}
+              searchOption={this.state.searchOption}
               onChangeOption={this.onChangeOption}
+              onChangeText={this.onChangeText}
             />
-          ]}
+          )}
         />
       </View>
     );
