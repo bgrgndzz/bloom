@@ -1,3 +1,4 @@
+const mongoosePaginate = require('mongoose-paginate');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -53,15 +54,15 @@ const UserSchema = new Schema({
       type: Number,
       default: 0
     },
-    posts: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Post',
-      default: []
-    }],
     likeCount: {
       type: Number,
       default: 0
-    }
+    },
+    blocked: [{
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      default: []
+    }]
   },
   passwordReset: {
     hash: String
@@ -74,6 +75,13 @@ const UserSchema = new Schema({
 
 UserSchema.pre('save', hashPassword);
 UserSchema.methods.verifyPassword = verifyPassword;
+
+mongoosePaginate.paginate.options = { 
+  lean: true,
+  limit: 20,
+  select: 'user'
+};
+UserSchema.plugin(mongoosePaginate);
 
 const User = mongoose.model('User', UserSchema);
 

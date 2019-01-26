@@ -12,29 +12,37 @@ module.exports = (req, res, next) => {
   const search = new RegExp(req.params.search.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&'), 'gi');
 
   User
-    .aggregate([
-      {$project: {
-        auth: 0,
-        preSave: 0
-      }},
-      {$addFields: { 
-        user: {
-          fullName: {$concat: ['$user.firstName', ' ', '$user.lastName']}
-        }
-      }},
-      {$match: {'user.fullName': search}}
-    ])
-    .exec((err, results) => {
-      if (!results) {
-        return res.status(200).send({
-          authenticated: true,
-          users: []
+    .findById(req.user)
+    .select('user')
+    .exec((err, self) => {
+      User
+        .aggregate([
+          {$project: {
+            auth: 0,
+            preSave: 0
+          }},
+          {$addFields: { 
+            user: {
+              fullName: {$concat: ['$user.firstName', ' ', '$user.lastName']}
+            }
+          }},
+          {$match: {
+            'user.fullName': search,
+            _id: {$nin: self.user.blocked}
+          }}
+        ])
+        .exec((err, results) => {
+          if (!results) {
+            return res.status(200).send({
+              authenticated: true,
+              users: []
+            });
+          }
+          
+          res.status(200).send({
+            authenticated: true,
+            users: results
+          });
         });
-      }
-      
-      res.status(200).send({
-        authenticated: true,
-        users: results
-      });
     });
 };

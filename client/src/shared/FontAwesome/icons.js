@@ -10,5 +10,6 @@ export default {
   check: '\uf00c',
   home: '\uf015',
   bell: '\uf0f3',
-  exclamation: '\uf12a'
+  exclamation: '\uf12a',
+  ellipsisV: '\uf142'
 };

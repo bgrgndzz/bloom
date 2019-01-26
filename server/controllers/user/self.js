@@ -21,10 +21,8 @@ module.exports = (req, res, next) => {
           res.status(200).send({
             authenticated: true,
             user: {
-              id: user.id,
               ...user._doc.user,
               posts: posts.map(post => ({
-                id: post.id,
                 ...post._doc,
                 liked: post.likes.indexOf(req.user) !== -1
               })),

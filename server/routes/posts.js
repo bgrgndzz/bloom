@@ -11,7 +11,7 @@ router.use(isLoggedIn);
 router.use(log);
 
 router.get('/list/feed/:page', feedController);
-router.get('/list/:topic/:sort/:page', listController);
+router.get('/list/:topic/:sort', listController);
 router.post('/create/:topic', createController);
 
 module.exports = router;

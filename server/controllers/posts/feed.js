@@ -19,7 +19,8 @@ module.exports = (req, res, next) => {
       Post.paginate(
         {
           author: {
-            $in: user.user.following
+            $in: user.user.following,
+            $nin: user.user.blocked
           },
           anonymous: false
         },
@@ -32,7 +33,7 @@ module.exports = (req, res, next) => {
         (err, posts) => {
           posts = posts.docs.map(post => ({
             ...post,
-            liked: post.likes.indexOf(req.user) !== -1,
+            liked: post.likes.findIndex(like => like.toString() === req.user) !== -1,
             author: {
               _id: post.author._id,
               ...post.author.user

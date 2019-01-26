@@ -5,13 +5,16 @@ import {
   View,
   Text,
   Alert,
-  RefreshControl
+  RefreshControl,
+  Modal,
+  TouchableOpacity
 } from 'react-native';
 
 import {CachedImage} from 'react-native-cached-image';
 
 import Post from '../shared/Post/Post';
 import Button from '../../shared/Button/Button';
+import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
 import api from '../../shared/api';
 
@@ -19,7 +22,8 @@ export default class Profile extends Component {
   state = {
     user: {},
     refreshing: false,
-    followDisabled: false
+    followDisabled: false,
+    modalOpen: false
   }
 
   loadUser = (state = {}) => {
@@ -43,7 +47,7 @@ export default class Profile extends Component {
       }
     );
   }
-  followUser = () => {
+  follow = () => {
     this.setState({followDisabled: true}, () => {
       api(
         {
@@ -69,6 +73,23 @@ export default class Profile extends Component {
       );
     });
   }
+  block = () => {
+    api(
+      {
+        path: `user/block/${this.props.navigation.getParam('user', '')}`,
+        method: 'POST',
+        jwt: this.props.navigation.getParam('jwt', ''),
+      },
+      (err, res) => {
+        if (err && !res) {
+          if (err === 'unauthenticated') return this.props.logout();
+          return Alert.alert(err);
+        }
+        
+        this.props.navigation.goBack();
+      }
+    );
+  }
   onRefresh = () => {
     this.setState({refreshing: true}, () => {
       this.loadUser({refreshing: false});
@@ -93,6 +114,17 @@ export default class Profile extends Component {
         >
           {Object.keys(this.state.user).length > 0 && (
             <View style={styles.user}>
+            {this.props.navigation.getParam('user', '') ? (
+              <TouchableOpacity 
+                style={styles.modalOpenButton}
+                onPress={() => this.setState({modalOpen: true})}
+              >
+                <FontAwesome 
+                  style={styles.modalOpenIcon}
+                  icon="ellipsisV" 
+                />
+              </TouchableOpacity>
+            ) : null}
               <CachedImage 
                 style={styles.profilepicture}
                 source={this.state.user.profilepicture ? 
@@ -122,7 +154,7 @@ export default class Profile extends Component {
               {this.props.navigation.getParam('user', '') ? (
                 <Button 
                   style={styles.followButton}
-                  onPress={this.followUser}
+                  onPress={this.follow}
                   disabled={this.state.followDisabled}
                   text={this.state.user.followed ? 'Takipten Çık' : 'Takip Et'}
                 />
@@ -140,6 +172,30 @@ export default class Profile extends Component {
             />
           ))}
         </ScrollView>
+        <Modal 
+          style={styles.settingsModalContainer}
+          visible={this.state.modalOpen}
+          transparent={true}
+        >
+          <TouchableOpacity 
+            style={styles.settingsModalBackdrop} 
+            onPress={() => this.setState({modalOpen: false})}
+          />
+          <View style={styles.settingsModalContent}>
+            <TouchableOpacity 
+              style={styles.settingsModalItem}
+              onPress={this.block}
+            >
+              <Text style={styles.settingsModalText}>Engelle</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.settingsModalCancel}
+              onPress={() => this.setState({modalOpen: false})}
+            >
+              <Text style={styles.settingsModalCancelText}>Vazgeç</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -225,5 +281,45 @@ const styles = StyleSheet.create({
     width: '50%',
     position: 'absolute',
     bottom: -20
+  },
+  modalOpenButton: {
+    position: 'absolute',
+    right: 20,
+    top: 20
+  },
+  modalOpenIcon: {
+    color: '#16425B',
+    fontSize: 20
+  },
+  settingsModalBackdrop: {
+    flex: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  settingsModalContent: {
+    flex: 2,
+    backgroundColor: 'white'
+  },
+  settingsModalItem: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)'
+  },
+  settingsModalText: {
+    textAlign: 'center',
+    fontSize: 15
+  },
+  settingsModalCancel: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  settingsModalCancelText: {
+    color: '#EA3546',
+    fontWeight: '700',
+    fontSize: 15,
+    textAlign: 'center'
   }
 });
