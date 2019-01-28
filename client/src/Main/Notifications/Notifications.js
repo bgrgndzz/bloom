@@ -4,7 +4,8 @@ import {
   FlatList,
   View,
   Text,
-  Alert
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 
 import Notification from '../shared/Notification/Notification';
@@ -16,7 +17,8 @@ export default class Notifications extends Component {
     notifications: [],
     refreshing: false,
     page: 1,
-    dataEnd: false
+    dataEnd: false,
+    dataLoading: false
   }
 
   listNotifications = (state = {}) => {
@@ -35,7 +37,8 @@ export default class Notifications extends Component {
         this.setState({
           ...state,
           notifications: this.state.notifications.concat(res.notifications),
-          dataEnd: res.notifications.length < 10
+          dataEnd: res.notifications.length < 10,
+          dataLoading: false
         });
       }
     );
@@ -50,13 +53,6 @@ export default class Notifications extends Component {
       this.listNotifications({refreshing: false});
     });
   }
-  nextPage = () => {
-    if (!this.state.dataEnd && this.direction === 'down' && this.offset > 0) {
-      this.setState({
-        page: this.state.page + 1
-      }, this.listNotifications);
-    }
-  }
 
   componentWillMount = this.onRefresh;
 
@@ -70,7 +66,6 @@ export default class Notifications extends Component {
           refreshing={this.state.refreshing}
           onRefresh={this.onRefresh}
           data={this.state.notifications}
-          extraData={this.state.refreshing}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) => (
             <Notification 
@@ -79,13 +74,31 @@ export default class Notifications extends Component {
               navigation={this.props.navigation}
             /> 
           )}
-          onEndReachedThreshold={0.5}
-          onEndReached={this.nextPage}
-          onScroll={(event) => {
-            const currentOffset = event.nativeEvent.contentOffset.y;
+          onScroll={e => {
+            const event = e.nativeEvent
+            const currentOffset = event.contentOffset.y;
             this.direction = currentOffset > this.offset ? 'down' : 'up';
             this.offset = currentOffset;
+            
+            if (
+              event.contentOffset.y >= event.contentSize.height - event.layoutMeasurement.height * 1.25 && 
+              !this.state.dataLoading && 
+              !this.state.dataEnd && 
+              this.direction === 'down' && 
+              this.offset > 0
+            ) {
+              this.setState({
+                dataLoading: true,
+                page: this.state.page + 1
+              }, this.listNotifications);
+            }
           }}
+          ListFooterComponent={
+            <ActivityIndicator 
+              style={styles.loading}
+              animating={this.state.dataLoading} 
+            />
+          }
         />
         {this.state.notifications.length === 0 && !this.state.refreshing && (
           <View style={styles.emptyNotificationsContainer}>
@@ -121,5 +134,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '300',
     color: 'rgba(0, 0, 0, 0.5)'
+  },
+  loading: {
+    marginBottom: 15
   }
 });

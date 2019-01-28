@@ -4,7 +4,8 @@ import {
   FlatList,
   View,
   Text,
-  Alert
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 
 import Post from '../shared/Post/Post';
@@ -16,7 +17,8 @@ export default class Feed extends Component {
     posts: [],
     page: 1,
     refreshing: false,
-    dataEnd: false
+    dataEnd: false,
+    dataLoading: false
   }
 
   listFeedPosts = (state = {}) => {
@@ -35,7 +37,8 @@ export default class Feed extends Component {
         this.setState({
           ...state,
           posts: this.state.posts.concat(res.posts),
-          dataEnd: res.posts.length < 10
+          dataEnd: res.posts.length < 10,
+          dataLoading: false
         });
       }
     );
@@ -50,13 +53,6 @@ export default class Feed extends Component {
       this.listFeedPosts({refreshing: false});
     });
   }
-  nextPage = () => {
-    if (!this.state.dataEnd && this.direction === 'down' && this.offset > 0) {
-      this.setState({
-        page: this.state.page + 1
-      }, this.listFeedPosts);
-    }
-  }
 
   componentWillMount = this.onRefresh;
 
@@ -70,7 +66,6 @@ export default class Feed extends Component {
           refreshing={this.state.refreshing}
           onRefresh={this.onRefresh}
           data={this.state.posts}
-          extraData={this.state.refreshing}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) => (
             <Post 
@@ -80,13 +75,31 @@ export default class Feed extends Component {
               logout={this.props.logout}
             />
           )}
-          onEndReachedThreshold={0.5}
-          onEndReached={this.nextPage}
-          onScroll={(event) => {
-            const currentOffset = event.nativeEvent.contentOffset.y;
+          onScroll={e => {
+            const event = e.nativeEvent
+            const currentOffset = event.contentOffset.y;
             this.direction = currentOffset > this.offset ? 'down' : 'up';
             this.offset = currentOffset;
+            
+            if (
+              event.contentOffset.y >= event.contentSize.height - event.layoutMeasurement.height * 1.25 && 
+              !this.state.dataLoading && 
+              !this.state.dataEnd && 
+              this.direction === 'down' && 
+              this.offset > 0
+            ) {
+              this.setState({
+                dataLoading: true,
+                page: this.state.page + 1
+              }, this.listFeedPosts);
+            }
           }}
+          ListFooterComponent={
+            <ActivityIndicator 
+              style={styles.loading}
+              animating={this.state.dataLoading} 
+            />
+          }
         />
         {this.state.posts.length === 0 && !this.state.refreshing && (
           <View style={styles.emptyFeedContainer}>
@@ -122,5 +135,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '300',
     color: 'rgba(0, 0, 0, 0.5)'
+  },
+  loading: {
+    marginBottom: 15
   }
 });

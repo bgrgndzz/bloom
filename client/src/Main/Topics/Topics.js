@@ -4,7 +4,8 @@ import {
   View,
   FlatList,
   Alert,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 
 import {debounce} from 'throttle-debounce';
@@ -53,7 +54,8 @@ export default class Topics extends Component {
       optionType: 'sort',
       search: '',
       refreshing: false,
-      dataEnd: false
+      dataEnd: false,
+      dataLoading: false
     };
     this.listTopicsDebounced = debounce(100, this.listTopics);
     this.searchDebounced = debounce(100, this.search);
@@ -75,7 +77,8 @@ export default class Topics extends Component {
         this.setState({
           ...state,
           topics: this.state.topics.concat(res.topics),
-          dataEnd: res.topics.length < 10
+          dataEnd: res.topics.length < 10,
+          dataLoading: false
         });
       }
     );
@@ -99,13 +102,6 @@ export default class Topics extends Component {
         });
       }
     );
-  }
-  nextPage = () => {
-    if (!this.state.dataEnd && this.direction === 'down' && this.offset > 0 && this.state.optionType === 'sort') {
-      this.setState({
-        page: this.state.page + 1
-      }, this.listTopicsDebounced);
-    }
   }
 
   onRefresh = () => {
@@ -197,15 +193,27 @@ export default class Topics extends Component {
           refreshing={this.state.refreshing}
           onRefresh={this.onRefresh}
           data={data}
-          extraData={this.state.refreshing}
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderItem}
-          onEndReachedThreshold={0.5}
-          onEndReached={this.nextPage}
-          onScroll={(event) => {
-            const currentOffset = event.nativeEvent.contentOffset.y;
+          onScroll={e => {
+            const event = e.nativeEvent
+            const currentOffset = event.contentOffset.y;
             this.direction = currentOffset > this.offset ? 'down' : 'up';
             this.offset = currentOffset;
+            
+            if (
+              event.contentOffset.y >= event.contentSize.height - event.layoutMeasurement.height * 1.25 && 
+              !this.state.dataLoading && 
+              !this.state.dataEnd && 
+              this.direction === 'down' && 
+              this.offset > 0 && 
+              this.state.optionType === 'sort'
+            ) {
+              this.setState({
+                dataLoading: true,
+                page: this.state.page + 1
+              }, this.listTopicsDebounced);
+            }
           }}
           ListHeaderComponent={(
             <ListHeader 
@@ -217,6 +225,12 @@ export default class Topics extends Component {
               onChangeText={this.onChangeText}
             />
           )}
+          ListFooterComponent={
+            <ActivityIndicator 
+              style={styles.loading}
+              animating={this.state.dataLoading} 
+            />
+          }
         />
       </View>
     );
@@ -234,5 +248,8 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingBottom: 15,
     paddingHorizontal: 15
+  },
+  loading: {
+    marginBottom: 15
   }
 });
