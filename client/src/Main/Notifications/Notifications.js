@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
 import {
   StyleSheet, 
-  ScrollView,
+  FlatList,
   View,
   Text,
-  Alert,
-  RefreshControl
+  Alert
 } from 'react-native';
 
 import Notification from '../shared/Notification/Notification';
@@ -15,13 +14,15 @@ import api from '../../shared/api';
 export default class Notifications extends Component {
   state = {
     notifications: [],
-    refreshing: false
+    refreshing: false,
+    page: 1,
+    dataEnd: false
   }
 
   listNotifications = (state = {}) => {
     api(
       {
-        path: 'notifications/list',
+        path: 'notifications/list/' + this.state.page,
         method: 'GET',
         jwt: this.props.navigation.getParam('jwt', '')
       },
@@ -33,15 +34,28 @@ export default class Notifications extends Component {
         
         this.setState({
           ...state,
-          notifications: res.notifications
+          notifications: this.state.notifications.concat(res.notifications),
+          dataEnd: res.notifications.length < 10
         });
       }
     );
   }
   onRefresh = () => {
-    this.setState({refreshing: true}, () => {
+    this.setState({
+      refreshing: true,
+      dataEnd: false,
+      notifications: [],
+      page: 1
+    }, () => {
       this.listNotifications({refreshing: false});
     });
+  }
+  nextPage = () => {
+    if (!this.state.dataEnd && this.direction === 'down' && this.offset > 0) {
+      this.setState({
+        page: this.state.page + 1
+      }, this.listNotifications);
+    }
   }
 
   componentWillMount = this.onRefresh;
@@ -49,25 +63,30 @@ export default class Notifications extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView 
+        <FlatList               
           style={styles.notifications}
           contentContainerStyle={styles.notificationsContent}
           showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh}
-            />
-          }
-        >
-          {this.state.notifications.map(notification => (
+          refreshing={this.state.refreshing}
+          onRefresh={this.onRefresh}
+          data={this.state.notifications}
+          extraData={this.state.refreshing}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item}) => (
             <Notification 
-              key={notification._id}
-              {...notification}
+              key={item._id}
+              {...item}
               navigation={this.props.navigation}
-            />
-          ))}
-        </ScrollView>
+            /> 
+          )}
+          onEndReachedThreshold={0.5}
+          onEndReached={this.nextPage}
+          onScroll={(event) => {
+            const currentOffset = event.nativeEvent.contentOffset.y;
+            this.direction = currentOffset > this.offset ? 'down' : 'up';
+            this.offset = currentOffset;
+          }}
+        />
         {this.state.notifications.length === 0 && !this.state.refreshing && (
           <View style={styles.emptyNotificationsContainer}>
             <Text style={styles.emptyNotifications}>Bildirimlerin burada görünür</Text>
@@ -80,15 +99,15 @@ export default class Notifications extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingHorizontal: 15
+    flex: 1
   },
   notifications: {
     flex: 1
   },
   notificationsContent: {
     marginTop: 15,
-    paddingBottom: 15
+    paddingBottom: 15,
+    paddingHorizontal: 15
   },
   emptyNotificationsContainer: {
     position: 'absolute',

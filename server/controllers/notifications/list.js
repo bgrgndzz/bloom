@@ -3,27 +3,36 @@ const Notification = require('../../models/Notification/Notification');
 const User = require('../../models/User/User');
 
 module.exports = (req, res, next) => {
+  const page = parseInt(req.params.page);
+
   User
     .findById(req.user)
     .select('user')
     .exec((err, self) => {
-      Notification
-        .find({
+      Notification.paginate(
+        {
           to: req.user,
           from: {$nin: self.user.blocked}
-        })
-        .populate('from')
-        .sort('-date')
-        .exec((err, notifications) => {
-          notifications = notifications.map(notification => ({
-            ...notification._doc,
+        },
+        {
+          sort: '-date',
+          populate: 'from',
+          limit: 10,
+          page
+        },
+        (err, notifications) => {
+          notifications = notifications.docs.map(notification => ({
+            ...notification,
             from: {
-              _id: notification.from.id,
-              ...notification.from._doc.user
+              _id: notification.from._id,
+              ...notification.from.user
             }
           }));
 
-          Notification.updateMany({to: req.user}, {$set: {seen: true}}, (err, raw) => {
+          Notification.updateMany({
+            _id: {$in: notifications.map(notification => notification.id)},
+            seen: false
+          }, {$set: {seen: true}}, (err, raw) => {
             return res.status(200).send({
               authenticated: true,
               notifications

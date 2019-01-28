@@ -1,3 +1,4 @@
+const mongoosePaginate = require('mongoose-paginate');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -28,6 +29,13 @@ const NotificationSchema = new Schema({
     default: false
   }
 });
+
+mongoosePaginate.paginate.options = { 
+  lean: true,
+  limit: 10,
+  populate: 'from'
+};
+NotificationSchema.plugin(mongoosePaginate);
 
 const Notification = mongoose.model('Notification', NotificationSchema);
 
