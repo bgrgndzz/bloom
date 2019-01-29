@@ -141,7 +141,6 @@ export default class Topics extends Component {
       data = this.state.topics;
       renderItem = ({item}) => (
         <TouchableOpacity 
-          key={item.topic}
           onPress={() => this.props.navigation.push('Topic', {topic: item.topic, jwt: this.props.navigation.getParam('jwt', '')})}
         >
           <Topic
@@ -155,7 +154,6 @@ export default class Topics extends Component {
         data = this.state.searchResults;
         renderItem = ({item}) => (
           <TouchableOpacity 
-            key={item.topic}
             onPress={() => this.props.navigation.push('Topic', {topic: item.topic, jwt: this.props.navigation.getParam('jwt', '')})}
           >
             <Topic
@@ -169,7 +167,6 @@ export default class Topics extends Component {
         data = this.state.searchResults;
         renderItem = ({item}) => (
           <TouchableOpacity 
-            key={item._id}
             onPress={() => this.props.navigation.push('Profile', {
               user: item._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : item._id,
               jwt: this.props.navigation.getParam('jwt', '')})

@@ -3,6 +3,7 @@ const Post = require('../../models/Post/Post');
 const User = require('../../models/User/User');
 
 module.exports = (req, res, next) => {
+  const page = parseInt(req.params.page);
   User
     .findById(req.user)
     .select('user')
@@ -22,14 +23,16 @@ module.exports = (req, res, next) => {
             authenticated: true,
             user: {
               ...user._doc.user,
-              posts: posts.map(post => ({
-                ...post._doc,
-                liked: post.likes.indexOf(req.user) !== -1
-              })),
               postCount: posts.length,
               likeCount: posts.reduce((reducer, post) => reducer += post.likeCount, 0),
               followersCount: user.user.followersCount
-            }
+            },
+            posts: posts
+              .slice((page - 1) * 10, page * 10)
+              .map(post => ({
+                ...post._doc,
+                liked: post.likes.indexOf(req.user) !== -1
+              })),
           });
         });
     });

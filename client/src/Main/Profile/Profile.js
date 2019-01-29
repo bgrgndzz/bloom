@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {
   StyleSheet, 
-  ScrollView,
+  ActivityIndicator,
+  FlatList,
   View,
   Text,
   Alert,
@@ -18,16 +19,80 @@ import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
 import api from '../../shared/api';
 
+const UserInformation = props => {
+  return (
+    <React.Fragment>
+      {Object.keys(props.user).length > 0 && (
+        <View style={styles.user}>
+        {props.userId ? (
+          <TouchableOpacity 
+            style={styles.modalOpenButton}
+            onPress={props.openModal}
+          >
+            <FontAwesome 
+              style={styles.modalOpenIcon}
+              icon="ellipsisV" 
+            />
+          </TouchableOpacity>
+        ) : null}
+          <CachedImage 
+            style={styles.profilepicture}
+            source={props.user.profilepicture ? 
+              {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + props.user.profilepicture} : 
+              require('../../../src/images/defaultprofile.png')
+            }
+          />
+          <Text style={styles.name}>{props.user.firstName} {props.user.lastName}</Text>
+          <Text style={styles.school}>{props.user.school}</Text>
+          {props.user.about && (
+            <Text style={styles.about}>{props.user.about}</Text>
+          )}
+          <View style={styles.stats}>
+            <View style={styles.stat}>
+              <Text style={styles.statNumber}>{props.user.postCount}</Text>
+              <Text style={styles.statName}>Paylaşım</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={styles.statNumber}>{props.user.followersCount}</Text>
+              <Text style={styles.statName}>Takipçi</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={styles.statNumber}>{props.user.likeCount}</Text>
+              <Text style={styles.statName}>Beğeni</Text>
+            </View>
+          </View>
+          {props.userId ? (
+            <Button 
+              style={styles.followButton}
+              onPress={props.follow}
+              disabled={props.followDisabled}
+              text={props.user.followed ? 'Takipten Çık' : 'Takip Et'}
+            />
+          ) : null}
+        </View>
+      )}
+    </React.Fragment>
+  );
+};
+
 export default class Profile extends Component {  
   state = {
     user: {},
     refreshing: false,
     followDisabled: false,
-    modalOpen: false
+    modalOpen: false,
+    page: 1,
+    dataEnd: false,
+    dataLoading: false
   }
 
   loadUser = (state = {}) => {
-    const path = 'user/' + (this.props.navigation.getParam('user', '') || '')
+    let path = 'user/';
+    if (this.props.navigation.getParam('user', '')) {
+      path += this.props.navigation.getParam('user', '') + '/';
+    }
+    path += this.state.page;
+
     api(
       {
         path,
@@ -42,7 +107,10 @@ export default class Profile extends Component {
         
         this.setState({
           ...state,
-          user: res.user
+          user: res.user,
+          posts: this.state.posts.concat(res.posts),
+          dataEnd: res.posts.length < 10,
+          dataLoading: false
         });
       }
     );
@@ -91,87 +159,76 @@ export default class Profile extends Component {
     );
   }
   onRefresh = () => {
-    this.setState({refreshing: true}, () => {
+    this.setState({
+      refreshing: true,
+      dataEnd: false,
+      user: {},
+      posts: [],
+      page: 1
+    }, () => {
       this.loadUser({refreshing: false});
     });
   }
+
+  openModal = () => this.setState({modalOpen: true});
 
   componentDidMount = this.onRefresh;
 
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView 
+        <FlatList               
           style={styles.posts}
           contentContainerStyle={styles.postsContent}
           showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this.onRefresh}
-            />
-          }
-        >
-          {Object.keys(this.state.user).length > 0 && (
-            <View style={styles.user}>
-            {this.props.navigation.getParam('user', '') ? (
-              <TouchableOpacity 
-                style={styles.modalOpenButton}
-                onPress={() => this.setState({modalOpen: true})}
-              >
-                <FontAwesome 
-                  style={styles.modalOpenIcon}
-                  icon="ellipsisV" 
-                />
-              </TouchableOpacity>
-            ) : null}
-              <CachedImage 
-                style={styles.profilepicture}
-                source={this.state.user.profilepicture ? 
-                  {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.state.user.profilepicture} : 
-                  require('../../../src/images/defaultprofile.png')
-                }
-              />
-              <Text style={styles.name}>{this.state.user.firstName} {this.state.user.lastName}</Text>
-              <Text style={styles.school}>{this.state.user.school}</Text>
-              {this.state.user.about && (
-                <Text style={styles.about}>{this.state.user.about}</Text>
-              )}
-              <View style={styles.stats}>
-                <View style={styles.stat}>
-                  <Text style={styles.statNumber}>{this.state.user.postCount}</Text>
-                  <Text style={styles.statName}>Paylaşım</Text>
-                </View>
-                <View style={styles.stat}>
-                  <Text style={styles.statNumber}>{this.state.user.followersCount}</Text>
-                  <Text style={styles.statName}>Takipçi</Text>
-                </View>
-                <View style={styles.stat}>
-                  <Text style={styles.statNumber}>{this.state.user.likeCount}</Text>
-                  <Text style={styles.statName}>Beğeni</Text>
-                </View>
-              </View>
-              {this.props.navigation.getParam('user', '') ? (
-                <Button 
-                  style={styles.followButton}
-                  onPress={this.follow}
-                  disabled={this.state.followDisabled}
-                  text={this.state.user.followed ? 'Takipten Çık' : 'Takip Et'}
-                />
-              ) : null}
-            </View>
-          )}
-          {Object.keys(this.state.user).length > 0 && this.state.user.posts.map(post => (
+          refreshing={this.state.refreshing}
+          onRefresh={this.onRefresh}
+          data={this.state.posts}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item}) => (
             <Post 
-              key={post._id}
-              {...post}
+              {...item}
               author={this.state.user}
               include={['user', 'topic']}
               navigation={this.props.navigation}
               logout={this.props.logout}
             />
-          ))}
-        </ScrollView>
+          )}
+          onScroll={e => {
+            const event = e.nativeEvent
+            const currentOffset = event.contentOffset.y;
+            this.direction = currentOffset > this.offset ? 'down' : 'up';
+            this.offset = currentOffset;
+            
+            if (
+              event.contentOffset.y >= event.contentSize.height - event.layoutMeasurement.height * 1.25 && 
+              !this.state.dataLoading && 
+              !this.state.dataEnd && 
+              this.direction === 'down' && 
+              this.offset > 0
+            ) {
+              this.setState({
+                dataLoading: true,
+                page: this.state.page + 1
+              }, this.loadUser);
+            }
+          }}
+          ListHeaderComponent={(
+            <UserInformation 
+              user={this.state.user}
+              followDisabled={this.state.followDisabled}
+              userId={this.props.navigation.getParam('user', '')}
+              openModal={this.openModal}
+              follow={this.follow}
+            />
+          )}
+          ListFooterComponent={
+            <ActivityIndicator 
+              style={styles.loading}
+              animating={this.state.dataLoading} 
+            />
+          }
+        />
         <Modal 
           style={styles.settingsModalContainer}
           visible={this.state.modalOpen}
@@ -203,15 +260,15 @@ export default class Profile extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    paddingHorizontal: 15
+    flex: 1
   },
   posts: {
     flex: 1
   },
   postsContent: {
     marginTop: 15,
-    paddingBottom: 15
+    paddingBottom: 15,
+    paddingHorizontal: 15
   },
   user: {
     backgroundColor: 'white',
@@ -321,5 +378,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 15,
     textAlign: 'center'
+  },
+  loading: {
+    marginBottom: 15
   }
 });

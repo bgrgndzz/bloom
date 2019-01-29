@@ -69,7 +69,6 @@ export default class Notifications extends Component {
           keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) => (
             <Notification 
-              key={item._id}
               {...item}
               navigation={this.props.navigation}
             /> 

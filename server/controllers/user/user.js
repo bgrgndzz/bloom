@@ -9,6 +9,8 @@ module.exports = (req, res, next) => {
       error: 'Lütfen bir kişi seçtiğinizden emin olun'
     });
   }
+  
+  const page = parseInt(req.params.page);
 
   User
     .findById(req.params.user)
@@ -40,18 +42,19 @@ module.exports = (req, res, next) => {
                 user: {
                   id: user.id,
                   ...user._doc.user,
-                  posts: posts
-                    .filter(post => !post.anonymous)
-                    .map(post => ({
-                      id: post.id,
-                      ...post._doc,
-                      liked: post.likes.indexOf(req.user) !== -1
-                    })),
                   postCount: posts.length,
                   likeCount: posts.reduce((reducer, post) => reducer += post.likeCount, 0),
                   followersCount: user.user.followersCount,
                   followed: user.user.followers.indexOf(req.user) >= 0
-                }
+                },
+                posts: posts
+                  .filter(post => !post.anonymous)
+                  .slice((page - 1) * 10, page * 10)
+                  .map(post => ({
+                    id: post.id,
+                    ...post._doc,
+                    liked: post.likes.indexOf(req.user) !== -1
+                  })),
               });
             });
         })
