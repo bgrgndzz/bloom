@@ -22,6 +22,7 @@ export default class Input extends Component {
         props.keyboardType = 'email-address';
         props.autoCorrect = false;
         props.textContentType = 'emailAddress';
+        props.autoCapitalize = 'none';
       } else if (this.props.type === 'password') {
         props.secureTextEntry = true;
         props.autoCorrect = false;
