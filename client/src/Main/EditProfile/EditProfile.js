@@ -75,6 +75,8 @@ export default class EditProfile extends Component {
     const options = {
       width: 300,
       height: 300,
+      compressImageMaxWidth: 2048,
+      compressImageMaxHeight: 2048,
       includeBase64: true,
       avoidEmptySpaceAroundImage: true,
       cropperCircleOverlay: true,
