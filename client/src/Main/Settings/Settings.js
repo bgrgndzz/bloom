@@ -19,6 +19,10 @@ export default class Settings extends Component {
         onPress: () => Linking.openURL('https://www.bloomapp.tk/web/privacy-policy')
       },
       {
+        title: 'Kullanım Şartları',
+        onPress: () => Linking.openURL('https://www.bloomapp.tk/web/terms')
+      },
+      {
         title: 'Çıkış Yap',
         onPress: this.props.logout
       }
