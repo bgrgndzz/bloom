@@ -22,6 +22,7 @@ module.exports = (req, res, next) => {
           res.status(200).send({
             authenticated: true,
             user: {
+              _id: user.id,
               ...user._doc.user,
               postCount: posts.length,
               likeCount: posts.reduce((reducer, post) => reducer += post.likeCount, 0),
