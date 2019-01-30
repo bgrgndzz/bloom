@@ -50,7 +50,7 @@ export default class EditProfile extends Component {
   getUser = () => {
     api(
       {
-        path: 'user/',
+        path: 'user/1',
         method: 'GET',
         jwt: this.props.navigation.getParam('jwt', ''),
       },

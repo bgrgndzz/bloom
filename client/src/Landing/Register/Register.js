@@ -4,7 +4,9 @@ import {
   Text, 
   View,
   Alert,
-  AsyncStorage
+  AsyncStorage,
+  Linking,
+  TouchableOpacity
 } from 'react-native';
 
 import Back from '../../shared/Back/Back';
@@ -127,6 +129,17 @@ export default class Register extends Component {
           text="Kayıt Ol" 
           onPress={this.register}
         />
+        <View style={styles.aggrements}>
+          <Text>Bu butona basarak</Text> 
+          <TouchableOpacity onPress={() => Linking.openURL('https://www.bloomapp.tk/web/privacy-policy')}>
+            <Text style={styles.agreementLink}> Gizlilik Sözleşmesi'ni </Text>
+          </TouchableOpacity> 
+          <Text>ve</Text> 
+          <TouchableOpacity onPress={() => Linking.openURL('https://www.bloomapp.tk/web/terms')}>
+            <Text style={styles.agreementLink}> Kullanım Şartları'nı </Text>
+          </TouchableOpacity> 
+          <Text>kabul etmiş olursunuz.</Text>
+        </View>
       </View>
     )
   }
@@ -160,5 +173,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
+  },
+  aggrements: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 15,
+    justifyContent: 'center'
+  },
+  agreementLink: {
+    color: '#16425B'
   }
 });
