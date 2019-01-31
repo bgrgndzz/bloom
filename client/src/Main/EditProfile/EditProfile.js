@@ -75,8 +75,8 @@ export default class EditProfile extends Component {
     const options = {
       width: 300,
       height: 300,
-      compressImageMaxWidth: 2048,
-      compressImageMaxHeight: 2048,
+      compressImageMaxWidth: 512,
+      compressImageMaxHeight: 512,
       includeBase64: true,
       avoidEmptySpaceAroundImage: true,
       cropperCircleOverlay: true,
@@ -121,6 +121,7 @@ export default class EditProfile extends Component {
       ) {
         imagePicker(options)
           .then(image => {
+            console.log(image);
             this.setState({
               profilepicture: {
                 type: 'base64',
@@ -170,7 +171,7 @@ export default class EditProfile extends Component {
         profilepicture = {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.state.profilepicture.uri};
         break;
       case 'base64':
-        profilepicture = {uri: `data:${this.state.profilepicture.mime};base64,${this.state.profilepicture.data}`};
+        profilepicture = {uri: this.state.profilepicture.uri};
         break;
       case 'default':
       default:
