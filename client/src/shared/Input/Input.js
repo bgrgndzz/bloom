@@ -9,6 +9,7 @@ export default class Input extends Component {
   render() {
     const width = this.props.width || '100%';
     let props = {
+      clearButtonMode: this.props.clearButtonMode,
       placeholder: this.props.placeholder,
       multiline: this.props.multiline,
       onChangeText: this.props.onChangeText,

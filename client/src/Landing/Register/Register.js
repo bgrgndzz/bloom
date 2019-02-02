@@ -6,15 +6,19 @@ import {
   Alert,
   AsyncStorage,
   Linking,
-  TouchableOpacity
+  TouchableOpacity,
+  FlatList,
+  Modal
 } from 'react-native';
 
 import Back from '../../shared/Back/Back';
 import Button from '../../shared/Button/Button';
 import Input from '../../shared/Input/Input';
-import Dropdown from '../../shared/Dropdown/Dropdown';
+import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
 import api from '../../shared/api';
+
+import schools from './schools';
 
 export default class Register extends Component {
   state = {
@@ -23,39 +27,10 @@ export default class Register extends Component {
     email: '',
     password: '',
     password2: '',
-    school: ''
+    school: '',
+    schoolField: '',
+    schoolFocused: false
   };
-
-  componentWillMount() {
-    this.schools = [
-      'ALEV Lisesi',
-      'Alman Lisesi',
-      'Avusturya Lisesi',
-      'Bahçelievler Anadolu Lisesi',
-      'Beşiktaş Anadolu Lisesi',
-      'Cağaloğlu Anadolu Lisesi',
-      'Çapa Fen Lisesi',
-      'Çevre Koleji',
-      'FMV Işık Lisesi',
-      'Galatasaray Lisesi',
-      'Hacı Ömer Tarman Anadolu Lisesi',
-      'İstanbul Erkek Lisesi',
-      'Kabataş Erkek Lisesi',
-      'Kadıköy Anadolu Lisesi',
-      'Notre Dame de Sion',
-      'Robert Kolej',
-      'Saint Benoit',
-      'Saint Joseph',
-      'Saint Michel',
-      'Saint Pulcherie',
-      'Sakıp Sabancı Anadolu Lisesi',
-      'Terakki Lisesi',
-      'Ulus Özel Musevi Lisesi',
-      'Üsküdar Amerikan Lisesi',
-      'Vefa Lisesi',
-      'Yaşar Acar Fen Lisesi',
-    ];
-  }
 
   onChangeText = (key) => {
     return (input) => this.setState({[key]: input});
@@ -63,6 +38,16 @@ export default class Register extends Component {
   onSelect = (key) => {
     return (index, input) => this.setState({[key]: input});
   }
+  onSchoolChange = (input) => {
+    this.setState({schoolField: input});
+  }
+
+  openSchoolModal = () => {
+    this.setState({schoolFocused: true});
+  };
+  closeSchoolModal = () => {
+    this.setState({schoolFocused: false});
+  };
 
   register = () => {
     api(
@@ -102,11 +87,72 @@ export default class Register extends Component {
             value={this.state.lastName}
           />
         </View>
-        <Dropdown 
-          defaultValue={this.state.school || 'Okul'}
-          onSelect={this.onSelect('school')}
-          options={this.schools} 
-        />
+        <TouchableOpacity
+          style={styles.schoolInputInterceptor}
+          onPress={this.openSchoolModal}
+        >
+          <View pointerEvents='none'>
+            <Input 
+              value={this.state.school}
+              editable={false}
+              onPress={this.openSchoolModal}
+              placeholder="Okul"
+              onChangeText={this.onSchoolChange}
+              ref="schoolInput"
+            />
+          </View>
+        </TouchableOpacity>
+        <Modal
+          visible={this.state.schoolFocused}
+          onRequestClose={this.closeSchoolModal}
+          animationType="slide"
+        >
+          <View style={styles.schoolModal}>
+            <FlatList
+              style={styles.schools}
+              contentContainerStyle={styles.schoolsContent}
+              showsVerticalScrollIndicator={false}
+              data={this.state.schoolField ? schools.filter(school => {
+                return school
+                  .replace('İ', 'i').toLowerCase()
+                  .indexOf(
+                    this.state.schoolField.replace('İ', 'i').toLowerCase()
+                  ) > -1
+              }) : []}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({item}) => (
+                <TouchableOpacity 
+                  style={styles.school}
+                  onPress={() => this.setState({school: item, schoolField: item})}
+                >
+                  <Text style={styles.schoolName}>{item}</Text>
+                </TouchableOpacity>
+              )}
+              ListHeaderComponent={(
+                <View style={styles.modalHeading}>
+                  <Input 
+                    containerStyle={{flex: 1}}
+                    clearButtonMode="while-editing"
+                    value={this.state.schoolField}
+                    placeholder="Okul"
+                    onChangeText={this.onSchoolChange}
+                    autoFocus={true}
+                  />
+                  <TouchableOpacity 
+                    style={styles.schoolSubmitButton}
+                    onPress={this.closeSchoolModal}
+                  >
+                    <FontAwesome
+                      style={styles.schoolSubmitIcon}
+                      icon="check"
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+              stickyHeaderIndices={[0]}
+            />
+          </View>
+        </Modal>
         <Input 
           onChangeText={this.onChangeText('email')} 
           type='email'
@@ -129,7 +175,7 @@ export default class Register extends Component {
           text="Kayıt Ol" 
           onPress={this.register}
         />
-        <View style={styles.aggrements}>
+        <View style={styles.agrements}>
           <Text>Bu butona basarak</Text> 
           <TouchableOpacity onPress={() => Linking.openURL('https://www.bloomapp.tk/web/privacy-policy')}>
             <Text style={styles.agreementLink}> Gizlilik Sözleşmesi'ni </Text>
@@ -174,7 +220,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  aggrements: {
+  agrements: {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -183,5 +229,56 @@ const styles = StyleSheet.create({
   },
   agreementLink: {
     color: '#16425B'
-  }
+  },
+  schoolInputInterceptor: {
+    width: '100%'
+  },
+  schoolModal: {
+    flex: 1,
+    backgroundColor: '#f7f7f7'
+  },
+  modalHeading: {
+    flexDirection: 'row',
+    marginTop: 15,
+    paddingTop: 15,
+    paddingBottom: 0
+  },
+  schoolSubmitButton: {
+    width: 39,
+    height: 39,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 15
+  },
+  schoolSubmitIcon: {
+    fontSize: 20,
+    color: '#16425B'
+  },
+  schools: {
+    flex: 1
+  },
+  schoolsContent: {
+    marginTop: -15,
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingHorizontal: 15
+  },
+  school: {
+    backgroundColor: 'white',
+    padding: 15,
+    marginBottom: 15,
+    borderRadius: 10,
+    shadowColor: '#000', 
+    shadowOffset: {width: 0, height: 0}, 
+    shadowOpacity: 0.1, 
+    shadowRadius: 5, 
+    elevation: 1
+  },
+  schoolName: {
+    flex: 1,
+    color: '#202020',
+    fontWeight: '100',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
 });
