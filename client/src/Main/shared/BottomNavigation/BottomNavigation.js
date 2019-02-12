@@ -11,9 +11,9 @@ import FontAwesome from '../../../shared/FontAwesome/FontAwesome';
 
 const pages = {
   Feed: 'home',
-  Topics: 'bookmark',
-  Profile: 'user',
-  Settings: 'cog'
+  Topics: 'compass',
+  Profile: 'user-circle',
+  Settings: 'bars'
 }
 export default class BottomNavigation extends Component {
   render() {
