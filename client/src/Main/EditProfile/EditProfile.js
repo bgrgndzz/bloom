@@ -199,6 +199,7 @@ export default class EditProfile extends Component {
             <Input 
               placeholder="Hakkında"
               onChangeText={this.onChangeText('about')}
+              multiline={true}
               value={this.state.about}
               containerStyle={styles.input}
             />
