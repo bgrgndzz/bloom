@@ -11,5 +11,6 @@ export default {
   home: '\uf015',
   bell: '\uf0f3',
   exclamation: '\uf12a',
-  ellipsisV: '\uf142'
+  ellipsisV: '\uf142',
+  search: '\uf002'
 };
