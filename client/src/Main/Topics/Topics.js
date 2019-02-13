@@ -15,6 +15,7 @@ import Topic from '../shared/Topic/Topic';
 import User from '../shared/User/User';
 import DoubleSelect from '../shared/DoubleSelect/DoubleSelect';
 import Input from '../../shared/Input/Input';
+import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
 import api from '../../shared/api';
 
