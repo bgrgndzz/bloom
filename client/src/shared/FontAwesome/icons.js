@@ -13,5 +13,6 @@ export default {
   exclamation: '\uf12a',
   ellipsisV: '\uf142',
   explore: '\uf14e',
-  usercircle: '\uf2bd'
+  usercircle: '\uf2bd',
+  settings: '\uf0c9'
 };
