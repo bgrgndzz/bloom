@@ -23,6 +23,7 @@ const ListHeader = props => {
     <React.Fragment>
       <Input
         placeholder="Kişi veya konu ara"
+        leftIcon={{ type: 'font-awesome', name: 'search' }}
         value={props.search}
         onChangeText={props.onChangeText}
         containerStyle={{marginBottom: 15}}
