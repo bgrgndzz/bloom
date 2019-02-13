@@ -5,5 +5,3 @@ A social media platform for high schoolers. / Lise öğrencileri için sosyal me
 
 ### Turkey
 - Istanbul
-- *Izmir (Coming Soon)*
-- *Ankara (Coming Soon)*
