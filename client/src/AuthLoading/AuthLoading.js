@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   ActivityIndicator,
   AsyncStorage,
@@ -9,15 +9,17 @@ import {
 export default class AuthLoading extends Component {
   constructor(props) {
     super(props);
-    this._navigate();
+    this.redirect();
   }
-  _navigate = async () => {
+
+  redirect = async () => {
     const jwt = await AsyncStorage.getItem('jwt');
+    const { navigate } = this.props.navigation;
 
     if (jwt) {
-      this.props.navigation.navigate('Feed', {jwt});
+      navigate('Topics', { jwt });
     } else {
-      this.props.navigation.navigate('Landing');
+      navigate('Landing');
     }
   };
 

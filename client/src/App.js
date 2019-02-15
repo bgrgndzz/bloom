@@ -31,7 +31,7 @@ const MainStack = createStackNavigator(
     Notifications: Page(Notifications)
   }, 
   {
-    initialRouteName: 'Feed',
+    initialRouteName: 'Topics',
     headerMode: 'none'
   }
 );
