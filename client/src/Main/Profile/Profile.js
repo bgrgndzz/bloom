@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   ActivityIndicator,
   FlatList,
   View,
@@ -24,20 +24,20 @@ const UserInformation = props => {
       {Object.keys(props.user).length > 0 && (
         <View style={styles.user}>
         {props.userId ? (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.modalOpenButton}
             onPress={props.openModal}
           >
-            <FontAwesome 
+            <FontAwesome
               style={styles.modalOpenIcon}
-              icon="ellipsisV" 
+              icon="ellipsisV"
             />
           </TouchableOpacity>
         ) : null}
-          <CachedImage 
+          <CachedImage
             style={styles.profilepicture}
-            source={props.user.profilepicture ? 
-              {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + props.user.profilepicture} : 
+            source={props.user.profilepicture ?
+              {uri: 'https://www.getbloom.info/uploads/profilepictures/' + props.user.profilepicture} :
               require('../../../src/images/defaultprofile.png')
             }
           />
@@ -61,7 +61,7 @@ const UserInformation = props => {
             </View>
           </View>
           {props.userId ? (
-            <Button 
+            <Button
               style={styles.followButton}
               onPress={props.follow}
               disabled={props.followDisabled}
@@ -74,7 +74,7 @@ const UserInformation = props => {
   );
 };
 
-export default class Profile extends Component {  
+export default class Profile extends Component {
   state = {
     user: {},
     refreshing: false,
@@ -103,7 +103,7 @@ export default class Profile extends Component {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
-        
+
         this.setState({
           ...state,
           user: res.user,
@@ -127,7 +127,7 @@ export default class Profile extends Component {
             if (err === 'unauthenticated') return this.props.logout();
             return Alert.alert(err);
           }
-          
+
           this.setState({
             user: {
               ...this.state.user,
@@ -152,7 +152,7 @@ export default class Profile extends Component {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
-        
+
         this.props.navigation.goBack();
       }
     );
@@ -176,7 +176,7 @@ export default class Profile extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <FlatList               
+        <FlatList
           style={styles.posts}
           contentContainerStyle={styles.postsContent}
           showsVerticalScrollIndicator={false}
@@ -185,7 +185,7 @@ export default class Profile extends Component {
           data={this.state.posts}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) => (
-            <Post 
+            <Post
               {...item}
               author={this.state.user}
               include={['user', 'topic']}
@@ -198,12 +198,12 @@ export default class Profile extends Component {
             const currentOffset = event.contentOffset.y;
             this.direction = currentOffset > this.offset ? 'down' : 'up';
             this.offset = currentOffset;
-            
+
             if (
-              event.contentOffset.y >= event.contentSize.height - event.layoutMeasurement.height * 1.25 && 
-              !this.state.dataLoading && 
-              !this.state.dataEnd && 
-              this.direction === 'down' && 
+              event.contentOffset.y >= event.contentSize.height - event.layoutMeasurement.height * 1.25 &&
+              !this.state.dataLoading &&
+              !this.state.dataEnd &&
+              this.direction === 'down' &&
               this.offset > 0
             ) {
               this.setState({
@@ -213,7 +213,7 @@ export default class Profile extends Component {
             }
           }}
           ListHeaderComponent={(
-            <UserInformation 
+            <UserInformation
               user={this.state.user}
               followDisabled={this.state.followDisabled}
               userId={this.props.navigation.getParam('user', '')}
@@ -222,29 +222,29 @@ export default class Profile extends Component {
             />
           )}
           ListFooterComponent={
-            <ActivityIndicator 
+            <ActivityIndicator
               style={styles.loading}
-              animating={this.state.dataLoading} 
+              animating={this.state.dataLoading}
             />
           }
         />
-        <Modal 
+        <Modal
           style={styles.settingsModalContainer}
           visible={this.state.modalOpen}
           transparent={true}
         >
-          <TouchableOpacity 
-            style={styles.settingsModalBackdrop} 
+          <TouchableOpacity
+            style={styles.settingsModalBackdrop}
             onPress={() => this.setState({modalOpen: false})}
           />
           <View style={styles.settingsModalContent}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.settingsModalItem}
               onPress={this.block}
             >
               <Text style={styles.settingsModalText}>Engelle</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.settingsModalCancel}
               onPress={() => this.setState({modalOpen: false})}
             >
@@ -273,10 +273,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 45,
     borderRadius: 10,
-    shadowColor: '#000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowOpacity: 0.1, 
-    shadowRadius: 5, 
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 1,
     padding: 15,
     paddingBottom: 30,

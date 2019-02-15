@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   View,
   Text,
   TouchableOpacity
@@ -35,18 +35,18 @@ const translateDate = (date) => {
 export default class Notification extends Component {
   render() {
     return (
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.notification}
         onPress={
           () => {
             if (this.props.type === 'like') {
               this.props.navigation.push('Topic', {
-                topic: this.props.topic, 
+                topic: this.props.topic,
                 jwt: this.props.navigation.getParam('jwt', '')
               });
             } else if (this.props.type === 'follow') {
               this.props.navigation.push('Profile', {
-                user: this.props.from._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : this.props.from._id, 
+                user: this.props.from._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : this.props.from._id,
                 jwt: this.props.navigation.getParam('jwt', '')
               })
             }
@@ -58,21 +58,21 @@ export default class Notification extends Component {
             <View style={styles.new}></View>
           )
         }
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.fromContainer}
           onPress={
             () => {
               this.props.navigation.push('Profile', {
-                user: this.props.from._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : this.props.from._id, 
+                user: this.props.from._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : this.props.from._id,
                 jwt: this.props.navigation.getParam('jwt', '')
               })
             }
           }
         >
-          <CachedImage 
+          <CachedImage
             style={styles.profilepicture}
-            source={this.props.from.profilepicture ? 
-              {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.props.from.profilepicture} : 
+            source={this.props.from.profilepicture ?
+              {uri: 'https://www.getbloom.info/uploads/profilepictures/' + this.props.from.profilepicture} :
               require('../../../images/defaultprofile.png')
             }
           />
@@ -81,7 +81,7 @@ export default class Notification extends Component {
           this.props.type === 'like' ?
           (
             <Text style={styles.main}><Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> "<Text style={styles.bold}>{this.props.topic}</Text>" başlığındaki bir paylaşımını beğendi. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text></Text>
-          ) : 
+          ) :
           (
             <Text style={styles.main}><Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> seni takip etmeye başladı. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text></Text>
           )
@@ -96,10 +96,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 15,
     borderRadius: 10,
-    shadowColor: '#000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowOpacity: 0.1, 
-    shadowRadius: 5, 
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 1,
     padding: 15,
     flexDirection: 'row',

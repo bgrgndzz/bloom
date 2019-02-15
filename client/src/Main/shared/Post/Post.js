@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   View,
   Text,
   TouchableOpacity,
@@ -56,7 +56,7 @@ export default class Post extends Component {
             if (err === 'unauthenticated') return this.props.logout();
             return Alert.alert(err);
           }
-          
+
           this.setState({
             liked: res.liked,
             likes: res.likes,
@@ -80,7 +80,7 @@ export default class Post extends Component {
             if (err === 'unauthenticated') return this.props.logout();
             return Alert.alert(err);
           }
-          
+
           Alert.alert('Şikayetiniz alındı');
           this.setState({
             disabled: false
@@ -96,13 +96,13 @@ export default class Post extends Component {
         {this.props.include.includes('user') && (
           <View style={styles.top}>
             {
-              this.props.anonymous ? 
+              this.props.anonymous ?
               (
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.authorContainer}
                   onPress={() => {}}
                 >
-                  <CachedImage 
+                  <CachedImage
                     style={styles.profilepicture}
                     source={require('../../../images/defaultprofile.png')}
                   />
@@ -110,27 +110,27 @@ export default class Post extends Component {
                 </TouchableOpacity>
               ) :
               (
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.authorContainer}
                   onPress={
                     () => {
                       this.props.navigation.push('Profile', {
-                        user: this.props.author._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : this.props.author._id, 
+                        user: this.props.author._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : this.props.author._id,
                         jwt: this.props.navigation.getParam('jwt', '')
                       })
                     }
                   }
                 >
-                  <CachedImage 
+                  <CachedImage
                     style={styles.profilepicture}
-                    source={this.props.author.profilepicture ? 
-                      {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.props.author.profilepicture} : 
+                    source={this.props.author.profilepicture ?
+                      {uri: 'https://www.getbloom.info/uploads/profilepictures/' + this.props.author.profilepicture} :
                       require('../../../images/defaultprofile.png')
                     }
                   />
                   <Text style={styles.author}>{this.props.author.firstName} {this.props.author.lastName}</Text>
                 </TouchableOpacity>
-              ) 
+              )
             }
             <View style={styles.dateContainer}>
               <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
@@ -139,7 +139,7 @@ export default class Post extends Component {
         )}
         <View style={styles.main}>
           {this.props.include.includes('topic') && (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.topicContainer}
               onPress={() => this.props.navigation.push('Topic', {topic: this.props.topic, jwt: this.props.navigation.getParam('jwt', '')})}
             >
@@ -149,23 +149,23 @@ export default class Post extends Component {
           <Text style={styles.text}>{this.props.text}</Text>
         </View>
         <View style={styles.bottom}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.likesContainer}
             onPress={this.like}
             disabled={this.state.disabled}
           >
-            <FontAwesome 
+            <FontAwesome
               style={this.state.liked ? styles.likeIconActive : styles.likeIconInactive}
               icon="heart"
             />
             <Text style={styles.likes}>{this.state.likes.length}</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.reportContainer}
             onPress={this.report}
             disabled={this.state.disabled}
           >
-            <FontAwesome 
+            <FontAwesome
               style={styles.reportIcon}
               icon="exclamation"
             />
@@ -181,10 +181,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 15,
     borderRadius: 10,
-    shadowColor: '#000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowOpacity: 0.1, 
-    shadowRadius: 5, 
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 1
   },
   top: {

@@ -1,27 +1,26 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
-  StyleSheet, 
-  Text, 
-  View, 
+  StyleSheet,
+  Text,
+  View,
   TouchableOpacity
 } from 'react-native';
 
 import Button from '../../shared/Button/Button';
 
-export default class Login extends Component {
-  render() {
-    return (
-      <View style={styles.buttons}>
-        <Button 
-          text="Kayıt ol"
-          onPress={this.props.animationPresets['Register']}
-        />
-        <TouchableOpacity onPress={this.props.animationPresets['Login']}>
-          <Text style={styles.login}>Hesabın var mı? Giriş yap.</Text>
-        </TouchableOpacity>
-      </View>
-    )
-  }
+export default function Login(props) {
+  const { animationPresets } = props;
+  return (
+    <View style={styles.buttons}>
+      <Button
+        text="Kayıt ol"
+        onPress={animationPresets.Register}
+      />
+      <TouchableOpacity onPress={animationPresets.Login}>
+        <Text style={styles.login}>Hesabın var mı? Giriş yap.</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

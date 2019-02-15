@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 module.exports = ({path, method, jwt, body}, callback) => {
   const config = {
     mode: 'cors',
@@ -6,17 +8,26 @@ module.exports = ({path, method, jwt, body}, callback) => {
       'Content-Type': 'application/json',
       'x-access-token': jwt
     },
-    body: JSON.stringify(body),
+    validateStatus: status => status >= 200 && status < 500,
+    url: 'https://www.getbloom.info/' + path,
+    data: body,
     method
   };
-  const url = 'https://www.bloomapp.tk/' + path;
 
-  fetch(url, config)
-    .then(response => response.json())
+  axios(config)
     .then(response => {
-      if (!response.authenticated) return callback('unauthenticated');
-      if (response.error) return callback(response.error);
-      return callback(null, response);
+      if (response.data.error) return callback(response.error);
+      if (response.status === 200) return callback(null, response.data);
+      if (response.status === 403 && !response.data.authenticated) return callback('unauthenticated');
+      return callback('Bilinmeyen bir hata oluştu.');
     })
-    .catch(callback);
+    .catch(error => {
+      if (error.response) {
+        callback(error.response.status);
+      } else if (error.request) {
+        callback(error.request._response);
+      } else {
+        callback('Error ' + error.message);
+      }
+    });
 };

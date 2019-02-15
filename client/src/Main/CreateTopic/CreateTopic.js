@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
@@ -17,69 +17,74 @@ import api from '../../shared/api';
 export default class CreateTopic extends Component {
   state = {
     topic: '',
-    post: '',
+    text: '',
     anonymous: false
   }
 
-  onChangeText = (key) => {
-    return (input) => this.setState({[key]: input});
-  }
+  onChangeText = key => input => this.setState({ [key]: input });
+
   onPress = () => {
+    const { topic, text, anonymous } = this.state;
+    const { navigation, logout } = this.props;
+    const jwt = navigation.getParam('jwt', '');
     api(
       {
-        path: 'posts/create/' + this.state.topic,
+        path: `posts/create/${topic}`,
         method: 'POST',
-        jwt: this.props.navigation.getParam('jwt', ''),
-        body: {
-          text: this.state.post,
-          anonymous: this.state.anonymous
-        }
+        body: { text, anonymous },
+        jwt
       },
       (err, res) => {
         if (err && !res) {
-          if (err === 'unauthenticated') return this.props.logout();
+          if (err === 'unauthenticated') return logout();
           return Alert.alert(err);
         }
-        
-        this.props.navigation.navigate('Topic', {topic: this.state.topic, jwt: this.props.navigation.getParam('jwt', '')});
+
+        return navigation.navigate('Topic', { topic, jwt });
       }
     );
   }
 
   render() {
+    const { text, topic, anonymous } = this.state;
     return (
       <ScrollView style={styles.container}>
         <View style={styles.formContainer}>
           <Text style={styles.formHeading}>Bir konu aç</Text>
           <View style={styles.form}>
-            <Input 
+            <Input
               placeholder="Konu Başlığı"
               onChangeText={this.onChangeText('topic')}
-              value={this.state.topic}
+              value={topic}
               containerStyle={styles.input}
             />
-            <Input 
+            <Input
               placeholder="Senin Fikrin"
-              multiline={true}
-              onChangeText={this.onChangeText('post')}
-              value={this.state.post}
+              onChangeText={this.onChangeText('text')}
+              value={text}
               containerStyle={styles.input}
+              multiline
             />
             <TouchableOpacity
               style={styles.checkboxContainer}
-              onPress={() => this.setState({anonymous: !this.state.anonymous})}
+              onPress={() => this.setState(prevState => ({ anonymous: !prevState.anonymous }))}
             >
-              <View style={[styles.checkbox, this.state.anonymous ? styles.checkboxActive : styles.checkboxInactive]}>
-                {this.state.anonymous &&
-                  <FontAwesome 
+              <View
+                style={[
+                  styles.checkbox,
+                  anonymous ? styles.checkboxActive : styles.checkboxInactive
+                ]}
+              >
+                {anonymous && (
+                  <FontAwesome
                     style={styles.checkboxIcon}
                     icon="check"
                   />
-                }
+                )}
               </View>
               <Text style={styles.checkboxText}>Anonim</Text>
             </TouchableOpacity>
-            <Button 
+            <Button
               text="Konu Aç"
               onPress={this.onPress}
             />
@@ -99,10 +104,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 15,
     borderRadius: 10,
-    shadowColor: '#000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowOpacity: 0.1, 
-    shadowRadius: 5, 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 1
   },
   formHeading: {
@@ -112,7 +117,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center'
   },
-  input: {marginBottom: 15},
+  input: { marginBottom: 15 },
   checkboxContainer: {
     marginBottom: 15,
     flexDirection: 'row',
@@ -126,12 +131,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  checkboxActive: {
-    backgroundColor: '#16425B',
-  },
-  checkboxInactive: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)'
-  },
+  checkboxActive: { backgroundColor: '#16425B' },
+  checkboxInactive: { backgroundColor: 'rgba(0, 0, 0, 0.1)' },
   checkboxIcon: {
     color: 'white',
     fontSize: 12.5

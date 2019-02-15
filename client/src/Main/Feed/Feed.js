@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   FlatList,
   View,
   Text,
@@ -22,21 +22,23 @@ export default class Feed extends Component {
   }
 
   listFeedPosts = (state = {}) => {
+    const jwt = this.props.navigation.getParam('jwt', '');
+    const { page, posts } = this.state;
     api(
       {
-        path: 'posts/list/feed/' + this.state.page,
+        path: `posts/list/feed/${page}`,
         method: 'GET',
-        jwt: this.props.navigation.getParam('jwt', ''),
+        jwt
       },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
-        
+
         this.setState({
           ...state,
-          posts: this.state.posts.concat(res.posts),
+          posts: posts.concat(res.posts),
           dataEnd: res.posts.length < 10,
           dataLoading: false
         });
@@ -57,22 +59,25 @@ export default class Feed extends Component {
   componentWillMount = this.onRefresh;
 
   render() {
+    const { posts, refreshing, page, dataEnd, dataLoading } = this.state;
+    const { navigation, logout } = this.props;
+
     return (
       <View style={styles.container}>
-        <FlatList               
+        <FlatList
           style={styles.posts}
           contentContainerStyle={styles.postsContent}
           showsVerticalScrollIndicator={false}
-          refreshing={this.state.refreshing}
+          refreshing={refreshing}
           onRefresh={this.onRefresh}
-          data={this.state.posts}
+          data={posts}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({item}) => (
-            <Post 
+            <Post
               {...item}
               include={['user', 'topic']}
-              navigation={this.props.navigation}
-              logout={this.props.logout}
+              navigation={navigation}
+              logout={logout}
             />
           )}
           onScroll={e => {
@@ -80,28 +85,28 @@ export default class Feed extends Component {
             const currentOffset = event.contentOffset.y;
             this.direction = currentOffset > this.offset ? 'down' : 'up';
             this.offset = currentOffset;
-            
+
             if (
-              event.contentOffset.y >= event.contentSize.height - event.layoutMeasurement.height * 1.25 && 
-              !this.state.dataLoading && 
-              !this.state.dataEnd && 
-              this.direction === 'down' && 
+              event.contentOffset.y >= event.contentSize.height - event.layoutMeasurement.height * 1.25 &&
+              !dataLoading &&
+              !dataEnd &&
+              this.direction === 'down' &&
               this.offset > 0
             ) {
               this.setState({
                 dataLoading: true,
-                page: this.state.page + 1
+                page: page + 1
               }, this.listFeedPosts);
             }
           }}
           ListFooterComponent={
-            <ActivityIndicator 
+            <ActivityIndicator
               style={styles.loading}
-              animating={this.state.dataLoading} 
+              animating={dataLoading}
             />
           }
         />
-        {this.state.posts.length === 0 && !this.state.refreshing && (
+        {posts.length === 0 && !refreshing && (
           <View style={styles.emptyFeedContainer}>
             <Text style={styles.emptyFeed}>Takip ettiklerin burada görünür</Text>
           </View>

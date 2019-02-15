@@ -1,9 +1,8 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  StyleSheet, 
-  View, 
-  Image, 
-  Dimensions, 
+  StyleSheet,
+  View,
+  Dimensions,
   Animated,
   Easing
 } from 'react-native';
@@ -12,10 +11,10 @@ import Buttons from './Buttons/Buttons';
 import Login from './Login/Login';
 import Register from './Register/Register';
 
+import logomark from '../images/logomark.png';
+
 export default class Landing extends Component {
-  state = {
-    preset: 'Landing'
-  }
+  state = { preset: 'Landing' }
 
   componentWillMount() {
     this.animatedState = {
@@ -27,7 +26,7 @@ export default class Landing extends Component {
     };
     this.animationPresets = {
       'Login': () => {
-        this.setState({preset: this.state.preset + '-Login'}, () => {
+        this.setState(prevState => ({ preset: `${prevState.preset}-Login` }), () => {
           Animated.timing(
             this.animatedState.backgroundHeight,
             {
@@ -71,12 +70,12 @@ export default class Landing extends Component {
               }
             )
           ]).start(() => {
-            this.setState({preset: 'Login'});
+            this.setState({ preset: 'Login' });
           });
         });
       },
       'Register': () => {
-        this.setState({preset: this.state.preset + 'Register'}, () => {
+        this.setState(prevState => ({ preset: `${prevState.preset}Register` }), () => {
           Animated.timing(
             this.animatedState.backgroundHeight,
             {
@@ -120,12 +119,12 @@ export default class Landing extends Component {
               }
             )
           ]).start(() => {
-            this.setState({preset: 'Register'});
+            this.setState({ preset: 'Register' });
           });
         });
       },
       'Landing': () => {
-        this.setState({preset: 'Landing' + this.state.preset}, () => {
+        this.setState(prevState => ({ preset: `Landing${prevState.preset}` }), () => {
           Animated.timing(
             this.animatedState.backgroundHeight,
             {
@@ -169,73 +168,81 @@ export default class Landing extends Component {
               }
             )
           ]).start(() => {
-            this.setState({preset: 'Landing'});
+            this.setState({ preset: 'Landing' });
           });
         });
       }
     };
   }
-  
+
   render() {
+    const { preset } = this.state;
+    const {
+      loginOpacity,
+      registerOpacity,
+      landingOpacity,
+      logomarkOpacity,
+      backgroundHeight
+    } = this.animatedState;
     return (
       <View style={styles.container}>
-        <Animated.View 
+        <Animated.View
           style={[
             styles.background,
-            {height: this.animatedState.backgroundHeight}
+            { height: backgroundHeight }
           ]}
         >
-          {this.state.preset.includes('Landing') && (
-            <Animated.View 
+          {preset.includes('Landing') && (
+            <Animated.View
               style={[
                 styles.logoBox,
-                {opacity: this.animatedState.logomarkOpacity}
-              ]}                                                                                                                                                                              
+                { opacity: logomarkOpacity }
+              ]}
             >
-              <Animated.Image 
+              <Animated.Image
                 style={styles.logomark}
-                source={require('../images/logomark.png')}
+                source={logomark}
                 resizeMode="contain"
               />
             </Animated.View>
           )}
         </Animated.View>
-        {this.state.preset.includes('Landing') && (
-          <Animated.View 
+        {preset.includes('Landing') && (
+          <Animated.View
             style={[
               styles.buttons,
-              {opacity: this.animatedState.landingOpacity}
+              { opacity: landingOpacity }
             ]}
           >
             <Buttons animationPresets={this.animationPresets} />
           </Animated.View>
         )}
-        {this.state.preset.includes('Login') && (
+        {preset.includes('Login') && (
           <View style={styles.main}>
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.login,
-                {opacity: this.animatedState.loginOpacity}
+                { opacity: loginOpacity }
               ]}
             >
-              <Login 
+              <Login
                 navigation={this.props.navigation}
-                animationPresets={this.animationPresets} 
+                animationPresets={this.animationPresets}
               />
             </Animated.View>
           </View>
         )}
-        {this.state.preset.includes('Register') && (
+        {preset.includes('Register') && (
           <View style={styles.main}>
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.register,
-                {opacity: this.animatedState.registerOpacity}
+                { opacity: registerOpacity }
               ]}
             >
-              <Register 
+              <Register
                 navigation={this.props.navigation}
-                animationPresets={this.animationPresets} 
+                animationPresets={this.animationPresets}
               />
             </Animated.View>
           </View>
@@ -269,10 +276,10 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width * 0.9,
     borderRadius: 10,
     padding: 20,
-    shadowColor: '#000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowOpacity: 0.25, 
-    shadowRadius: 10, 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
     elevation: 5
   },
   register: {
@@ -280,10 +287,10 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width * 0.9,
     borderRadius: 10,
     padding: 20,
-    shadowColor: '#000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowOpacity: 0.25, 
-    shadowRadius: 10, 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
     elevation: 5
   },
   logomark: {
