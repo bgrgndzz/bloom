@@ -49,7 +49,7 @@ const UserInformation = props => {
           <View style={styles.stats}>
             <View style={styles.stat}>
               <Text style={styles.statNumber}>{props.user.postCount}</Text>
-              <Text style={styles.statName}>Paylaşım</Text>
+              <Text style={styles.statName}>Gönderi</Text>
             </View>
             <View style={styles.stat}>
               <Text style={styles.statNumber}>{props.user.followersCount}</Text>
