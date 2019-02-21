@@ -38,9 +38,9 @@ module.exports = (req, res, next) => {
 
         userRes.save(err => {
           const token = jwt.sign({user: userRes.id}, process.env.JWT_SECRET, {
-            expiresIn: 60 * 60 * 24 * 365 // a year
+            expiresIn: 60 * 60 * 24 * 365 * 10 // 10 years
           });
-          
+
           res.status(200).send({
             authenticated: true,
             jwt: token
