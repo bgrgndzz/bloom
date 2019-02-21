@@ -6,19 +6,17 @@ import {
   Alert,
   AsyncStorage,
   Linking,
-  TouchableOpacity,
-  FlatList,
-  Modal
+  TouchableOpacity
 } from 'react-native';
 
 import Back from '../../shared/Back/Back';
 import Button from '../../shared/Button/Button';
 import Input from '../../shared/Input/Input';
-import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
 import api from '../../shared/api';
 
 import schools from './schools';
+import Dropdown from '../../shared/Dropdown/Dropdown';
 
 export default class Register extends Component {
   state = {
@@ -34,13 +32,11 @@ export default class Register extends Component {
 
   onChangeText = key => input => this.setState({ [key]: input });
 
-  onSelect = key => (index, input) => this.setState({ [key]: input });
-
   onSchoolChange = input => this.setState({ schoolField: input });
 
-  openSchoolModal = () => this.setState({ schoolFocused: true });
+  onSchoolPress = item => this.setState({ school: item, schoolField: item });
 
-  closeSchoolModal = () => this.setState({ schoolFocused: false });
+  toggleSchoolModal = () => this.setState({schoolFocused: !this.state.schoolFocused});
 
   register = () => {
     api(
@@ -94,68 +90,27 @@ export default class Register extends Component {
         </View>
         <TouchableOpacity
           style={styles.schoolInputInterceptor}
-          onPress={this.openSchoolModal}
+          onPress={this.toggleSchoolModal}
         >
           <View pointerEvents="none">
             <Input
               value={school}
               editable={false}
-              onPress={this.openSchoolModal}
+              onPress={this.toggleSchoolModal}
               placeholder="Okul"
               onChangeText={this.onSchoolChange}
-              ref="schoolInput"
             />
           </View>
         </TouchableOpacity>
-        <Modal
-          visible={schoolFocused}
-          onRequestClose={this.closeSchoolModal}
-          animationType="slide"
-        >
-          <View style={styles.schoolModal}>
-            <FlatList
-              style={styles.schools}
-              contentContainerStyle={styles.schoolsContent}
-              showsVerticalScrollIndicator={false}
-              data={schoolField ? schools.filter(schoolOption => schoolOption
-                .replace('İ', 'i').toLowerCase()
-                .indexOf(
-                  schoolField.replace('İ', 'i').toLowerCase()
-                ) > -1) : []}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.school}
-                  onPress={() => this.setState({ school: item, schoolField: item })}
-                >
-                  <Text style={styles.schoolName}>{item}</Text>
-                </TouchableOpacity>
-              )}
-              ListHeaderComponent={(
-                <View style={styles.modalHeading}>
-                  <Input
-                    containerStyle={styles.modalInputContainer}
-                    clearButtonMode="while-editing"
-                    value={schoolField}
-                    placeholder="Okul"
-                    onChangeText={this.onSchoolChange}
-                    autoFocus
-                  />
-                  <TouchableOpacity
-                    style={styles.schoolSubmitButton}
-                    onPress={this.closeSchoolModal}
-                  >
-                    <FontAwesome
-                      style={styles.schoolSubmitIcon}
-                      icon="check"
-                    />
-                  </TouchableOpacity>
-                </View>
-              )}
-              stickyHeaderIndices={[0]}
-            />
-          </View>
-        </Modal>
+        <Dropdown
+          value={school}
+          field={schoolField}
+          data={schools}
+          focused={schoolFocused}
+          onChange={this.onSchoolChange}
+          onPress={this.onSchoolPress}
+          toggle={this.toggleSchoolModal}
+        />
         <Input
           onChangeText={this.onChangeText('email')}
           type="email"
@@ -195,6 +150,7 @@ export default class Register extends Component {
 }
 
 const styles = StyleSheet.create({
+  schoolInputInterceptor: { width: '100%' },
   register: {
     justifyContent: 'center',
     alignItems: 'center'
@@ -230,53 +186,5 @@ const styles = StyleSheet.create({
     marginTop: 15,
     justifyContent: 'center'
   },
-  agreementLink: { color: '#16425B' },
-  schoolInputInterceptor: { width: '100%' },
-  schoolModal: {
-    flex: 1,
-    backgroundColor: '#f7f7f7'
-  },
-  modalHeading: {
-    flexDirection: 'row',
-    marginTop: 15,
-    paddingTop: 15,
-    paddingBottom: 0
-  },
-  modalInputContainer: { flex: 1 },
-  schoolSubmitButton: {
-    width: 39,
-    height: 39,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 15
-  },
-  schoolSubmitIcon: {
-    fontSize: 20,
-    color: '#16425B'
-  },
-  schools: { flex: 1 },
-  schoolsContent: {
-    marginTop: -15,
-    paddingTop: 15,
-    paddingBottom: 15,
-    paddingHorizontal: 15
-  },
-  school: {
-    backgroundColor: 'white',
-    padding: 15,
-    marginBottom: 15,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 1
-  },
-  schoolName: {
-    flex: 1,
-    color: '#202020',
-    fontWeight: '100',
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
+  agreementLink: { color: '#16425B' }
 });
