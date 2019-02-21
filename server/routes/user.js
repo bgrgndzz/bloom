@@ -13,6 +13,7 @@ const followController = require('../controllers/user/follow');
 const unfollowController = require('../controllers/user/unfollow');
 const blockController = require('../controllers/user/block');
 
+router.get('/', selfController);
 router.get('/:page', selfController);
 router.get('/:user/:page', userController);
 router.post('/edit', editController);
