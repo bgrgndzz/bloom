@@ -14,7 +14,7 @@ import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
 export default class Dropdown extends Component {
   render() {
-    const {field, data, focused, onChange, onPress, toggle} = this.props;
+    const {field, data, focused, placeholder, searchKey, onChange, onPress, toggle} = this.props;
 
     return (
       <React.Fragment>
@@ -28,7 +28,7 @@ export default class Dropdown extends Component {
               style={styles.schools}
               contentContainerStyle={styles.schoolsContent}
               showsVerticalScrollIndicator={false}
-              data={field ? data.filter(option => option
+              data={field ? data.filter(option => (searchKey ? option[searchKey] : option)
                 .replace('İ', 'i').toLowerCase()
                 .indexOf(
                   field.replace('İ', 'i').toLowerCase()
@@ -39,7 +39,7 @@ export default class Dropdown extends Component {
                   style={styles.school}
                   onPress={() => onPress(item)}
                 >
-                  <Text style={styles.schoolName}>{item}</Text>
+                  <Text style={styles.schoolName}>{searchKey ? item[searchKey] : item}</Text>
                 </TouchableOpacity>
               )}
               ListHeaderComponent={(
@@ -48,7 +48,7 @@ export default class Dropdown extends Component {
                     containerStyle={styles.modalInputContainer}
                     clearButtonMode="while-editing"
                     value={field}
-                    placeholder="Okul"
+                    placeholder={placeholder}
                     onChangeText={onChange}
                     autoFocus
                   />

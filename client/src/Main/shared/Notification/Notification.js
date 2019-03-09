@@ -39,7 +39,10 @@ export default class Notification extends Component {
         style={styles.notification}
         onPress={
           () => {
-            if (this.props.type === 'like') {
+            if (
+              this.props.type === 'like' ||
+              this.props.type === 'mention'
+            ) {
               this.props.navigation.push('Topic', {
                 topic: this.props.topic,
                 jwt: this.props.navigation.getParam('jwt', '')
@@ -78,13 +81,29 @@ export default class Notification extends Component {
           />
         </TouchableOpacity>
         {
-          this.props.type === 'like' ?
-          (
-            <Text style={styles.main}><Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> "<Text style={styles.bold}>{this.props.topic}</Text>" başlığındaki bir paylaşımını beğendi. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text></Text>
-          ) :
-          (
-            <Text style={styles.main}><Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> seni takip etmeye başladı. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text></Text>
-          )
+          (() => {
+            if (this.props.type === 'like') {
+              return (
+                <Text style={styles.main}>
+                  <Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> "<Text style={styles.bold}>{this.props.topic}</Text>" başlığındaki bir paylaşımını beğendi. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                </Text>
+              );
+            } else if (this.props.type === 'follow') {
+              return (
+                <Text style={styles.main}>
+                  <Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> seni takip etmeye başladı. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                </Text>
+              );
+            } else if (this.props.type === 'mention') {
+              return (
+                <Text style={styles.main}>
+                  <Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> "<Text style={styles.bold}>{this.props.topic}</Text>" başlığında senden bahsetti. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                </Text>
+              );
+            }
+
+            return;
+          })()
         }
       </TouchableOpacity>
     );

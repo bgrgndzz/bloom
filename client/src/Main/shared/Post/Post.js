@@ -43,6 +43,78 @@ export default class Post extends Component {
     disabled: false
   }
 
+  transformPost = post => {
+    const mentionRegex = /\[mention: \((.*?)\)\((.*?)\)\]/i;
+    const mentionRegexUngrouped = /\[mention: \(.*?\)\(.*?\)\]/gi;
+    const mentions = post.match(new RegExp(mentionRegex, 'g'));
+
+    if (mentions) {
+      post = post.split(mentionRegexUngrouped).map((splitText, index, array) => {
+        let id, name;
+
+        if (index !== array.length - 1) {
+          const mentionArgs = mentions[index].match(mentionRegex);
+          id = mentionArgs[1];
+          name = mentionArgs[2];
+        }
+
+        return [
+        (
+          <Text
+            style={styles.normal}
+            key="normal"
+          >
+            {splitText}
+          </Text>
+        ),
+        index === array.length - 1 ? null : (
+          <Text
+            style={styles.highlighted}
+            key="higlighted"
+            onPress={() => this.props.navigation.push('Profile', {
+              user: id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : id,
+              jwt: this.props.navigation.getParam('jwt', '')
+            })}
+          >
+            @{name}
+          </Text>
+        )
+      ]});
+      /*mentions.forEach(mention => {
+        const mentionArgs = mentionRegex.exec(mention);
+        if (!mentionArgs) return;
+
+        const id = mentionArgs[1];
+        const name = mentionArgs[2];
+
+        post = post.split(mention).map((splitText, index, array) => [
+          (
+            <Text
+              style={styles.normal}
+              key="normal"
+            >
+              {splitText}
+            </Text>
+          ),
+          index === array.length - 1 ? null : (
+            <Text
+              style={styles.highlighted}
+              key="higlighted"
+              onPress={() => this.props.navigation.push('Profile', {
+                user: id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : id,
+                jwt: this.props.navigation.getParam('jwt', '')
+              })}
+            >
+              @{name}
+            </Text>
+          )
+        ]);
+      });*/
+    }
+
+    return post;
+  }
+
   like = () => {
     this.setState({disabled: true}, () => {
       api(
@@ -146,7 +218,7 @@ export default class Post extends Component {
               <Text style={styles.topic}>{this.props.topic}</Text>
             </TouchableOpacity>
           )}
-          <Text style={styles.text}>{this.props.text}</Text>
+          <Text style={styles.text}>{this.transformPost(this.props.text)}</Text>
         </View>
         <View style={styles.bottom}>
           <TouchableOpacity
@@ -263,5 +335,8 @@ const styles = StyleSheet.create({
     color: 'rgba(0, 0, 0, 0.5)',
     fontWeight: '300',
     fontSize: 12
+  },
+  highlighted: {
+    color: '#16425B'
   }
 });

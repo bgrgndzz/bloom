@@ -103,10 +103,10 @@ export default class Register extends Component {
           </View>
         </TouchableOpacity>
         <Dropdown
-          value={school}
           field={schoolField}
           data={schools}
           focused={schoolFocused}
+          placeholder="Okul"
           onChange={this.onSchoolChange}
           onPress={this.onSchoolPress}
           toggle={this.toggleSchoolModal}
