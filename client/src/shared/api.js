@@ -16,9 +16,9 @@ module.exports = ({path, method, jwt, body}, callback) => {
 
   axios(config)
     .then(response => {
-      if (response.data.error) return callback(response.error);
+      if (response.data.error) return callback(response.data.error);
       if (response.status === 200) return callback(null, response.data);
-      if (response.status === 403 && !response.data.authenticated) return callback('unauthenticated');
+      if (response.status === 403 || !response.data.authenticated) return callback('unauthenticated');
       return callback('Bilinmeyen bir hata oluştu.');
     })
     .catch(error => {
