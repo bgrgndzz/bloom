@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -12,7 +12,7 @@ export default class Settings extends Component {
     this.settings = [
       {
         title: 'Profilini Düzenle',
-        onPress: () => this.props.navigation.push('EditProfile', {jwt: this.props.navigation.getParam('jwt', '')})
+        onPress: () => this.props.navigation.push('EditProfile')
       },
       {
         title: 'Gizlilik Sözleşmesi',

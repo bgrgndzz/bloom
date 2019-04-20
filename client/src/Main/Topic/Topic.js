@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -48,7 +48,7 @@ export default class Topic extends Component {
       {
         path: 'users/list',
         method: 'GET',
-        jwt: this.props.navigation.getParam('jwt', '')
+        jwt: this.props.screenProps.jwt
       },
       (err, res) => {
         if (err && !res) {
@@ -62,12 +62,12 @@ export default class Topic extends Component {
   }
 
   onRefresh = () => {
-    this.setState({refreshing: true}, () => {
+    this.setState({ refreshing: true }, () => {
       api(
         {
           path: `posts/list/${this.props.navigation.getParam('topic', '')}/${this.state.sort}`,
           method: 'GET',
-          jwt: this.props.navigation.getParam('jwt', '')
+          jwt: this.props.screenProps.jwt
         },
         (err, res) => {
           if (err && !res) {
@@ -87,9 +87,9 @@ export default class Topic extends Component {
   onPress = () => {
     api(
       {
-        path: 'posts/create/' + this.props.navigation.getParam('topic', ''),
+        path: `posts/create/${this.props.navigation.getParam('topic', '')}`,
         method: 'POST',
-        jwt: this.props.navigation.getParam('jwt', ''),
+        jwt: this.props.screenProps.jwt,
         body: {
           text: this.state.post,
           anonymous: this.state.anonymous
@@ -110,13 +110,14 @@ export default class Topic extends Component {
   }
 
   onChangeText = post => {
-    const mentionRegex = /\[mention: \((.*?)\)\((.*?)\)\]/gi;
+    const mentionRegex = /\[mention: \((.*?)\)\((.*?)\)\]/i;
+    const mentionRegexGlobal = /\[mention: \((.*?)\)\((.*?)\)\]/gi;
     const mentions = post.match(/@([^\s]+)/gi);
-    const originalMentions = this.state.post.match(mentionRegex);
+    const originalMentions = this.state.post.match(mentionRegexGlobal);
 
     if (mentions && originalMentions) {
       originalMentions.forEach(mention => {
-        const name = mentionRegex.exec(mention)[2];
+        const name = mention.match(mentionRegex)[2];
         post = post.replace(new RegExp(`@${name}`, 'gi'), mention);
       });
     }
@@ -129,7 +130,7 @@ export default class Topic extends Component {
   }
 
   sort = sort => {
-    this.setState({sort}, this.onRefresh);
+    this.setState({ sort }, this.onRefresh);
   }
 
   componentDidMount = () => {
@@ -145,12 +146,12 @@ export default class Topic extends Component {
           contentContainerStyle={styles.postsContent}
           showsVerticalScrollIndicator={false}
           stickyHeaderIndices={[0]}
-          refreshControl={
+          refreshControl={(
             <RefreshControl
               refreshing={this.state.refreshing}
               onRefresh={this.onRefresh}
             />
-          }
+          )}
         >
           <View style={styles.topicContainer}>
             <View style={styles.topic}>
@@ -160,7 +161,7 @@ export default class Topic extends Component {
           <View style={styles.form}>
             <Input
               placeholder="Fikrini paylaş"
-              multiline={true}
+              multiline
               onChangeText={this.onChangeText}
               value={transformPostInput(this.state.post)}
               containerStyle={{marginBottom: 15}}
@@ -180,12 +181,12 @@ export default class Topic extends Component {
               onPress={() => this.setState({anonymous: !this.state.anonymous})}
             >
               <View style={[styles.checkbox, this.state.anonymous ? styles.checkboxActive : styles.checkboxInactive]}>
-                {this.state.anonymous &&
+                {this.state.anonymous && (
                   <FontAwesome
                     style={styles.checkboxIcon}
                     icon="check"
                   />
-                }
+                )}
               </View>
               <Text style={styles.checkboxText}>Anonim</Text>
             </TouchableOpacity>
@@ -206,6 +207,7 @@ export default class Topic extends Component {
             <Post
               key={post._id}
               {...post}
+              {...this.props}
               include={['user']}
               navigation={this.props.navigation}
               logout={this.props.logout}
@@ -244,7 +246,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 0},
+    shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 1

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-module.exports = ({path, method, jwt, body}, callback) => {
+module.exports = ({ path, method, jwt, body }, callback) => {
   const config = {
     mode: 'cors',
     headers: {
@@ -9,7 +9,7 @@ module.exports = ({path, method, jwt, body}, callback) => {
       'x-access-token': jwt
     },
     validateStatus: status => status >= 200 && status < 500,
-    url: 'https://www.getbloom.info/' + path,
+    url: `https://www.getbloom.info/${path}`,
     data: body,
     method
   };
@@ -18,7 +18,7 @@ module.exports = ({path, method, jwt, body}, callback) => {
     .then(response => {
       if (response.data.error) return callback(response.data.error);
       if (response.status === 200) return callback(null, response.data);
-      if (response.status === 403 || !response.data.authenticated) return callback('unauthenticated');
+      if (response.status === 403 && !response.data.authenticated) return callback('unauthenticated');
       return callback('Bilinmeyen bir hata oluştu.');
     })
     .catch(error => {
@@ -27,7 +27,7 @@ module.exports = ({path, method, jwt, body}, callback) => {
       } else if (error.request) {
         callback(error.request._response);
       } else {
-        callback('Error ' + error.message);
+        callback(`Error ${error.message}`);
       }
     });
 };

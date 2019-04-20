@@ -15,10 +15,14 @@
         "comma-dangle": 0,
         "quote-props": 0,
         "no-use-before-define": 0,
-        "operator-linebreak": "after",
+        "object-curly-newline": 0,
+        "no-underscore-dangle": 0,
+        "operator-linebreak": ["error", "after"],
         "react/prop-types": 0,
         "react/destructuring-assignment": 0,
         "react/jsx-filename-extension": 0,
-        "react/no-unescaped-entities": 0
+        "react/no-unescaped-entities": 0,
+        "react/sort-comp": 0,
+        "react/jsx-one-expression-per-line": 0
     }
 }

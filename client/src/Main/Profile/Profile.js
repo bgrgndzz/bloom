@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   ActivityIndicator,
@@ -10,7 +10,8 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-import {CachedImage} from 'react-native-cached-image';
+import jwtDecode from 'jwt-decode';
+import { CachedImage } from 'react-native-cached-image';
 
 import Post from '../shared/Post/Post';
 import Button from '../../shared/Button/Button';
@@ -18,11 +19,10 @@ import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
 import api from '../../shared/api';
 
-const UserInformation = props => {
-  return (
-    <React.Fragment>
-      {Object.keys(props.user).length > 0 && (
-        <View style={styles.user}>
+const UserInformation = props => (
+  <React.Fragment>
+    {Object.keys(props.user).length > 0 && (
+      <View style={styles.user}>
         {props.userId ? (
           <TouchableOpacity
             style={styles.modalOpenButton}
@@ -34,45 +34,44 @@ const UserInformation = props => {
             />
           </TouchableOpacity>
         ) : null}
-          <CachedImage
-            style={styles.profilepicture}
-            source={props.user.profilepicture ?
-              {uri: 'https://www.getbloom.info/uploads/profilepictures/' + props.user.profilepicture} :
-              require('../../../src/images/defaultprofile.png')
-            }
-          />
-          <Text style={styles.name}>{props.user.firstName} {props.user.lastName}</Text>
-          <Text style={styles.school}>{props.user.school}</Text>
-          {props.user.about && (
-            <Text style={styles.about}>{props.user.about}</Text>
-          )}
-          <View style={styles.stats}>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>{props.user.postCount}</Text>
-              <Text style={styles.statName}>Paylaşım</Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>{props.user.followersCount}</Text>
-              <Text style={styles.statName}>Takipçi</Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>{props.user.likeCount}</Text>
-              <Text style={styles.statName}>Beğeni</Text>
-            </View>
+        <CachedImage
+          style={styles.profilepicture}
+          source={props.user.profilepicture ?
+            {uri: 'https://www.getbloom.info/uploads/profilepictures/' + props.user.profilepicture} :
+            require('../../../src/images/defaultprofile.png')
+          }
+        />
+        <Text style={styles.name}>{props.user.firstName} {props.user.lastName}</Text>
+        <Text style={styles.school}>{props.user.school}</Text>
+        {props.user.about && (
+          <Text style={styles.about}>{props.user.about}</Text>
+        )}
+        <View style={styles.stats}>
+          <View style={styles.stat}>
+            <Text style={styles.statNumber}>{props.user.postCount}</Text>
+            <Text style={styles.statName}>Paylaşım</Text>
           </View>
-          {props.userId ? (
-            <Button
-              style={styles.followButton}
-              onPress={props.follow}
-              disabled={props.followDisabled}
-              text={props.user.followed ? 'Takipten Çık' : 'Takip Et'}
-            />
-          ) : null}
+          <View style={styles.stat}>
+            <Text style={styles.statNumber}>{props.user.followersCount}</Text>
+            <Text style={styles.statName}>Takipçi</Text>
+          </View>
+          <View style={styles.stat}>
+            <Text style={styles.statNumber}>{props.user.likeCount}</Text>
+            <Text style={styles.statName}>Beğeni</Text>
+          </View>
         </View>
-      )}
-    </React.Fragment>
-  );
-};
+        {props.userId ? (
+          <Button
+            style={styles.followButton}
+            onPress={props.follow}
+            disabled={props.followDisabled}
+            text={props.user.followed ? 'Takipten Çık' : 'Takip Et'}
+          />
+        ) : null}
+      </View>
+    )}
+  </React.Fragment>
+);
 
 export default class Profile extends Component {
   state = {
@@ -88,7 +87,7 @@ export default class Profile extends Component {
   loadUser = (state = {}) => {
     let path = 'user/';
     if (this.props.navigation.getParam('user', '')) {
-      path += this.props.navigation.getParam('user', '') + '/';
+      path += `${this.props.navigation.getParam('user', '')}/`;
     }
     path += this.state.page;
 
@@ -96,7 +95,7 @@ export default class Profile extends Component {
       {
         path,
         method: 'GET',
-        jwt: this.props.navigation.getParam('jwt', ''),
+        jwt: this.props.screenProps.jwt,
       },
       (err, res) => {
         if (err && !res) {
@@ -104,7 +103,7 @@ export default class Profile extends Component {
           return Alert.alert(err);
         }
 
-        this.setState({
+        return this.setState({
           ...state,
           user: res.user,
           posts: this.state.posts.concat(res.posts),
@@ -114,13 +113,14 @@ export default class Profile extends Component {
       }
     );
   }
+
   follow = () => {
-    this.setState({followDisabled: true}, () => {
+    this.setState({ followDisabled: true }, () => {
       api(
         {
           path: `user/${this.state.user.followed ? 'unfollow' : 'follow'}/${this.props.navigation.getParam('user', '')}`,
           method: 'POST',
-          jwt: this.props.navigation.getParam('jwt', ''),
+          jwt: this.props.screenProps.jwt,
         },
         (err, res) => {
           if (err && !res) {
@@ -128,7 +128,7 @@ export default class Profile extends Component {
             return Alert.alert(err);
           }
 
-          this.setState({
+          return this.setState({
             user: {
               ...this.state.user,
               followed: res.followed,
@@ -140,12 +140,13 @@ export default class Profile extends Component {
       );
     });
   }
+
   block = () => {
     api(
       {
         path: `user/block/${this.props.navigation.getParam('user', '')}`,
         method: 'POST',
-        jwt: this.props.navigation.getParam('jwt', ''),
+        jwt: this.props.screenProps.jwt,
       },
       (err, res) => {
         if (err && !res) {
@@ -153,10 +154,11 @@ export default class Profile extends Component {
           return Alert.alert(err);
         }
 
-        this.props.navigation.goBack();
+        return this.props.navigation.goBack();
       }
     );
   }
+
   onRefresh = () => {
     this.setState({
       refreshing: true,
@@ -165,11 +167,11 @@ export default class Profile extends Component {
       posts: [],
       page: 1
     }, () => {
-      this.loadUser({refreshing: false});
+      this.loadUser({ refreshing: false });
     });
   }
 
-  openModal = () => this.setState({modalOpen: true});
+  openModal = () => this.setState({ modalOpen: true });
 
   componentDidMount = this.onRefresh;
 
@@ -184,9 +186,10 @@ export default class Profile extends Component {
           onRefresh={this.onRefresh}
           data={this.state.posts}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <Post
               {...item}
+              {...this.props}
               author={this.state.user}
               include={['user', 'topic']}
               navigation={this.props.navigation}
@@ -194,13 +197,14 @@ export default class Profile extends Component {
             />
           )}
           onScroll={e => {
-            const event = e.nativeEvent
+            const event = e.nativeEvent;
             const currentOffset = event.contentOffset.y;
+            const heightLimit = event.contentSize.height - event.layoutMeasurement.height * 1.25;
             this.direction = currentOffset > this.offset ? 'down' : 'up';
             this.offset = currentOffset;
 
             if (
-              event.contentOffset.y >= event.contentSize.height - event.layoutMeasurement.height * 1.25 &&
+              event.contentOffset.y >= heightLimit &&
               !this.state.dataLoading &&
               !this.state.dataEnd &&
               this.direction === 'down' &&
@@ -221,23 +225,41 @@ export default class Profile extends Component {
               follow={this.follow}
             />
           )}
-          ListFooterComponent={
+          ListFooterComponent={(
             <ActivityIndicator
               style={styles.loading}
               animating={this.state.dataLoading}
             />
-          }
+          )}
         />
         <Modal
           style={styles.settingsModalContainer}
           visible={this.state.modalOpen}
-          transparent={true}
+          transparent
         >
           <TouchableOpacity
             style={styles.settingsModalBackdrop}
-            onPress={() => this.setState({modalOpen: false})}
+            onPress={() => this.setState({ modalOpen: false })}
           />
           <View style={styles.settingsModalContent}>
+            <TouchableOpacity
+              style={styles.settingsModalItem}
+              onPress={
+                () => {
+                  if (this.state.user._id !== jwtDecode(this.props.screenProps.jwt).user) {
+                    this.setState(
+                      { modalOpen: false },
+                      () => this.props.navigation.push('Conversation', {
+                        user: this.state.user._id,
+                        jwt: this.props.screenProps.jwt
+                      })
+                    );
+                  }
+                }
+              }
+            >
+              <Text style={styles.settingsModalText}>Mesaj Gönder</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.settingsModalItem}
               onPress={this.block}
@@ -246,7 +268,7 @@ export default class Profile extends Component {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.settingsModalCancel}
-              onPress={() => this.setState({modalOpen: false})}
+              onPress={() => this.setState({ modalOpen: false })}
             >
               <Text style={styles.settingsModalCancelText}>Vazgeç</Text>
             </TouchableOpacity>
@@ -274,7 +296,7 @@ const styles = StyleSheet.create({
     marginBottom: 45,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 0},
+    shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 1,
@@ -301,7 +323,7 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     color: 'rgba(0, 0, 0, 0.5)'
   },
-  about: {fontWeight: '400'},
+  about: { fontWeight: '400' },
   backButtonContainer: {
     width: 30,
     height: 30,

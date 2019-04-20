@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {
-  StyleSheet, 
-  Text, 
+  StyleSheet,
+  Text,
   TouchableOpacity,
   ActivityIndicator
 } from 'react-native';
@@ -9,13 +9,13 @@ import {
 export default class Button extends Component {
   render() {
     return (
-      <TouchableOpacity 
+      <TouchableOpacity
         style={[styles.button, this.props.style]}
         onPress={this.props.onPress}
         disabled={this.props.disabled}
       >
         {
-          this.props.disabled ? 
+          this.props.disabled ?
           <ActivityIndicator /> :
           <Text style={styles.buttonText}>{this.props.text || ''}</Text>
         }

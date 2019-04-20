@@ -1,18 +1,22 @@
 // require modules
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const connectRedis = require('connect-redis');
 const cors = require('cors');
 const express = require('express');
 const expressBrute = require('express-brute');
 const expressSession = require('express-session');
 const helmet = require('helmet');
 const http = require('http');
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const path = require('path');
+const redis = require('redis');
+const socketio = require('socket.io');
 
 // dotenv config
-dotenv.config({path: path.join(__dirname, '.env')});
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 // require routes
 const authRoute = require('./routes/auth');
@@ -23,6 +27,7 @@ const userRoute = require('./routes/user');
 const usersRoute = require('./routes/users');
 const searchRoute = require('./routes/search');
 const notificationsRoute = require('./routes/notifications');
+const messagesRoute = require('./routes/messages');
 const webRoute = require('./routes/web');
 const adminRoute = require('./routes/admin');
 
@@ -34,25 +39,41 @@ const {
 } = process.env;
 
 // mongoose connection
-mongoose.connect(MONGO_URI, {useNewUrlParser: true});
+mongoose.connect(MONGO_URI, { useNewUrlParser: true });
 
 // server setup
 const app = express();
 const server = http.Server(app);
+const io = socketio(server);
 
 app.set('trust proxy', true);
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, '/views'));
 
 app.use(express.static(path.join(__dirname, '/public')));
-app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
-app.use(bodyParser.json({limit: '10mb', extended: true}));
-app.use(expressSession({
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+app.use(bodyParser.json({ limit: '10mb', extended: true }));
+
+const redisClient = redis.createClient();
+const RedisStore = connectRedis(expressSession);
+const session = {
   secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  cookie: {secure: false}
-}));
+  cookie: { secure: false },
+  store: new RedisStore({
+    host: 'localhost',
+    port: 6379,
+    client: redisClient,
+    ttl: 86400
+  })
+};
+app.use(expressSession(session));
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+app.locals.users = [];
 
 // logging
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
@@ -73,8 +94,40 @@ app.use('/user', userRoute);
 app.use('/users', usersRoute);
 app.use('/search', searchRoute);
 app.use('/notifications', notificationsRoute);
+app.use('/messages', messagesRoute);
 app.use('/web', webRoute);
 app.use('/admin', adminRoute);
+
+// socket.io setup
+io.on('connection', socket => {
+  const { token } = socket.handshake.query;
+
+  if (token) {
+    jwt.verify(token, process.env.JWT_SECRET, (err, jwtRes) => {
+      if (err) return false;
+
+      let userIndex = app.locals.users.findIndex(user => user.id === jwtRes.user);
+
+      if (userIndex === -1) {
+        app.locals.users.push({
+          id: jwtRes.user,
+          socket
+        });
+
+        userIndex = app.locals.users.length;
+
+        io.emit('online user', jwtRes.user);
+      }
+
+      socket.on('disconnect', () => {
+        userIndex = app.locals.users.findIndex(user => user.id === jwtRes.user);
+        app.locals.users.splice(userIndex, 1);
+
+        io.emit('offline user', jwtRes.user);
+      });
+    });
+  }
+});
 
 // listen to connections
 server.listen(PORT);

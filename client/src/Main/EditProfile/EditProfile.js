@@ -47,7 +47,7 @@ export default class EditProfile extends Component {
   }
 
   getUser = () => {
-    const jwt = this.props.navigation.getParam('jwt', '');
+    const { jwt } = this.props.screenProps;
     api(
       {
         path: 'user/1',
@@ -143,7 +143,7 @@ export default class EditProfile extends Component {
   }
 
   submitProfileInfo = () => {
-    const jwt = this.props.navigation.getParam('jwt', '');
+    const { jwt } = this.props.screenProps;
     const { about, profilepicture } = this.state;
     api(
       {

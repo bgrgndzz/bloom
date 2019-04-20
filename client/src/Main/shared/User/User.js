@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
@@ -6,58 +6,28 @@ import {
   Text
 } from 'react-native';
 
-import {CachedImage} from 'react-native-cached-image';
+import { CachedImage } from 'react-native-cached-image';
 
-const highlight = (string, search) => {
-  return string && string.split(new RegExp(search, 'gi')).map((splitName, index, array) => [
-    (
-      <Text
-        style={styles.normal}
-        key="normal"
-      >
-        {splitName}
-      </Text>
-    ),
-    index === array.length - 1 ? null : (
-      <Text
-        style={styles.highlighted}
-        key="higlighted"
-      >
-        {string.match(new RegExp(search, 'gi'))[index]}
-      </Text>
-    )
-  ]);
-};
+import defaultprofile from '../../../images/defaultprofile.png';
 
-export default class User extends Component {
-  render() {
-    return (this.props.user && this.props.user.user) ? (
-      <View style={styles.user}>
-        {this.props.user.user.profilepicture ? (
-          <CachedImage
-            style={styles.profilepicture}
-            source={{uri: 'https://www.getbloom.info/uploads/profilepictures/' + this.props.user.user.profilepicture}}
-            resizeMode="contain"
-          />
-        ) : (
-          <Image
-            style={styles.profilepicture}
-            source={require('../../../images/defaultprofile.png')}
-            resizeMode="contain"
-          />
-        )}
-
-        <Text style={styles.name}>
-          {
-            this.props.search ?
-            highlight(`${this.props.user.user.firstName} ${this.props.user.user.lastName}`, this.props.search) :
-            `${this.props.user.user.firstName} ${this.props.user.user.lastName}`
-          }
-        </Text>
-      </View>
-    ) : null;
-  }
-}
+const highlight = (string, search) => string && string.split(new RegExp(search, 'gi')).map((splitName, index, array) => [
+  (
+    <Text
+      style={styles.normal}
+      key="normal"
+    >
+      {splitName}
+    </Text>
+  ),
+  index === array.length - 1 ? null : (
+    <Text
+      style={styles.highlighted}
+      key="higlighted"
+    >
+      {string.match(new RegExp(search, 'gi'))[index]}
+    </Text>
+  )
+]);
 
 const styles = StyleSheet.create({
   user: {
@@ -66,7 +36,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 0},
+    shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 1,
@@ -88,3 +58,30 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   }
 });
+
+const User = (props) => ((props.user && props.user.user) ? (
+  <View style={styles.user}>
+    {props.user.user.profilepicture ? (
+      <CachedImage
+        style={styles.profilepicture}
+        source={{ uri: `https://www.getbloom.info/uploads/profilepictures/${props.user.user.profilepicture}` }}
+        resizeMode="contain"
+      />
+    ) : (
+      <Image
+        style={styles.profilepicture}
+        source={defaultprofile}
+        resizeMode="contain"
+      />
+    )}
+    <Text style={styles.name}>
+      {
+        props.search ?
+          highlight(`${props.user.user.firstName} ${props.user.user.lastName}`, props.search) :
+          `${props.user.user.firstName} ${props.user.user.lastName}`
+      }
+    </Text>
+  </View>
+) : null);
+
+export default User;

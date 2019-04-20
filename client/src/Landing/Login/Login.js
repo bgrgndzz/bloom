@@ -32,7 +32,8 @@ export default class Login extends Component {
         if (err) return Alert.alert(err);
         if (!res) return Alert.alert('Bilinmeyen bir hata oluştu');
         AsyncStorage.setItem('jwt', res.jwt);
-        return this.props.navigation.navigate('Topics', { jwt: res.jwt });
+        this.props.screenProps.setJWT(res.jwt);
+        return this.props.navigation.navigate('Topics');
       }
     );
   }

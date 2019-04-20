@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,9 +8,9 @@ import {
   Text
 } from 'react-native';
 
-import Input from '../../shared/Input/Input';
+import Input from '../Input/Input';
 
-import FontAwesome from '../../shared/FontAwesome/FontAwesome';
+import FontAwesome from '../FontAwesome/FontAwesome';
 
 export default class Dropdown extends Component {
   render() {

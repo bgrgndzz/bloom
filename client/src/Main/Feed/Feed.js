@@ -22,7 +22,7 @@ export default class Feed extends Component {
   }
 
   listFeedPosts = (state = {}) => {
-    const jwt = this.props.navigation.getParam('jwt', '');
+    const { jwt } = this.props.screenProps;
     const { page, posts } = this.state;
     api(
       {
@@ -72,16 +72,17 @@ export default class Feed extends Component {
           onRefresh={this.onRefresh}
           data={posts}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <Post
               {...item}
+              {...this.props}
               include={['user', 'topic']}
               navigation={navigation}
               logout={logout}
             />
           )}
           onScroll={e => {
-            const event = e.nativeEvent
+            const event = e.nativeEvent;
             const currentOffset = event.contentOffset.y;
             this.direction = currentOffset > this.offset ? 'down' : 'up';
             this.offset = currentOffset;

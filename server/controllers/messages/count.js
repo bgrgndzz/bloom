@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Notification = require('../../models/Notification/Notification');
+const Message = require('../../models/Message/Message');
 const User = require('../../models/User/User');
 
 module.exports = (req, res) => {
@@ -7,16 +7,16 @@ module.exports = (req, res) => {
     .findById(req.user)
     .select('user')
     .exec((err, self) => {
-      Notification
+      Message
         .count({
           to: req.user,
           from: { $nin: self.user.blocked },
           seen: false
         })
-        .exec((err, notifications) => {
+        .exec((err, messages) => {
           return res.status(200).send({
             authenticated: true,
-            notifications
+            messages
           });
         });
     });

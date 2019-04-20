@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   View,
   FlatList,
   Alert,
@@ -8,8 +8,8 @@ import {
   ActivityIndicator
 } from 'react-native';
 
-import {debounce} from 'throttle-debounce';
-import jwt_decode from 'jwt-decode';
+import { debounce } from 'throttle-debounce';
+import jwtDecode from 'jwt-decode';
 
 import Topic from '../shared/Topic/Topic';
 import User from '../shared/User/User';
@@ -18,32 +18,30 @@ import Input from '../../shared/Input/Input';
 
 import api from '../../shared/api';
 
-const ListHeader = props => {
-  return (
-    <React.Fragment>
-      <Input
-        placeholder="Kişi veya konu ara"
-        value={props.search}
-        onChangeText={props.onChangeText}
-        containerStyle={{marginBottom: 15}}
-      />
-      <DoubleSelect
-        options={props.optionType === 'sort' ? {
-          popular: 'Popüler',
-          new: 'Yeni'
-        } : {
-          topics: 'Konular',
-          users: 'Kullanıcılar'
-        }}
-        option={props.optionType === 'sort' ? props.sort : props.searchOption}
-        onChangeOption={props.onChangeOption}
-      />
-    </React.Fragment>
-  );
-};
+const ListHeader = props => (
+  <React.Fragment>
+    <Input
+      placeholder="Kişi veya konu ara"
+      value={props.search}
+      onChangeText={props.onChangeText}
+      containerStyle={styles.input}
+    />
+    <DoubleSelect
+      options={props.optionType === 'sort' ? {
+        popular: 'Popüler',
+        new: 'Yeni'
+      } : {
+        topics: 'Konular',
+        users: 'Kullanıcılar'
+      }}
+      option={props.optionType === 'sort' ? props.sort : props.searchOption}
+      onChangeOption={props.onChangeOption}
+    />
+  </React.Fragment>
+);
 
 export default class Topics extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       topics: [],
@@ -60,21 +58,21 @@ export default class Topics extends Component {
     this.listTopicsDebounced = debounce(100, this.listTopics);
     this.searchDebounced = debounce(100, this.search);
   }
-  
+
   listTopics = (state = {}) => {
     api(
       {
         path: `topics/list/${this.state.sort}/${this.state.page}`,
         method: 'GET',
-        jwt: this.props.navigation.getParam('jwt', ''),
+        jwt: this.props.screenProps.jwt,
       },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
-        
-        this.setState({
+
+        return this.setState({
           ...state,
           topics: this.state.topics.concat(res.topics),
           dataEnd: res.topics.length < 10,
@@ -83,19 +81,20 @@ export default class Topics extends Component {
       }
     );
   }
+
   search = (state = {}) => {
     api(
       {
         path: `search/${this.state.searchOption}/${this.state.search}`,
         method: 'GET',
-        jwt: this.props.navigation.getParam('jwt', ''),
+        jwt: this.props.screenProps.jwt,
       },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
-        
+
         this.setState({
           ...state,
           searchResults: res[this.state.searchOption],
@@ -112,22 +111,24 @@ export default class Topics extends Component {
         topics: [],
         searchResults: [],
         page: 1
-      }, 
-      () => this.state.optionType === 'sort' ? this.listTopicsDebounced({refreshing: false}) : this.searchDebounced({refreshing: false})
+      },
+      () => (this.state.optionType === 'sort' ? this.listTopicsDebounced({refreshing: false}) : this.searchDebounced({refreshing: false}))
     );
   }
+
   onChangeOption = option => {
-    this.setState({[this.state.optionType === 'sort' ? 'sort' : 'searchOption']: option}, this.onRefresh);
+    this.setState({ [this.state.optionType === 'sort' ? 'sort' : 'searchOption']: option }, this.onRefresh);
   }
+
   onChangeText = search => {
     if (search && search.length > 0) {
       if (this.state.optionType === 'search') {
-        this.setState({search}, this.onRefresh);
+        this.setState({ search }, this.onRefresh);
       } else {
-        this.setState({search, optionType: 'search'}, this.onRefresh);
+        this.setState({ search, optionType: 'search' }, this.onRefresh);
       }
     } else {
-      this.setState({search: '', optionType: 'sort'}, this.onRefresh);
+      this.setState({ search: '', optionType: 'sort' }, this.onRefresh);
     }
   }
 
@@ -139,9 +140,9 @@ export default class Topics extends Component {
 
     if (this.state.optionType === 'sort') {
       data = this.state.topics;
-      renderItem = ({item}) => (
-        <TouchableOpacity 
-          onPress={() => this.props.navigation.push('Topic', {topic: item.topic, jwt: this.props.navigation.getParam('jwt', '')})}
+      renderItem = ({ item }) => (
+        <TouchableOpacity
+          onPress={() => this.props.navigation.push('Topic', { topic: item.topic, jwt: this.props.screenProps.jwt })}
         >
           <Topic
             topic={item.topic}
@@ -149,12 +150,12 @@ export default class Topics extends Component {
           />
         </TouchableOpacity>
       );
-    } else if (this.state.optionType === 'search'){
+    } else if (this.state.optionType === 'search') {
       if (this.state.searchOption === 'topics') {
         data = this.state.searchResults;
-        renderItem = ({item}) => (
-          <TouchableOpacity 
-            onPress={() => this.props.navigation.push('Topic', {topic: item.topic, jwt: this.props.navigation.getParam('jwt', '')})}
+        renderItem = ({ item }) => (
+          <TouchableOpacity
+            onPress={() => this.props.navigation.push('Topic', { topic: item.topic, jwt: this.props.screenProps.jwt })}
           >
             <Topic
               topic={item.topic}
@@ -165,15 +166,17 @@ export default class Topics extends Component {
         );
       } else if (this.state.searchOption === 'users') {
         data = this.state.searchResults;
-        renderItem = ({item}) => (
-          <TouchableOpacity 
-            onPress={() => this.props.navigation.push('Profile', {
-              user: item._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : item._id,
-              jwt: this.props.navigation.getParam('jwt', '')})
-            }
+        renderItem = ({ item }) => (
+          <TouchableOpacity
+            onPress={() => {
+              this.props.navigation.push('Profile', {
+                user: item._id === jwtDecode(this.props.screenProps.jwt).user ? null : item._id,
+                jwt: this.props.screenProps.jwt
+              });
+            }}
           >
-            <User 
-              user={item} 
+            <User
+              user={item}
               search={this.state.search}
             />
           </TouchableOpacity>
@@ -183,7 +186,7 @@ export default class Topics extends Component {
 
     return (
       <View style={styles.container}>
-        <FlatList               
+        <FlatList
           style={styles.topics}
           contentContainerStyle={styles.topicsContent}
           showsVerticalScrollIndicator={false}
@@ -193,17 +196,17 @@ export default class Topics extends Component {
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderItem}
           onScroll={e => {
-            const event = e.nativeEvent
+            const event = e.nativeEvent;
             const currentOffset = event.contentOffset.y;
             this.direction = currentOffset > this.offset ? 'down' : 'up';
             this.offset = currentOffset;
-            
+
             if (
-              event.contentOffset.y >= event.contentSize.height - event.layoutMeasurement.height * 1.25 && 
-              !this.state.dataLoading && 
-              !this.state.dataEnd && 
-              this.direction === 'down' && 
-              this.offset > 0 && 
+              event.contentOffset.y >= event.contentSize.height - event.layoutMeasurement.height * 1.25 &&
+              !this.state.dataLoading &&
+              !this.state.dataEnd &&
+              this.direction === 'down' &&
+              this.offset > 0 &&
               this.state.optionType === 'sort'
             ) {
               this.setState({
@@ -213,7 +216,7 @@ export default class Topics extends Component {
             }
           }}
           ListHeaderComponent={(
-            <ListHeader 
+            <ListHeader
               search={this.state.search}
               optionType={this.state.optionType}
               sort={this.state.sort}
@@ -222,12 +225,12 @@ export default class Topics extends Component {
               onChangeText={this.onChangeText}
             />
           )}
-          ListFooterComponent={
-            <ActivityIndicator 
+          ListFooterComponent={(
+            <ActivityIndicator
               style={styles.loading}
-              animating={this.state.dataLoading} 
+              animating={this.state.dataLoading}
             />
-          }
+          )}
         />
       </View>
     );
@@ -247,6 +250,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15
   },
   loading: {
+    marginBottom: 15
+  },
+  input: {
     marginBottom: 15
   }
 });

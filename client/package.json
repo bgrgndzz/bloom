@@ -24,11 +24,13 @@
     "react-native-gesture-handler": "^1.0.9",
     "react-native-image-crop-picker": "^0.21.3",
     "react-native-ios-status-bar-padding": "^1.2.0",
+    "react-native-keyboard-spacer": "^0.4.1",
     "react-native-modal-dropdown": "^0.6.2",
     "react-native-permissions": "^1.1.1",
     "react-native-push-notification": "^3.1.2",
     "react-navigation": "^3.0.0",
     "rn-fetch-blob": "^0.10.13",
+    "socket.io-client": "^2.2.0",
     "throttle-debounce": "^2.0.1"
   },
   "devDependencies": {

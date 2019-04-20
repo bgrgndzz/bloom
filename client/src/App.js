@@ -1,24 +1,29 @@
+import React, { PureComponent } from 'react';
+import { AsyncStorage, AppState } from 'react-native';
 import {
   createSwitchNavigator,
   createStackNavigator,
   createAppContainer
 } from 'react-navigation';
 import codePush from 'react-native-code-push';
+import io from 'socket.io-client';
 
 import AuthLoading from './AuthLoading/AuthLoading';
 import Landing from './Landing/Landing';
 import Page from './Main/shared/hoc/Page/Page';
 
-import Feed from './Main/Feed/Feed.js';
-import Topics from './Main/Topics/Topics.js';
-import Topic from './Main/Topic/Topic.js';
-import Profile from './Main/Profile/Profile.js';
-import Notifications from './Main/Notifications/Notifications.js';
-import CreateTopic from './Main/CreateTopic/CreateTopic.js';
-import Settings from './Main/Settings/Settings.js';
-import EditProfile from './Main/EditProfile/EditProfile.js';
+import Feed from './Main/Feed/Feed';
+import Topics from './Main/Topics/Topics';
+import Topic from './Main/Topic/Topic';
+import Profile from './Main/Profile/Profile';
+import Notifications from './Main/Notifications/Notifications';
+import CreateTopic from './Main/CreateTopic/CreateTopic';
+import Settings from './Main/Settings/Settings';
+import EditProfile from './Main/EditProfile/EditProfile';
+import Messages from './Main/Messages/Messages';
+import Conversation from './Main/Conversation/Conversation';
 
-const LandingStack = createStackNavigator({Landing}, {headerMode: 'none'});
+const LandingStack = createStackNavigator({ Landing }, { headerMode: 'none' });
 const MainStack = createStackNavigator(
   {
     Feed: Page(Feed),
@@ -28,8 +33,10 @@ const MainStack = createStackNavigator(
     CreateTopic: Page(CreateTopic),
     Settings: Page(Settings),
     EditProfile: Page(EditProfile),
-    Notifications: Page(Notifications)
-  }, 
+    Notifications: Page(Notifications),
+    Messages: Page(Messages),
+    Conversation: Page(Conversation)
+  },
   {
     initialRouteName: 'Topics',
     headerMode: 'none'
@@ -38,11 +45,7 @@ const MainStack = createStackNavigator(
 
 const AppContainer = createAppContainer(
   createSwitchNavigator(
-    {
-      AuthLoading: AuthLoading,
-      MainStack: MainStack,
-      LandingStack: LandingStack,
-    },
+    { AuthLoading, MainStack, LandingStack },
     {
       initialRouteName: 'AuthLoading',
       headerMode: 'none'
@@ -50,4 +53,79 @@ const AppContainer = createAppContainer(
   )
 );
 
-export default codePush(AppContainer);
+class App extends PureComponent {
+  state = {
+    jwt: '',
+    socket: {},
+    appState: AppState.currentState
+  };
+
+  socket = {};
+
+  setJWT = jwt => {
+    this.setState({ jwt });
+  }
+
+  socketConnect = callback => {
+    this.setState({
+      socket: io('https://www.getbloom.info', {
+        query: {
+          token: this.state.jwt
+        },
+        forceNew: true,
+        reconnection: true,
+        reconnectionDelay: 500,
+        reconnectionAttempts: Infinity,
+        transports: ['websocket']
+      })
+    }, callback);
+  }
+
+  socketDisconnect = callback => {
+    this.state.socket.disconnect();
+    this.setState({ socket: {} }, callback);
+  }
+
+  handleAppStateChange = nextAppState => {
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      this.socketConnect();
+    } else if (this.state.appState === 'active' && nextAppState.match(/inactive|background/)) {
+      this.socketDisconnect();
+    }
+    this.setState({ appState: nextAppState });
+  }
+
+  componentWillMount() {
+    AsyncStorage
+      .getItem('jwt')
+      .then(jwt => {
+        if (jwt) this.setState({ jwt });
+      });
+  }
+
+  componentDidMount() {
+    AppState.addEventListener('change', this.handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
+    this.socketDisconnect();
+  }
+
+  render() {
+    return (
+      <AppContainer
+        ref={nav => { this.navigator = nav; }}
+        screenProps={{
+          socket: this.state.socket,
+          jwt: this.state.jwt,
+          setJWT: this.setJWT,
+          socketConnect: this.socketConnect,
+          socketDisconnect: this.socketDisconnect
+        }}
+      />
+    );
+  }
+}
+
+export default codePush(App);

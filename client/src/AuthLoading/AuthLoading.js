@@ -17,6 +17,7 @@ export default class AuthLoading extends Component {
     const { navigate } = this.props.navigation;
 
     if (jwt) {
+      this.props.screenProps.socketConnect();
       navigate('Topics', { jwt });
     } else {
       navigate('Landing');

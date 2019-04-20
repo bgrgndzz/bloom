@@ -227,6 +227,7 @@ export default class Landing extends Component {
             >
               <Login
                 navigation={this.props.navigation}
+                screenProps={this.props.screenProps}
                 animationPresets={this.animationPresets}
               />
             </Animated.View>
@@ -242,6 +243,7 @@ export default class Landing extends Component {
             >
               <Register
                 navigation={this.props.navigation}
+                screenProps={this.props.screenProps}
                 animationPresets={this.animationPresets}
               />
             </Animated.View>

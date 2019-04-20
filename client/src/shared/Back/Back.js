@@ -1,8 +1,7 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  StyleSheet, 
-  TouchableOpacity, 
-  Image
+  StyleSheet,
+  TouchableOpacity
 } from 'react-native';
 
 import FontAwesome from '../FontAwesome/FontAwesome';
@@ -12,22 +11,20 @@ export default class Back extends Component {
     disabled: false
   }
 
-  onPress = () => {
-    this.setState({disabled: true}, this.props.onPress);
-  }
+  onPress = () => this.setState({ disabled: true }, this.props.onPress);
 
   render() {
     return (
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={this.onPress}
         disabled={this.state.disabled}
       >
-        <FontAwesome 
+        <FontAwesome
           style={styles.back}
           icon="chevronLeft"
         />
       </TouchableOpacity>
-    )
+    );
   }
 }
 

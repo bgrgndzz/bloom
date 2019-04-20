@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,34 +7,28 @@ import {
   Alert
 } from 'react-native';
 
-import {CachedImage} from 'react-native-cached-image';
+import { CachedImage } from 'react-native-cached-image';
 import moment from 'moment';
-import jwt_decode from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
+
+import defaultprofile from '../../../images/defaultprofile.png';
 
 import FontAwesome from '../../../shared/FontAwesome/FontAwesome';
 import api from '../../../shared/api';
 
-const translateDate = (date) => {
-  date = date.replace('a few seconds ago', 'şimdi');
-  date = date.replace('seconds ago', ' sn');
-
-  date = date.replace('a minute ago', '1 dk');
-  date = date.replace('minutes ago', 'dk');
-
-  date = date.replace('an hour ago', '1 sa');
-  date = date.replace('hours ago', 'sa');
-
-  date = date.replace('a day ago', '1 gün');
-  date = date.replace('days ago', 'gün');
-
-  date = date.replace('a month ago', '1 ay');
-  date = date.replace('months ago', 'ay');
-
-  date = date.replace('a year ago', '1 yıl');
-  date = date.replace('years ago', 'yıl');
-
-  return date;
-}
+const translateDate = date => date
+  .replace('a few seconds ago', 'şimdi')
+  .replace('seconds ago', ' sn')
+  .replace('a minute ago', '1 dk')
+  .replace('minutes ago', 'dk')
+  .replace('an hour ago', '1 sa')
+  .replace('hours ago', 'sa')
+  .replace('a day ago', '1 gün')
+  .replace('days ago', 'gün')
+  .replace('a month ago', '1 ay')
+  .replace('months ago', 'ay')
+  .replace('a year ago', '1 yıl')
+  .replace('years ago', 'yıl');
 
 export default class Post extends Component {
   state = {
@@ -45,49 +39,21 @@ export default class Post extends Component {
 
   transformPost = post => {
     const mentionRegex = /\[mention: \((.*?)\)\((.*?)\)\]/i;
+    const mentionRegexGlobal = /\[mention: \((.*?)\)\((.*?)\)\]/gi;
     const mentionRegexUngrouped = /\[mention: \(.*?\)\(.*?\)\]/gi;
-    const mentions = post.match(new RegExp(mentionRegex, 'g'));
+    const mentions = post.match(mentionRegexGlobal);
 
     if (mentions) {
       post = post.split(mentionRegexUngrouped).map((splitText, index, array) => {
-        let id, name;
+        let id;
+        let name;
 
         if (index !== array.length - 1) {
           const mentionArgs = mentions[index].match(mentionRegex);
-          id = mentionArgs[1];
-          name = mentionArgs[2];
+          [, id, name] = mentionArgs;
         }
 
         return [
-        (
-          <Text
-            style={styles.normal}
-            key="normal"
-          >
-            {splitText}
-          </Text>
-        ),
-        index === array.length - 1 ? null : (
-          <Text
-            style={styles.highlighted}
-            key="higlighted"
-            onPress={() => this.props.navigation.push('Profile', {
-              user: id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : id,
-              jwt: this.props.navigation.getParam('jwt', '')
-            })}
-          >
-            @{name}
-          </Text>
-        )
-      ]});
-      /*mentions.forEach(mention => {
-        const mentionArgs = mentionRegex.exec(mention);
-        if (!mentionArgs) return;
-
-        const id = mentionArgs[1];
-        const name = mentionArgs[2];
-
-        post = post.split(mention).map((splitText, index, array) => [
           (
             <Text
               style={styles.normal}
@@ -101,27 +67,27 @@ export default class Post extends Component {
               style={styles.highlighted}
               key="higlighted"
               onPress={() => this.props.navigation.push('Profile', {
-                user: id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : id,
-                jwt: this.props.navigation.getParam('jwt', '')
+                user: id === jwtDecode(this.props.screenProps.jwt).user ? null : id,
+                jwt: this.props.screenProps.jwt
               })}
             >
               @{name}
             </Text>
           )
-        ]);
-      });*/
+        ];
+      });
     }
 
     return post;
   }
 
   like = () => {
-    this.setState({disabled: true}, () => {
+    this.setState({ disabled: true }, () => {
       api(
         {
           path: `post/${this.state.liked ? 'unlike' : 'like'}/${this.props._id}`,
           method: 'POST',
-          jwt: this.props.navigation.getParam('jwt', ''),
+          jwt: this.props.screenProps.jwt,
         },
         (err, res) => {
           if (err && !res) {
@@ -129,7 +95,7 @@ export default class Post extends Component {
             return Alert.alert(err);
           }
 
-          this.setState({
+          return this.setState({
             liked: res.liked,
             likes: res.likes,
             disabled: false
@@ -140,12 +106,12 @@ export default class Post extends Component {
   }
 
   report = () => {
-    this.setState({disabled: true}, () => {
+    this.setState({ disabled: true }, () => {
       api(
         {
-          path: 'post/report/' + this.props._id,
+          path: `post/report/${this.props._id}`,
           method: 'POST',
-          jwt: this.props.navigation.getParam('jwt', ''),
+          jwt: this.props.screenProps.jwt,
         },
         (err, res) => {
           if (err && !res) {
@@ -154,9 +120,7 @@ export default class Post extends Component {
           }
 
           Alert.alert('Şikayetiniz alındı');
-          this.setState({
-            disabled: false
-          });
+          return this.setState({ disabled: false });
         }
       );
     });
@@ -169,40 +133,42 @@ export default class Post extends Component {
           <View style={styles.top}>
             {
               this.props.anonymous ?
-              (
-                <TouchableOpacity
-                  style={styles.authorContainer}
-                  onPress={() => {}}
-                >
-                  <CachedImage
-                    style={styles.profilepicture}
-                    source={require('../../../images/defaultprofile.png')}
-                  />
-                  <Text style={styles.author}>Anonim</Text>
-                </TouchableOpacity>
-              ) :
-              (
-                <TouchableOpacity
-                  style={styles.authorContainer}
-                  onPress={
-                    () => {
-                      this.props.navigation.push('Profile', {
-                        user: this.props.author._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : this.props.author._id,
-                        jwt: this.props.navigation.getParam('jwt', '')
-                      })
+                (
+                  <TouchableOpacity
+                    style={styles.authorContainer}
+                    onPress={() => {}}
+                  >
+                    <CachedImage
+                      style={styles.profilepicture}
+                      source={defaultprofile}
+                    />
+                    <Text style={styles.author}>Anonim</Text>
+                  </TouchableOpacity>
+                ) :
+                (
+                  <TouchableOpacity
+                    style={styles.authorContainer}
+                    onPress={
+                      () => {
+                        this.props.navigation.push('Profile', {
+                          user: this.props.author._id === jwtDecode(this.props.screenProps.jwt).user ? null : this.props.author._id,
+                          jwt: this.props.screenProps.jwt
+                        });
+                      }
                     }
-                  }
-                >
-                  <CachedImage
-                    style={styles.profilepicture}
-                    source={this.props.author.profilepicture ?
-                      {uri: 'https://www.getbloom.info/uploads/profilepictures/' + this.props.author.profilepicture} :
-                      require('../../../images/defaultprofile.png')
-                    }
-                  />
-                  <Text style={styles.author}>{this.props.author.firstName} {this.props.author.lastName}</Text>
-                </TouchableOpacity>
-              )
+                  >
+                    <CachedImage
+                      style={styles.profilepicture}
+                      source={this.props.author.profilepicture ?
+                        { uri: `https://www.getbloom.info/uploads/profilepictures/${this.props.author.profilepicture}` } :
+                        defaultprofile
+                      }
+                    />
+                    <Text style={styles.author}>
+                      {this.props.author.firstName} {this.props.author.lastName}
+                    </Text>
+                  </TouchableOpacity>
+                )
             }
             <View style={styles.dateContainer}>
               <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
@@ -213,7 +179,10 @@ export default class Post extends Component {
           {this.props.include.includes('topic') && (
             <TouchableOpacity
               style={styles.topicContainer}
-              onPress={() => this.props.navigation.push('Topic', {topic: this.props.topic, jwt: this.props.navigation.getParam('jwt', '')})}
+              onPress={() => this.props.navigation.push('Topic', {
+                topic: this.props.topic,
+                jwt: this.props.screenProps.jwt
+              })}
             >
               <Text style={styles.topic}>{this.props.topic}</Text>
             </TouchableOpacity>
@@ -254,7 +223,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 0},
+    shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 1

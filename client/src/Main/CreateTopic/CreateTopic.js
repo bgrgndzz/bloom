@@ -32,13 +32,14 @@ export default class CreateTopic extends Component {
   onChangeTopic = topic => this.setState({ topic })
 
   onChangeText = text => {
-    const mentionRegex = /\[mention: \((.*?)\)\((.*?)\)\]/gi;
+    const mentionRegex = /\[mention: \((.*?)\)\((.*?)\)\]/i;
+    const mentionRegexGlobal = /\[mention: \((.*?)\)\((.*?)\)\]/gi;
     const mentions = text.match(/@([^\s]+)/gi);
-    const originalMentions = this.state.text.match(mentionRegex);
+    const originalMentions = this.state.text.match(mentionRegexGlobal);
 
     if (mentions && originalMentions) {
       originalMentions.forEach(mention => {
-        const name = mentionRegex.exec(mention)[2];
+        const name = mention.match(mentionRegex)[2];
         text = text.replace(new RegExp(`@${name}`, 'gi'), mention);
       });
     }
@@ -66,7 +67,7 @@ export default class CreateTopic extends Component {
       {
         path: 'users/list',
         method: 'GET',
-        jwt: this.props.navigation.getParam('jwt', '')
+        jwt: this.props.screenProps.jwt
       },
       (err, res) => {
         if (err && !res) {
@@ -76,13 +77,13 @@ export default class CreateTopic extends Component {
 
         this.setState({ users: res.users });
       }
-    )
+    );
   }
 
   onPress = () => {
     const { topic, text, anonymous } = this.state;
     const { navigation, logout } = this.props;
-    const jwt = navigation.getParam('jwt', '');
+    const { jwt } = this.props.screenProps;
     api(
       {
         path: `posts/create/${topic}`,
