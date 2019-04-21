@@ -7,10 +7,8 @@ const conversationController = require('../controllers/messages/conversation');
 const sendController = require('../controllers/messages/send');
 
 const isLoggedIn = require('../middleware/isLoggedIn');
-const log = require('../middleware/log');
 
 router.use(isLoggedIn);
-router.use(log);
 
 router.get('/count', countController);
 router.get('/conversations/:page', conversationsController);
