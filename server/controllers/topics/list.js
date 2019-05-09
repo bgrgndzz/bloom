@@ -18,7 +18,12 @@ module.exports = (req, res, next) => {
     {
       $addFields: {
         posts: { $size: '$postLinks' },
-        lifetime: moment().diff(moment({ $arrayElemAt: ['$postLinks.date', 0] }), 'minutes') / (60 * 24)
+        lifetime: {
+          $divide: [
+            { $subtract: [new Date(), '$date'] },
+            1000 * 60 * 60 * 24
+          ]
+        }
       }
     },
     {
@@ -31,7 +36,17 @@ module.exports = (req, res, next) => {
                 $filter: {
                   input: '$postLinks',
                   as: 'post',
-                  cond: { $lte: [moment().diff(moment('$$post.date'), 'minutes') / (60 * 24), 1] }
+                  cond: {
+                    $lte: [
+                      {
+                        $divide: [
+                          { $subtract: [new Date(), '$$post.date'] },
+                          1000 * 60 * 60 * 24
+                        ]
+                      },
+                      1
+                    ]
+                  }
                 }
               }
             },
@@ -50,7 +65,9 @@ module.exports = (req, res, next) => {
       $project: {
         _id: 1,
         topic: 1,
-        rank: 1
+        posts: 1,
+        rank: 1,
+        lastDate: 1
       }
     },
     { $sort: { rank: -1, lastDate: -1 } },
@@ -60,9 +77,15 @@ module.exports = (req, res, next) => {
 
   const newAggregation = [
     {
+      $addFields: {
+        posts: { $size: '$posts' }
+      }
+    },
+    {
       $project: {
         _id: 1,
         topic: 1,
+        posts: 1,
         lastDate: 1
       }
     },
