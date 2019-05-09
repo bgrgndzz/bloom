@@ -34,7 +34,7 @@ const PostSchema = new Schema({
   }
 });
 
-mongoosePaginate.paginate.options = { 
+mongoosePaginate.paginate.options = {
   lean: true,
   limit: 10,
   populate: 'author'

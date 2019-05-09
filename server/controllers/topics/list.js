@@ -4,42 +4,84 @@ const mongoose = require('mongoose');
 const Topic = require('../../models/Topic/Topic');
 
 module.exports = (req, res, next) => {
-  const page = parseInt(req.params.page);
+  const page = parseInt(req.params.page, 10);
+
+  const popularAggregation = [
+    {
+      $lookup: {
+        from: 'posts',
+        localField: 'posts',
+        foreignField: '_id',
+        as: 'postLinks'
+      }
+    },
+    {
+      $addFields: {
+        posts: { $size: '$postLinks' },
+        lifetime: moment().diff(moment({ $arrayElemAt: ['$postLinks.date', 0] }), 'minutes') / (60 * 24)
+      }
+    },
+    {
+      $addFields: {
+        rank: {
+          $cond: [
+            { $gt: ['$lifetime', 1] },
+            {
+              $size: {
+                $filter: {
+                  input: '$postLinks',
+                  as: 'post',
+                  cond: { $lte: [moment().diff(moment('$$post.date'), 'minutes') / (60 * 24), 1] }
+                }
+              }
+            },
+            {
+              $cond: [
+                { $lt: ['$lifetime', 0.25] },
+                { $divide: ['$posts', 0.25] },
+                { $divide: ['$posts', '$lifetime'] }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        topic: 1,
+        rank: 1
+      }
+    },
+    { $sort: { rank: -1, lastDate: -1 } },
+    { $skip: (page - 1) * 10 },
+    { $limit: 10 }
+  ];
+
+  const newAggregation = [
+    {
+      $project: {
+        _id: 1,
+        topic: 1,
+        lastDate: 1
+      }
+    },
+    { $sort: { lastDate: -1 } },
+    { $skip: (page - 1) * 10 },
+    { $limit: 10 }
+  ];
 
   Topic
-    .find()
-    .populate('posts')
-    .sort('-lastDate')
+    .aggregate(
+      (
+        (req.params && req.params.sort === 'popular') ||
+        (!req.params || !req.params.sort)
+      ) ? popularAggregation : newAggregation
+    )
     .exec((err, topics) => {
-      if ((req.params && req.params.sort === 'popular') || (!req.params || !req.params.sort)) {
-        const rank = topic => {
-          const topicLifetime = moment().diff(moment(topic.posts[0].date), 'minutes') / (60 * 24);
-          let postCount, divisor;
-          if (topicLifetime > 1) {
-            postCount = topic.posts.filter(post => moment().diff(moment(post.date), 'minutes') / (60 * 24) <= 1).length;
-            divisor = 1;
-          } else if (topicLifetime < 0.25) {
-            postCount = topic.posts.length;
-            divisor = 0.25;
-          } else {
-            postCount = topic.posts.length;
-            divisor = topicLifetime;
-          }
-
-          return postCount / divisor;
-        };
-        topics = topics.sort((prev, cur) => rank(cur) - rank(prev));
-      }
-
-      topics = topics.map(topic => ({
-        id: topic.id,
-        ...topic._doc,
-        posts: topic.posts.length
-      }));
-
       res.status(200).send({
         authenticated: true,
-        topics: topics.slice((page - 1) * 10, page * 10)
+        topics
       });
     });
 };
