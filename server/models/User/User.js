@@ -24,15 +24,15 @@ const UserSchema = new Schema({
   },
   user: {
     firstName: {
-      type: String, 
+      type: String,
       required: true
     },
     lastName: {
-      type: String, 
+      type: String,
       required: true
     },
     school: {
-      type: String, 
+      type: String,
       required: true
     },
     about: String,
@@ -68,6 +68,10 @@ const UserSchema = new Schema({
   passwordReset: {
     hash: String
   },
+  notificationTokens: [{
+    type: String,
+    default: []
+  }],
   preSave: {
     type: Boolean,
     default: true
@@ -77,7 +81,7 @@ const UserSchema = new Schema({
 UserSchema.pre('save', hashPassword);
 UserSchema.methods.verifyPassword = verifyPassword;
 
-mongoosePaginate.paginate.options = { 
+mongoosePaginate.paginate.options = {
   lean: true,
   limit: 20,
   select: 'user'

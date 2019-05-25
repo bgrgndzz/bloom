@@ -1,5 +1,10 @@
 import React, { PureComponent } from 'react';
-import { AsyncStorage, AppState } from 'react-native';
+import {
+  AsyncStorage,
+  AppState,
+  PushNotificationIOS
+} from 'react-native';
+
 import {
   createSwitchNavigator,
   createStackNavigator,
@@ -56,6 +61,7 @@ const AppContainer = createAppContainer(
 class App extends PureComponent {
   state = {
     jwt: '',
+    notificationToken: '',
     socket: {},
     appState: AppState.currentState
   };
@@ -100,6 +106,26 @@ class App extends PureComponent {
       .getItem('jwt')
       .then(jwt => {
         if (jwt) this.setState({ jwt });
+
+        PushNotificationIOS.addEventListener('register', token => {
+          this.setState({ notificationToken: token });
+        });
+
+        PushNotificationIOS.addEventListener('registrationError', registrationError => {
+          console.log(registrationError, '--');
+        });
+
+        PushNotificationIOS.addEventListener('notification', notification => {
+          if (!notification) return;
+          const data = notification.getData();
+        });
+
+        PushNotificationIOS.getInitialNotification().then(notification => {
+          if (!notification) return;
+          const data = notification.getData();
+        });
+
+        PushNotificationIOS.requestPermissions();
       });
   }
 
@@ -119,6 +145,7 @@ class App extends PureComponent {
         screenProps={{
           socket: this.state.socket,
           jwt: this.state.jwt,
+          notificationToken: this.state.notificationToken,
           setJWT: this.setJWT,
           socketConnect: this.socketConnect,
           socketDisconnect: this.socketDisconnect

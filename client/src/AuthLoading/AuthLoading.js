@@ -6,6 +6,8 @@ import {
   View,
 } from 'react-native';
 
+import api from '../shared/api';
+
 export default class AuthLoading extends Component {
   constructor(props) {
     super(props);
@@ -18,9 +20,25 @@ export default class AuthLoading extends Component {
 
     if (jwt) {
       this.props.screenProps.socketConnect();
-      navigate('Topics', { jwt });
+
+      api(
+        {
+          path: 'notificationToken/register',
+          method: 'POST',
+          body: { notificationToken: this.props.screenProps.notificationToken },
+          jwt: this.props.screenProps.jwt
+        },
+        (err, res) => navigate('Topics', { jwt })
+      );
     } else {
-      navigate('Landing');
+      api(
+        {
+          path: 'notificationToken/unregister',
+          method: 'POST',
+          body: { notificationToken: this.props.screenProps.notificationToken }
+        },
+        (err, res) => navigate('Landing')
+      );
     }
   };
 

@@ -12,6 +12,7 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const path = require('path');
+const pushNotifications = require('node-pushnotifications');
 const redis = require('redis');
 const socketio = require('socket.io');
 
@@ -28,6 +29,7 @@ const usersRoute = require('./routes/users');
 const searchRoute = require('./routes/search');
 const notificationsRoute = require('./routes/notifications');
 const messagesRoute = require('./routes/messages');
+const notificationTokenRoute = require('./routes/notificationToken');
 const webRoute = require('./routes/web');
 const adminRoute = require('./routes/admin');
 
@@ -95,6 +97,7 @@ app.use('/users', usersRoute);
 app.use('/search', searchRoute);
 app.use('/notifications', notificationsRoute);
 app.use('/messages', messagesRoute);
+app.use('/notificationToken', notificationTokenRoute);
 app.use('/web', webRoute);
 app.use('/admin', adminRoute);
 
