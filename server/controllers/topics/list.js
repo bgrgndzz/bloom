@@ -1,5 +1,3 @@
-const moment = require('moment');
-
 const mongoose = require('mongoose');
 const Topic = require('../../models/Topic/Topic');
 
@@ -94,13 +92,38 @@ module.exports = (req, res, next) => {
     { $limit: 10 }
   ];
 
+  const randomAggregation = [
+    { $sample: { size: 10 } },
+    {
+      $addFields: {
+        posts: { $size: '$posts' }
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        topic: 1,
+        posts: 1
+      }
+    }
+  ];
+
+  let chosen;
+
+  switch (req.params.sort) {
+    case 'popular':
+      chosen = popularAggregation;
+      break;
+    case 'new':
+      chosen = newAggregation;
+      break;
+    default:
+      chosen = randomAggregation;
+      break;
+  }
+
   Topic
-    .aggregate(
-      (
-        (req.params && req.params.sort === 'popular') ||
-        (!req.params || !req.params.sort)
-      ) ? popularAggregation : newAggregation
-    )
+    .aggregate(chosen)
     .exec((err, topics) => {
       res.status(200).send({
         authenticated: true,

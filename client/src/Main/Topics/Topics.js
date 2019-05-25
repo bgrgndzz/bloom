@@ -29,7 +29,8 @@ const ListHeader = props => (
     <DoubleSelect
       options={props.optionType === 'sort' ? {
         popular: 'Popüler',
-        new: 'Yeni'
+        new: 'Yeni',
+        random: 'Rastgele'
       } : {
         topics: 'Konular',
         users: 'Kullanıcılar'

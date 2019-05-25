@@ -10,10 +10,12 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    width: '105%',
+    marginLeft: '-2.5%'
   },
   inactive: {
-    width: '45%',
+    flex: 1,
     backgroundColor: 'white',
     padding: 10,
     marginBottom: 15,
@@ -23,9 +25,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 1,
+    margin: '2.5%'
   },
   active: {
-    width: '45%',
+    flex: 1,
     backgroundColor: '#16425B',
     padding: 10,
     marginBottom: 15,
@@ -35,6 +38,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 1,
+    margin: '2.5%'
   },
   inactiveText: {
     color: 'rgba(0, 0, 0, 0.75)',
