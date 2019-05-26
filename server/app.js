@@ -15,6 +15,7 @@ const path = require('path');
 const pushNotifications = require('node-pushnotifications');
 const redis = require('redis');
 const socketio = require('socket.io');
+const socketRedis = require('socket.io-redis');
 
 // dotenv config
 dotenv.config({ path: path.join(__dirname, '.env') });
@@ -102,6 +103,13 @@ app.use('/web', webRoute);
 app.use('/admin', adminRoute);
 
 // socket.io setup
+io.adapter(socketRedis({
+  host: 'localhost',
+  port: 6379,
+  client: redisClient,
+  ttl: 86400
+}));
+
 io.on('connection', socket => {
   const { token } = socket.handshake.query;
 
