@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 const connectRedis = require('connect-redis');
 const cors = require('cors');
 const express = require('express');
-const expressBrute = require('express-brute');
+const ExpressBrute = require('rate-limiter-flexible/lib/ExpressBruteFlexible')
 const expressSession = require('express-session');
 const helmet = require('helmet');
 const http = require('http');
@@ -82,14 +82,23 @@ app.locals.users = [];
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // security
-// const store = new expressBrute.MemoryStore();
-// const bruteforce = new expressBrute(store);
-// app.use(bruteforce.prevent);
+const bruteRedisClient = redis.createClient({ enable_offline_queue: false });
+const opts = {
+  freeRetries: 10,
+  minWait: 1000,
+  maxWait: 10000,
+  lifetime: 30,
+  storeClient: bruteRedisClient,
+};
+const bruteforce = new ExpressBrute(
+  ExpressBrute.LIMITER_TYPES.REDIS,
+  opts
+);
 app.use(cors());
 app.use(helmet());
 
 // routing
-app.use('/auth', authRoute);
+app.use('/auth', bruteforce.prevent, authRoute);
 app.use('/posts', postsRoute);
 app.use('/post', postRoute);
 app.use('/topics', topicsRoute);
@@ -100,7 +109,7 @@ app.use('/notifications', notificationsRoute);
 app.use('/messages', messagesRoute);
 app.use('/notificationToken', notificationTokenRoute);
 app.use('/web', webRoute);
-app.use('/admin', adminRoute);
+app.use('/admin', bruteforce.prevent, adminRoute);
 
 // socket.io setup
 io.adapter(socketRedis({
