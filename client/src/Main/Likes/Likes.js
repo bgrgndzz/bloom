@@ -4,7 +4,8 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  Alert
+  Alert,
+  Text
 } from 'react-native';
 
 import jwtDecode from 'jwt-decode';
@@ -77,6 +78,9 @@ export default class Post extends Component {
               />
             </TouchableOpacity>
           )}
+          ListHeaderComponent={(
+            <Text style={styles.likesHeading}>Beğenenler</Text>
+          )}
         />
       </View>
     );
@@ -94,5 +98,12 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingBottom: 15,
     paddingHorizontal: 15
+  },
+  likesHeading: {
+    fontSize: 25,
+    fontWeight: '900',
+    color: '#16425B',
+    marginBottom: 15,
+    textAlign: 'center'
   },
 });
