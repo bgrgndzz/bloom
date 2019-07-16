@@ -199,7 +199,14 @@ export default class Post extends Component {
               style={this.state.liked ? styles.likeIconActive : styles.likeIconInactive}
               icon="heart"
             />
-            <Text style={styles.likes}>{this.state.likes.length}</Text>
+            <TouchableOpacity
+              onPress={() => this.props.navigation.push('Likes', {
+                post: this.props._id,
+                jwt: this.props.screenProps.jwt
+              })}
+            >
+              <Text style={styles.likes}>{this.state.likes.length} beğeni</Text>
+            </TouchableOpacity>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.reportContainer}
