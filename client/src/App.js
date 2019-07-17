@@ -28,6 +28,7 @@ import EditProfile from './Main/EditProfile/EditProfile';
 import Messages from './Main/Messages/Messages';
 import Conversation from './Main/Conversation/Conversation';
 import Likes from './Main/Likes/Likes';
+import Followers from './Main/Followers/Followers';
 
 const LandingStack = createStackNavigator({ Landing }, { headerMode: 'none' });
 const MainStack = createStackNavigator(
@@ -42,7 +43,8 @@ const MainStack = createStackNavigator(
     Notifications: Page(Notifications),
     Messages: Page(Messages),
     Conversation: Page(Conversation),
-    Likes: Page(Likes)
+    Likes: Page(Likes),
+    Followers: Page(Followers)
   },
   {
     initialRouteName: 'Topics',

@@ -4,25 +4,28 @@ import {
   View,
   FlatList,
   TouchableOpacity,
-  Alert,
-  Text
+  Alert
 } from 'react-native';
 
 import jwtDecode from 'jwt-decode';
 
 import api from '../../shared/api';
 import User from '../shared/User/User';
+import DoubleSelect from '../shared/DoubleSelect/DoubleSelect';
 
-export default class Likes extends Component {
+export default class Followers extends Component {
   state = {
-    likes: [],
+    followers: [],
+    following: [],
+    mutual: [],
+    option: 'followers',
     refreshing: false
   }
 
-  listLikes = () => {
+  listFollowers = () => {
     api(
       {
-        path: `post/likes/${this.props.navigation.getParam('post', '')}`,
+        path: `user/followers/${this.props.navigation.getParam('user', '')}`,
         method: 'GET',
         jwt: this.props.screenProps.jwt,
       },
@@ -33,7 +36,9 @@ export default class Likes extends Component {
         }
 
         return this.setState({
-          likes: res.likes,
+          followers: res.followers,
+          following: res.following,
+          mutual: res.mutual,
           refreshing: false
         });
       }
@@ -44,11 +49,15 @@ export default class Likes extends Component {
     this.setState(
       {
         refreshing: true,
-        likes: []
+        followers: [],
+        following: [],
+        mutual: []
       },
-      this.listLikes
+      this.listFollowers
     );
   }
+
+  onChangeOption = option => this.setState({ option });
 
   componentDidMount = this.onRefresh;
 
@@ -56,12 +65,12 @@ export default class Likes extends Component {
     return (
       <View style={styles.container}>
         <FlatList
-          style={styles.likes}
-          contentContainerStyle={styles.likesContent}
+          style={styles.followers}
+          contentContainerStyle={styles.followersContent}
           showsVerticalScrollIndicator={false}
           refreshing={this.state.refreshing}
           onRefresh={this.onRefresh}
-          data={this.state.likes}
+          data={this.state[this.state.option]}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -79,7 +88,15 @@ export default class Likes extends Component {
             </TouchableOpacity>
           )}
           ListHeaderComponent={(
-            <Text style={styles.likesHeading}>Beğenenler</Text>
+            <DoubleSelect
+              options={{
+                followers: 'Takipçi',
+                following: 'Takip',
+                mutual: 'Ortak'
+              }}
+              option={this.state.option}
+              onChangeOption={this.onChangeOption}
+            />
           )}
         />
       </View>
@@ -91,19 +108,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  likes: {
+  followers: {
     flex: 1
   },
-  likesContent: {
+  followersContent: {
     marginTop: 15,
     paddingBottom: 15,
     paddingHorizontal: 15
-  },
-  likesHeading: {
-    fontSize: 25,
-    fontWeight: '900',
-    color: '#16425B',
-    marginBottom: 15,
-    textAlign: 'center'
-  },
+  }
 });

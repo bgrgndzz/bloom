@@ -51,10 +51,18 @@ const UserInformation = props => (
             <Text style={styles.statNumber}>{props.user.postCount}</Text>
             <Text style={styles.statName}>Paylaşım</Text>
           </View>
-          <View style={styles.stat}>
+          <TouchableOpacity
+            style={styles.stat}
+            onPress={() => {
+              props.navigationPush('Followers', {
+                user: props.userId || jwtDecode(props.jwt).user,
+                jwt: props.jwt
+              });
+            }}
+          >
             <Text style={styles.statNumber}>{props.user.followersCount}</Text>
             <Text style={styles.statName}>Takipçi</Text>
-          </View>
+          </TouchableOpacity>
           <View style={styles.stat}>
             <Text style={styles.statNumber}>{props.user.likeCount}</Text>
             <Text style={styles.statName}>Beğeni</Text>
@@ -221,6 +229,8 @@ export default class Profile extends Component {
               user={this.state.user}
               followDisabled={this.state.followDisabled}
               userId={this.props.navigation.getParam('user', '')}
+              jwt={this.props.screenProps.jwt}
+              navigationPush={this.props.navigation.push}
               openModal={this.openModal}
               follow={this.follow}
             />

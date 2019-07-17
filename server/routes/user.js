@@ -8,12 +8,14 @@ router.use(log);
 
 const selfController = require('../controllers/user/self');
 const userController = require('../controllers/user/user');
+const followersController = require('../controllers/user/followers');
 const editController = require('../controllers/user/edit');
 const followController = require('../controllers/user/follow');
 const unfollowController = require('../controllers/user/unfollow');
 const blockController = require('../controllers/user/block');
 
 router.get('/', selfController);
+router.get('/followers/:user', followersController);
 router.get('/:page', selfController);
 router.get('/:user/:page', userController);
 router.post('/edit', editController);
