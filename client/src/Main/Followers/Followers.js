@@ -90,9 +90,9 @@ export default class Followers extends Component {
           ListHeaderComponent={(
             <DoubleSelect
               options={{
-                followers: 'Takipçi',
-                following: 'Takip',
-                mutual: 'Ortak'
+                followers: `${this.state.followers.length} Takipçi`,
+                following: `${this.state.following.length} Takip`,
+                mutual: `${this.state.mutual.length} Ortak`
               }}
               option={this.state.option}
               onChangeOption={this.onChangeOption}
