@@ -25,8 +25,7 @@ module.exports = (req, res, next) => {
               _id: user.id,
               ...user._doc.user,
               postCount: posts.length,
-              likeCount: posts.reduce((reducer, post) => reducer += post.likeCount, 0),
-              followersCount: user.user.followersCount
+              likeCount: posts.reduce((reducer, post) => reducer += post.likeCount, 0)
             },
             posts: posts
               .slice((page - 1) * 10, page * 10)

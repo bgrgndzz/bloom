@@ -42,19 +42,11 @@ const UserSchema = new Schema({
       ref: 'User',
       default: []
     }],
-    followingCount: {
-      type: Number,
-      default: 0
-    },
     followers: [{
       type: Schema.Types.ObjectId,
       ref: 'User',
       default: []
     }],
-    followersCount: {
-      type: Number,
-      default: 0
-    },
     likeCount: {
       type: Number,
       default: 0

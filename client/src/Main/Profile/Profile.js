@@ -69,7 +69,7 @@ const UserInformation = props => (
               });
             }}
           >
-            <Text style={styles.statNumber}>{props.user.followersCount}</Text>
+            <Text style={styles.statNumber}>{props.user.followers.length}</Text>
             <Text style={styles.statName}>Takipçi</Text>
           </TouchableOpacity>
           <View style={styles.stat}>
@@ -149,7 +149,7 @@ export default class Profile extends Component {
             user: {
               ...this.state.user,
               followed: res.followed,
-              followersCount: res.followersCount
+              followers: res.followers
             },
             followDisabled: false
           });

@@ -44,7 +44,6 @@ module.exports = (req, res, next) => {
                   ...user._doc.user,
                   postCount: posts.length,
                   likeCount: posts.reduce((reducer, post) => reducer += post.likeCount, 0),
-                  followersCount: user.user.followersCount,
                   followed: user.user.followers.indexOf(req.user) >= 0
                 },
                 posts: posts
