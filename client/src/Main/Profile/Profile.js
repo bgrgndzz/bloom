@@ -42,7 +42,16 @@ const UserInformation = props => (
           }
         />
         <Text style={styles.name}>{props.user.firstName} {props.user.lastName}</Text>
-        <Text style={styles.school}>{props.user.school}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            props.navigationPush('School', {
+              school: props.user.school,
+              jwt: props.jwt
+            });
+          }}
+        >
+          <Text style={styles.school}>{props.user.school}</Text>
+        </TouchableOpacity>
         {props.user.about && (
           <Text style={styles.about}>{props.user.about}</Text>
         )}

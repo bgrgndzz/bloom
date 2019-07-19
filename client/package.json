@@ -19,7 +19,7 @@
     "prettier": "^1.16.4",
     "react": "16.5.0",
     "react-native": "0.57.1",
-    "react-native-cached-image": "github:fungilation/react-native-cached-image",
+    "react-native-cached-image": "github:fungilation/react-native-cached-image#32a8a9a",
     "react-native-code-push": "^5.4.2",
     "react-native-gesture-handler": "^1.0.9",
     "react-native-image-crop-picker": "^0.21.3",
