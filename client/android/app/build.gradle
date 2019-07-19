@@ -149,6 +149,7 @@ android {
 }
 
 dependencies {
+    compile project(':@react-native-community_netinfo')
     compile project(':appcenter')
     compile project(':appcenter-crashes')
     compile project(':appcenter-push')

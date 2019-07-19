@@ -8,22 +8,127 @@ PODS:
     - AppCenter/Core
   - AppCenterReactNativeShared (1.10.0):
     - AppCenter/Core (= 1.11.0)
+  - boost-for-react-native (1.63.0)
+  - DoubleConversion (1.1.6)
+  - Folly (2016.10.31.00):
+    - boost-for-react-native
+    - DoubleConversion
+    - glog
+  - glog (0.3.5)
+  - React (0.57.1):
+    - React/Core (= 0.57.1)
+  - react-native-netinfo (2.0.10):
+    - React
+  - React/Core (0.57.1):
+    - yoga (= 0.57.1.React)
+  - React/CxxBridge (0.57.1):
+    - Folly (= 2016.10.31.00)
+    - React/Core
+    - React/cxxreact
+  - React/cxxreact (0.57.1):
+    - boost-for-react-native (= 1.63.0)
+    - Folly (= 2016.10.31.00)
+    - React/jschelpers
+    - React/jsinspector
+  - React/DevSupport (0.57.1):
+    - React/Core
+    - React/RCTWebSocket
+  - React/fishhook (0.57.1)
+  - React/jschelpers (0.57.1):
+    - Folly (= 2016.10.31.00)
+    - React/PrivateDatabase
+  - React/jsinspector (0.57.1)
+  - React/PrivateDatabase (0.57.1)
+  - React/RCTActionSheet (0.57.1):
+    - React/Core
+  - React/RCTAnimation (0.57.1):
+    - React/Core
+  - React/RCTBlob (0.57.1):
+    - React/Core
+  - React/RCTCameraRoll (0.57.1):
+    - React/Core
+    - React/RCTImage
+  - React/RCTGeolocation (0.57.1):
+    - React/Core
+  - React/RCTImage (0.57.1):
+    - React/Core
+    - React/RCTNetwork
+  - React/RCTLinkingIOS (0.57.1):
+    - React/Core
+  - React/RCTNetwork (0.57.1):
+    - React/Core
+  - React/RCTPushNotification (0.57.1):
+    - React/Core
+  - React/RCTSettings (0.57.1):
+    - React/Core
+  - React/RCTText (0.57.1):
+    - React/Core
+  - React/RCTVibration (0.57.1):
+    - React/Core
+  - React/RCTWebSocket (0.57.1):
+    - React/Core
+    - React/fishhook
+    - React/RCTBlob
+  - yoga (0.57.1.React)
 
 DEPENDENCIES:
   - AppCenter/Analytics (~> 1.11.0)
   - AppCenter/Crashes (~> 1.11.0)
   - AppCenter/Push (~> 1.11.0)
   - AppCenterReactNativeShared (~> 1.10.0)
+  - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
+  - glog (from `../node_modules/react-native/third-party-podspecs/GLog.podspec`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - React/Core (from `../node_modules/react-native`)
+  - React/CxxBridge (from `../node_modules/react-native`)
+  - React/DevSupport (from `../node_modules/react-native`)
+  - React/RCTActionSheet (from `../node_modules/react-native`)
+  - React/RCTAnimation (from `../node_modules/react-native`)
+  - React/RCTBlob (from `../node_modules/react-native`)
+  - React/RCTCameraRoll (from `../node_modules/react-native`)
+  - React/RCTGeolocation (from `../node_modules/react-native`)
+  - React/RCTImage (from `../node_modules/react-native`)
+  - React/RCTLinkingIOS (from `../node_modules/react-native`)
+  - React/RCTNetwork (from `../node_modules/react-native`)
+  - React/RCTPushNotification (from `../node_modules/react-native`)
+  - React/RCTSettings (from `../node_modules/react-native`)
+  - React/RCTText (from `../node_modules/react-native`)
+  - React/RCTVibration (from `../node_modules/react-native`)
+  - React/RCTWebSocket (from `../node_modules/react-native`)
+  - yoga (from `../node_modules/react-native/ReactCommon/yoga/yoga.podspec`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - AppCenter
     - AppCenterReactNativeShared
+    - boost-for-react-native
+
+EXTERNAL SOURCES:
+  DoubleConversion:
+    :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+  Folly:
+    :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
+  glog:
+    :podspec: "../node_modules/react-native/third-party-podspecs/GLog.podspec"
+  React:
+    :path: "../node_modules/react-native"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
+  yoga:
+    :path: "../node_modules/react-native/ReactCommon/yoga/yoga.podspec"
 
 SPEC CHECKSUMS:
   AppCenter: 3bccf8d733e337d0db574dd4cb0e33ab9637b7f2
   AppCenterReactNativeShared: a77b000c2ac6dc2e44472621d7d0770f196e5822
+  boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
+  DoubleConversion: bb338842f62ab1d708ceb63ec3d999f0f3d98ecd
+  Folly: c89ac2d5c6ab169cd7397ef27485c44f35f742c7
+  glog: e8acf0ebbf99759d3ff18c86c292a5898282dcde
+  React: b4e0982b0ed6a7de90e96cf6fe5cf036aeadd1ec
+  react-native-netinfo: c5a291927e79059bf35169097b2ff0db71418134
+  yoga: 5e2e4bcf11188977f799b64625dc5913c2aea8fd
 
-PODFILE CHECKSUM: 243930965c8f78b7487cec40526f505e811cbd43
+PODFILE CHECKSUM: 57ceace1490b60170086ace9a790bf57de3fe9d2
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.7.4
