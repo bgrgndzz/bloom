@@ -4,6 +4,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Alert
 } from 'react-native';
 
@@ -34,7 +35,8 @@ export default class Post extends Component {
   state = {
     liked: this.props.liked,
     likes: this.props.likes,
-    disabled: false
+    disabled: false,
+    innerDoubleTapDisabled: false
   }
 
   transformPost = post => {
@@ -126,100 +128,130 @@ export default class Post extends Component {
     });
   }
 
+  handleInnerDoubleTap = () => {
+    this.setState({ innerDoubleTapDisabled: true }, () => {
+      setInterval(() => {
+        this.setState({ innerDoubleTapDisabled: false });
+      }, 300);
+    });
+  }
+  /*
+  handleDoubleTap = () => {
+    const now = Date.now();
+    const DOUBLE_PRESS_DELAY = 300;
+    if (this.lastTap && (now - this.lastTap) < DOUBLE_PRESS_DELAY) {
+      this.like();
+    } else {
+      this.lastTap = now;
+    }
+  }
+  */
+
   render() {
     return (
-      <View style={styles.post}>
-        {this.props.include.includes('user') && (
-          <View style={styles.top}>
-            {
-              this.props.anonymous ?
-                (
-                  <TouchableOpacity
-                    style={styles.authorContainer}
-                    onPress={() => {}}
-                  >
-                    <CachedImage
-                      style={styles.profilepicture}
-                      source={defaultprofile}
-                    />
-                    <Text style={styles.author}>Anonim</Text>
-                  </TouchableOpacity>
-                ) :
-                (
-                  <TouchableOpacity
-                    style={styles.authorContainer}
-                    onPress={
-                      () => {
-                        this.props.navigation.push('Profile', {
-                          user: this.props.author._id === jwtDecode(this.props.screenProps.jwt).user ? null : this.props.author._id,
-                          jwt: this.props.screenProps.jwt
-                        });
-                      }
-                    }
-                  >
-                    <CachedImage
-                      style={styles.profilepicture}
-                      source={this.props.author.profilepicture ?
-                        { uri: `https://www.getbloom.info/uploads/profilepictures/${this.props.author.profilepicture}` } :
-                        defaultprofile
-                      }
-                    />
-                    <Text style={styles.author}>
-                      {this.props.author.firstName} {this.props.author.lastName}
-                    </Text>
-                  </TouchableOpacity>
-                )
-            }
-            <View style={styles.dateContainer}>
-              <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+      <TouchableOpacity
+        onPress={this.like}
+      >
+        <TouchableWithoutFeedback
+          onPress={this.handleInnerDoubleTap}
+          disabled={this.state.innerDoubleTapDisabled}
+        >
+          <View style={styles.post}>
+            {this.props.include.includes('user') && (
+              <View style={styles.top}>
+                {
+                  this.props.anonymous ?
+                    (
+                      <TouchableOpacity
+                        style={styles.authorContainer}
+                        onPress={() => {}}
+                      >
+                        <CachedImage
+                          style={styles.profilepicture}
+                          source={defaultprofile}
+                        />
+                        <Text style={styles.author}>Anonim</Text>
+                      </TouchableOpacity>
+                    ) :
+                    (
+                      <TouchableOpacity
+                        style={styles.authorContainer}
+                        onPress={
+                          () => {
+                            this.props.navigation.push('Profile', {
+                              user: this.props.author._id === jwtDecode(this.props.screenProps.jwt).user ? null : this.props.author._id,
+                              jwt: this.props.screenProps.jwt
+                            });
+                          }
+                        }
+                      >
+                        <CachedImage
+                          style={styles.profilepicture}
+                          source={this.props.author.profilepicture ?
+                            { uri: `https://www.getbloom.info/uploads/profilepictures/${this.props.author.profilepicture}` } :
+                            defaultprofile
+                          }
+                        />
+                        <Text style={styles.author}>
+                          {this.props.author.firstName} {this.props.author.lastName}
+                        </Text>
+                      </TouchableOpacity>
+                    )
+                }
+                <View style={styles.dateContainer}>
+                  <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                </View>
+              </View>
+            )}
+            <View style={styles.main}>
+              {this.props.include.includes('topic') && (
+                <TouchableOpacity
+                  style={styles.topicContainer}
+                  onPress={() => this.props.navigation.push('Topic', {
+                    topic: this.props.topic,
+                    jwt: this.props.screenProps.jwt
+                  })}
+                >
+                  <Text style={styles.topic}>{this.props.topic}</Text>
+                </TouchableOpacity>
+              )}
+              <Text style={styles.text}>{this.transformPost(this.props.text)}</Text>
+            </View>
+            <View style={styles.bottom}>
+              <View style={styles.likesContainer}>
+                <TouchableOpacity
+                  style={styles.likeButton}
+                  onPress={this.like}
+                  disabled={this.state.disabled}
+                >
+                  <FontAwesome
+                    style={this.state.liked ? styles.likeIconActive : styles.likeIconInactive}
+                    icon="heart"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => this.props.navigation.push('Likes', {
+                    post: this.props._id,
+                    jwt: this.props.screenProps.jwt
+                  })}
+                >
+                  <Text style={styles.likes}>{this.state.likes.length} beğeni</Text>
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity
+                style={styles.reportContainer}
+                onPress={this.report}
+                disabled={this.state.disabled}
+              >
+                <FontAwesome
+                  style={styles.reportIcon}
+                  icon="exclamation"
+                />
+              </TouchableOpacity>
             </View>
           </View>
-        )}
-        <View style={styles.main}>
-          {this.props.include.includes('topic') && (
-            <TouchableOpacity
-              style={styles.topicContainer}
-              onPress={() => this.props.navigation.push('Topic', {
-                topic: this.props.topic,
-                jwt: this.props.screenProps.jwt
-              })}
-            >
-              <Text style={styles.topic}>{this.props.topic}</Text>
-            </TouchableOpacity>
-          )}
-          <Text style={styles.text}>{this.transformPost(this.props.text)}</Text>
-        </View>
-        <View style={styles.bottom}>
-          <TouchableOpacity
-            style={styles.likesContainer}
-            onPress={this.like}
-            disabled={this.state.disabled}
-          >
-            <FontAwesome
-              style={this.state.liked ? styles.likeIconActive : styles.likeIconInactive}
-              icon="heart"
-            />
-            <TouchableOpacity
-              onPress={() => this.props.navigation.push('Likes', {
-                post: this.props._id,
-                jwt: this.props.screenProps.jwt
-              })}
-            >
-              <Text style={styles.likes}>{this.state.likes.length} beğeni</Text>
-            </TouchableOpacity>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.reportContainer}
-            onPress={this.report}
-            disabled={this.state.disabled}
-          >
-            <FontAwesome
-              style={styles.reportIcon}
-              icon="exclamation"
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
+        </TouchableWithoutFeedback>
+      </TouchableOpacity>
     );
   }
 }
@@ -249,7 +281,8 @@ const styles = StyleSheet.create({
   },
   bottom: {
     width: '100%',
-    padding: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
     borderTopColor: 'rgba(0, 0, 0, 0.1)',
     borderTopWidth: 1,
     backgroundColor: '#fcfcfc',
@@ -290,12 +323,10 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   likeIconActive: {
-    color: '#EA3546',
-    marginRight: 5
+    color: '#EA3546'
   },
   likeIconInactive: {
-    color: '#CBD5DE',
-    marginRight: 5
+    color: '#CBD5DE'
   },
   reportContainer: {
     marginLeft: 'auto'
@@ -305,7 +336,17 @@ const styles = StyleSheet.create({
   },
   likes: {
     color: 'rgba(0, 0, 0, 0.75)',
-    fontWeight: '100'
+    fontWeight: '100',
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
+  likeButton: {
+    width: 30,
+    height: 40,
+    marginLeft: -5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   date: {
     color: 'rgba(0, 0, 0, 0.5)',
