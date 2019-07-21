@@ -24,13 +24,16 @@ const NotificationSchema = new Schema({
   topic: {
     type: String
   },
+  text: {
+    type: String
+  },
   seen: {
     type: Boolean,
     default: false
   }
 });
 
-mongoosePaginate.paginate.options = { 
+mongoosePaginate.paginate.options = {
   lean: true,
   limit: 10,
   populate: 'from'

@@ -50,7 +50,7 @@ export default class Notification extends Component {
       >
         {
           this.props.seen ? null : (
-            <View style={styles.new}></View>
+            <View style={styles.new} />
           )
         }
         <TouchableOpacity
@@ -80,16 +80,25 @@ export default class Notification extends Component {
                   <Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> "<Text style={styles.bold}>{this.props.topic}</Text>" başlığındaki bir paylaşımını beğendi. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
                 </Text>
               );
-            } else if (this.props.type === 'follow') {
+            }
+            if (this.props.type === 'follow') {
               return (
                 <Text style={styles.main}>
                   <Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> seni takip etmeye başladı. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
                 </Text>
               );
-            } else if (this.props.type === 'mention') {
+            }
+            if (this.props.type === 'mention') {
               return (
                 <Text style={styles.main}>
                   <Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> "<Text style={styles.bold}>{this.props.topic}</Text>" başlığında senden bahsetti. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                </Text>
+              );
+            }
+            if (this.props.type === 'bloom') {
+              return (
+                <Text style={styles.main}>
+                  {this.props.text} <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
                 </Text>
               );
             }

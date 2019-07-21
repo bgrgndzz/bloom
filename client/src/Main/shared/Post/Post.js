@@ -15,6 +15,7 @@ import jwtDecode from 'jwt-decode';
 import defaultprofile from '../../../images/defaultprofile.png';
 
 import FontAwesome from '../../../shared/FontAwesome/FontAwesome';
+import Badge from '../Badge/Badge';
 import api from '../../../shared/api';
 
 const translateDate = date => date
@@ -162,16 +163,13 @@ export default class Post extends Component {
                 {
                   this.props.anonymous ?
                     (
-                      <TouchableOpacity
-                        style={styles.authorContainer}
-                        onPress={() => {}}
-                      >
+                      <View style={styles.authorContainer}>
                         <CachedImage
                           style={styles.profilepicture}
                           source={defaultprofile}
                         />
                         <Text style={styles.author}>Anonim</Text>
-                      </TouchableOpacity>
+                      </View>
                     ) :
                     (
                       <TouchableOpacity
@@ -195,6 +193,12 @@ export default class Post extends Component {
                         <Text style={styles.author}>
                           {this.props.author.firstName} {this.props.author.lastName}
                         </Text>
+                        {this.props.author.mainBadge ? (
+                          <Badge
+                            badge={this.props.author.mainBadge}
+                            size="small"
+                          />
+                        ) : null}
                       </TouchableOpacity>
                     )
                 }
@@ -307,7 +311,8 @@ const styles = StyleSheet.create({
   },
   author: {
     fontWeight: '700',
-    color: '#505050'
+    color: '#505050',
+    marginRight: 5
   },
   topic: {
     fontWeight: '700',
