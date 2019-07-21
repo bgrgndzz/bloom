@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
   bigBadgeIcon: {
     width: undefined,
     aspectRatio: 1,
+    marginRight: 3
   },
   smallBadgeContainer: {
     flexDirection: 'row',
@@ -24,13 +25,14 @@ const styles = StyleSheet.create({
   smallBadgeIcon: {
     width: undefined,
     aspectRatio: 1,
+    marginRight: 2
   }
 });
 
 const badges = {
   beta: {
     icon: require('../../../images/logo.png'),
-    text: 'eta',
+    text: 'beta',
     big: {
       containerStyle: {
         backgroundColor: '#16425B',
