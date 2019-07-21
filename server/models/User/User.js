@@ -55,7 +55,15 @@ const UserSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'User',
       default: []
-    }]
+    }],
+    badges: [{
+      type: String,
+      default: []
+    }],
+    mainBadge: {
+      type: String,
+      default: ''
+    },
   },
   passwordReset: {
     hash: String

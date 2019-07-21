@@ -10,6 +10,8 @@ import { CachedImage } from 'react-native-cached-image';
 
 import defaultprofile from '../../../images/defaultprofile.png';
 
+import Badge from '../Badge/Badge';
+
 const highlight = (string, search) => string && string.split(new RegExp(search, 'gi')).map((splitName, index, array) => [
   (
     <Text
@@ -40,7 +42,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   profilepicture: {
     width: 30,
@@ -49,10 +52,10 @@ const styles = StyleSheet.create({
     marginRight: 15
   },
   name: {
-    flex: 1,
     color: '#202020',
     fontWeight: '100',
-    lineHeight: 30
+    lineHeight: 30,
+    marginRight: 10
   },
   highlighted: {
     fontWeight: '600'
@@ -81,6 +84,12 @@ const User = (props) => ((props.user && props.user.user) ? (
           `${props.user.user.firstName} ${props.user.user.lastName}`
       }
     </Text>
+    {props.user.user.mainBadge ? (
+      <Badge
+        badge={props.user.user.mainBadge}
+        size="small"
+      />
+    ) : null}
   </View>
 ) : null);
 

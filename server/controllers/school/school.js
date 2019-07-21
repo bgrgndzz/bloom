@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
 
   User
     .find({'user.school': req.params.school})
-    .select('user.firstName user.lastName user.profilepicture')
+    .select('user.firstName user.lastName user.profilepicture user.mainBadge')
     .exec((err, users) => {
       let idList = users.map(user => user._id);
 

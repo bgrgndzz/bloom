@@ -16,6 +16,7 @@ import { CachedImage } from 'react-native-cached-image';
 import Post from '../shared/Post/Post';
 import Button from '../../shared/Button/Button';
 import FontAwesome from '../../shared/FontAwesome/FontAwesome';
+import Badge from '../shared/Badge/Badge';
 
 import api from '../../shared/api';
 
@@ -52,6 +53,12 @@ const UserInformation = props => (
         >
           <Text style={styles.school}>{props.user.school}</Text>
         </TouchableOpacity>
+        {props.user.mainBadge ? (
+          <Badge
+            badge={props.user.mainBadge}
+            size="big"
+          />
+        ) : null}
         {props.user.about && (
           <Text style={styles.about}>{props.user.about}</Text>
         )}
@@ -338,11 +345,14 @@ const styles = StyleSheet.create({
   school: {
     textAlign: 'center',
     fontSize: 15,
-    marginBottom: 15,
+    marginBottom: 5,
     fontWeight: '300',
     color: 'rgba(0, 0, 0, 0.5)'
   },
-  about: { fontWeight: '400' },
+  about: {
+    fontWeight: '400',
+    marginTop: 10
+  },
   backButtonContainer: {
     width: 30,
     height: 30,
