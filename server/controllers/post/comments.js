@@ -35,7 +35,10 @@ module.exports = (req, res, next) => {
           post = {
             ...post._doc,
             liked: post.likes.indexOf(req.user) !== -1,
-            author: { ...post.author._doc.user },
+            author: {
+              _id: post.author._id,
+              ...post.author._doc.user
+            },
           };
 
           Comment
@@ -51,7 +54,10 @@ module.exports = (req, res, next) => {
             .exec((err, comments) => {
               comments = comments.map(comment => ({
                 ...comment._doc,
-                author: { ...comment.author._doc.user }
+                author: {
+                  _id: comment.author._id,
+                  ...comment.author._doc.user
+                }
               }));
               return res.status(200).send({
                 authenticated: true,
