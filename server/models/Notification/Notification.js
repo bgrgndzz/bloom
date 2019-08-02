@@ -26,8 +26,7 @@ const NotificationSchema = new Schema({
   },
   post: {
     type: Schema.Types.ObjectId,
-    ref: 'Post',
-    required: true
+    ref: 'Post'
   },
   anonymous: {
     type: Boolean,
