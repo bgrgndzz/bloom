@@ -136,17 +136,6 @@ export default class Post extends Component {
       }, 300);
     });
   }
-  /*
-  handleDoubleTap = () => {
-    const now = Date.now();
-    const DOUBLE_PRESS_DELAY = 300;
-    if (this.lastTap && (now - this.lastTap) < DOUBLE_PRESS_DELAY) {
-      this.like();
-    } else {
-      this.lastTap = now;
-    }
-  }
-  */
 
   render() {
     return (
@@ -243,6 +232,21 @@ export default class Post extends Component {
                 </TouchableOpacity>
               </View>
               <TouchableOpacity
+                style={styles.commentsContainer}
+                onPress={() => this.props.navigation.push('Comments', {
+                  post: this.props._id,
+                  jwt: this.props.screenProps.jwt
+                })}
+              >
+                <View style={styles.commentButton}>
+                  <FontAwesome
+                    style={styles.commentIcon}
+                    icon="comment"
+                  />
+                </View>
+                <Text style={styles.comments}>{this.props.comments.length} yorum</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
                 style={styles.reportContainer}
                 onPress={this.report}
                 disabled={this.state.disabled}
@@ -325,13 +329,36 @@ const styles = StyleSheet.create({
   },
   likesContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginRight: 10
   },
   likeIconActive: {
     color: '#EA3546'
   },
   likeIconInactive: {
     color: '#CBD5DE'
+  },
+  commentsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  commentIcon: {
+    color: '#CBD5DE'
+  },
+  comments: {
+    color: 'rgba(0, 0, 0, 0.75)',
+    fontWeight: '100',
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
+  commentButton: {
+    width: 30,
+    height: 40,
+    marginLeft: -5,
+    marginTop: 2.5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   reportContainer: {
     marginLeft: 'auto'

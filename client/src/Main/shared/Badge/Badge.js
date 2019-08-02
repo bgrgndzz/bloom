@@ -9,9 +9,17 @@ import {
 const styles = StyleSheet.create({
   bigBadgeContainer: {
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 25,
+    paddingHorizontal: 10,
+    borderRadius: 25
   },
-  bigBadgeText: {},
+  bigBadgeText: {
+    fontWeight: '700',
+    fontSize: 17,
+    textAlignVertical: 'center'
+  },
   bigBadgeIcon: {
     width: undefined,
     aspectRatio: 1,
@@ -19,9 +27,17 @@ const styles = StyleSheet.create({
   },
   smallBadgeContainer: {
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 15,
+    paddingHorizontal: 5,
+    borderRadius: 15
   },
-  smallBadgeText: {},
+  smallBadgeText: {
+    fontWeight: '700',
+    fontSize: 12.5,
+    textAlignVertical: 'center'
+  },
   smallBadgeIcon: {
     width: undefined,
     aspectRatio: 1,
@@ -35,18 +51,10 @@ const badges = {
     text: 'beta',
     big: {
       containerStyle: {
-        backgroundColor: '#16425B',
-        height: 25,
-        paddingVertical: 5,
-        paddingHorizontal: 10,
-        borderRadius: 25
+        backgroundColor: '#16425B'
       },
       textStyle: {
-        color: 'white',
-        fontWeight: '700',
-        lineHeight: 18,
-        fontSize: 18,
-        marginLeft: -1
+        color: 'white'
       },
       iconStyle: {
         height: 15
@@ -54,36 +62,112 @@ const badges = {
     },
     small: {
       containerStyle: {
-        backgroundColor: '#16425B',
-        height: 15,
-        paddingVertical: 2.5,
-        paddingHorizontal: 5,
-        borderRadius: 15
+        backgroundColor: '#16425B'
       },
       textStyle: {
-        color: 'white',
-        fontWeight: '700',
-        lineHeight: 12.5,
-        fontSize: 12.5,
-        marginLeft: -1
+        color: 'white'
       },
       iconStyle: {
         height: 10
       }
     }
-  }
+  },
+  jsninja: {
+    icon: null,
+    text: 'JS Ninja',
+    big: {
+      containerStyle: {
+        backgroundColor: '#F7DF1D'
+      },
+      textStyle: {
+        color: 'black'
+      },
+      iconStyle: {
+        height: 0
+      }
+    },
+    small: {
+      containerStyle: {
+        backgroundColor: '#F7DF1D'
+      },
+      textStyle: {
+        color: 'black'
+      },
+      iconStyle: {
+        height: 0
+      }
+    }
+  },
+  sensei: {
+    icon: require('../../../images/badges/sensei.png'),
+    text: 'Sensei',
+    big: {
+      containerStyle: {
+        backgroundColor: 'black'
+      },
+      textStyle: {
+        color: 'white'
+      },
+      iconStyle: {
+        height: 20,
+        marginRight: 2
+      }
+    },
+    small: {
+      containerStyle: {
+        backgroundColor: 'black'
+      },
+      textStyle: {
+        color: 'white'
+      },
+      iconStyle: {
+        height: 13,
+        marginRight: 1
+      }
+    }
+  },
+  mekaninsahibi: {
+    icon: null,
+    text: 'Mekanın Sahibi',
+    big: {
+      containerStyle: {
+        backgroundColor: 'black'
+      },
+      textStyle: {
+        color: 'white'
+      },
+      iconStyle: {
+        height: 0
+      }
+    },
+    small: {
+      containerStyle: {
+        backgroundColor: 'black'
+      },
+      textStyle: {
+        color: 'white'
+      },
+      iconStyle: {
+        height: 0
+      }
+    }
+  },
 };
 
 const Badge = props => {
+  if (!badges[props.badge]) return null;
+
   const { icon, text } = badges[props.badge];
   const { containerStyle, textStyle, iconStyle } = badges[props.badge][props.size];
   return (
     <View style={[styles[`${props.size}BadgeContainer`], containerStyle]}>
-      <Image
-        style={[styles[`${props.size}BadgeIcon`], iconStyle]}
-        source={icon}
-        resizeMode="contain"
-      />
+      {icon ? (
+        <Image
+          style={[styles[`${props.size}BadgeIcon`], iconStyle]}
+          source={icon}
+          resizeMode="contain"
+        />
+      ) : null}
       <Text style={[styles[`${props.size}BadgeText`], textStyle]}>{text}</Text>
     </View>
   );

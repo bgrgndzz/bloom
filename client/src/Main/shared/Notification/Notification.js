@@ -32,6 +32,16 @@ export default class Notification extends Component {
         onPress={
           () => {
             if (
+              (
+                this.props.type === 'like' ||
+                this.props.type === 'comment'
+              ) && this.props.post
+            ) {
+              this.props.navigation.push('Comments', {
+                post: this.props.post,
+                jwt: this.props.screenProps.jwt
+              });
+            } else if (
               this.props.type === 'like' ||
               this.props.type === 'mention'
             ) {
@@ -43,7 +53,7 @@ export default class Notification extends Component {
               this.props.navigation.push('Profile', {
                 user: this.props.from._id === jwt_decode(this.props.screenProps.jwt).user ? null : this.props.from._id,
                 jwt: this.props.screenProps.jwt
-              })
+              });
             }
           }
         }
@@ -57,41 +67,57 @@ export default class Notification extends Component {
           style={styles.fromContainer}
           onPress={
             () => {
-              this.props.navigation.push('Profile', {
-                user: this.props.from._id === jwt_decode(this.props.screenProps.jwt).user ? null : this.props.from._id,
-                jwt: this.props.screenProps.jwt
-              });
+              if (!this.props.anonymous) {
+                this.props.navigation.push('Profile', {
+                  user: this.props.from._id === jwt_decode(this.props.screenProps.jwt).user ? null : this.props.from._id,
+                  jwt: this.props.screenProps.jwt
+                });
+              }
             }
           }
         >
           <CachedImage
             style={styles.profilepicture}
-            source={this.props.from.profilepicture ?
-              {uri: 'https://www.getbloom.info/uploads/profilepictures/' + this.props.from.profilepicture} :
+            source={(this.props.from.profilepicture && !this.props.anonymous) ?
+              { uri: 'https://www.getbloom.info/uploads/profilepictures/' + this.props.from.profilepicture } :
               require('../../../images/defaultprofile.png')
             }
           />
         </TouchableOpacity>
         {
           (() => {
+            let from;
+            if (this.props.anonymous) {
+              from = (<Text style={styles.from}>Anonim</Text>);
+            } else {
+              from = (<Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text>);
+            }
+
             if (this.props.type === 'like') {
               return (
                 <Text style={styles.main}>
-                  <Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> "<Text style={styles.bold}>{this.props.topic}</Text>" başlığındaki bir paylaşımını beğendi. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                  {from} "<Text style={styles.bold}>{this.props.topic}</Text>" başlığındaki bir paylaşımını beğendi. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
                 </Text>
               );
             }
             if (this.props.type === 'follow') {
               return (
                 <Text style={styles.main}>
-                  <Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> seni takip etmeye başladı. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                  {from} seni takip etmeye başladı. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
                 </Text>
               );
             }
             if (this.props.type === 'mention') {
               return (
                 <Text style={styles.main}>
-                  <Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> "<Text style={styles.bold}>{this.props.topic}</Text>" başlığında senden bahsetti. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                  {from} "<Text style={styles.bold}>{this.props.topic}</Text>" başlığında senden bahsetti. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                </Text>
+              );
+            }
+            if (this.props.type === 'comment') {
+              return (
+                <Text style={styles.main}>
+                  {from} "<Text style={styles.bold}>{this.props.topic}</Text>" başlığındaki bir paylaşımına yorum yaptı. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
                 </Text>
               );
             }

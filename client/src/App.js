@@ -30,6 +30,7 @@ import Conversation from './Main/Conversation/Conversation';
 import Likes from './Main/Likes/Likes';
 import Followers from './Main/Followers/Followers';
 import School from './Main/School/School';
+import Comments from './Main/Comments/Comments';
 
 const LandingStack = createStackNavigator({ Landing }, { headerMode: 'none' });
 const MainStack = createStackNavigator(
@@ -46,7 +47,8 @@ const MainStack = createStackNavigator(
     Conversation: Page(Conversation),
     Likes: Page(Likes),
     Followers: Page(Followers),
-    School: Page(School)
+    School: Page(School),
+    Comments: Page(Comments)
   },
   {
     initialRouteName: 'Topics',

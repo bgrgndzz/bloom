@@ -24,6 +24,15 @@ const NotificationSchema = new Schema({
   topic: {
     type: String
   },
+  post: {
+    type: Schema.Types.ObjectId,
+    ref: 'Post',
+    required: true
+  },
+  anonymous: {
+    type: Boolean,
+    default: false
+  },
   text: {
     type: String
   },
