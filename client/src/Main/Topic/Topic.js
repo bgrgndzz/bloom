@@ -5,9 +5,12 @@ import {
   View,
   Text,
   Alert,
+  AsyncStorage,
   RefreshControl,
   TouchableOpacity
 } from 'react-native';
+
+import Tooltip from 'react-native-walkthrough-tooltip';
 
 import Post from '../shared/Post/Post';
 import Input from '../../shared/Input/Input';
@@ -29,7 +32,8 @@ export default class Topic extends Component {
     mentionField: '',
     refreshing: false,
     anonymous: false,
-    mentionFocused: false
+    mentionFocused: false,
+    postTopicOnboarding: false
   }
 
   toggleMentionModal = () => this.setState({ mentionFocused: !this.state.mentionFocused });
@@ -124,9 +128,7 @@ export default class Topic extends Component {
 
     this.setState({ post });
 
-    if (post[post.length - 1] === '@') {
-      this.toggleMentionModal();
-    }
+    if (post[post.length - 1] === '@') this.toggleMentionModal();
   }
 
   sort = sort => {
@@ -136,6 +138,18 @@ export default class Topic extends Component {
   componentDidMount = () => {
     this.onRefresh();
     this.loadUsers();
+    this.onboarding = {};
+    AsyncStorage
+      .getItem('onboarding')
+      .then(onboarding => {
+        if (onboarding) this.onboarding = JSON.parse(onboarding);
+        if (this.onboarding.postTopic) {
+          this.setState({ postTopicOnboarding: true });
+        } else {
+          this.onboarding.postTopic = true;
+          AsyncStorage.setItem('onboarding', JSON.stringify(this.onboarding));
+        }
+      });
   }
 
   render() {
@@ -159,13 +173,23 @@ export default class Topic extends Component {
             </View>
           </View>
           <View style={styles.form}>
-            <Input
-              placeholder="Fikrini paylaş"
-              multiline
-              onChangeText={this.onChangeText}
-              value={transformPostInput(this.state.post)}
-              containerStyle={{marginBottom: 15}}
-            />
+            <Tooltip
+              animated
+              isVisible={!this.state.postTopicOnboarding}
+              content={<Text style={styles.tooltipContent}>Bu konu hakkındaki fikrini yaz ve yaşıtlarınla paylaş!</Text>}
+              placement="top"
+              tooltipStyle={styles.tooltip}
+              onClose={() => this.setState({ postTopicOnboarding: true })}
+              onChildPress={() => this.setState({ postTopicOnboarding: true })}
+            >
+              <Input
+                placeholder="Fikrini paylaş"
+                multiline
+                onChangeText={this.onChangeText}
+                value={transformPostInput(this.state.post)}
+                containerStyle={{marginBottom: 15}}
+              />
+            </Tooltip>
             <Dropdown
               field={this.state.mentionField}
               data={this.state.users}
@@ -289,5 +313,12 @@ const styles = StyleSheet.create({
   checkboxIcon: {
     color: 'white',
     fontSize: 12.5
+  },
+  tooltip: {
+    width: '50%',
+    marginTop: -15
+  },
+  tooltipContent: {
+    textAlign: 'center'
   }
 });

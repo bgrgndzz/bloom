@@ -47,9 +47,19 @@ export default class Register extends Component {
       },
       (err, res) => {
         if (err && !res.jwt) return Alert.alert(err);
+
         AsyncStorage.setItem('jwt', res.jwt);
         this.props.screenProps.setJWT(res.jwt);
-        return this.props.navigation.navigate('Topics');
+
+        AsyncStorage
+          .getItem('onboarding')
+          .then(onboarding => {
+            if (!onboarding) {
+              AsyncStorage.setItem('onboarding', JSON.stringify({}));
+            }
+
+            return this.props.navigation.navigate('Topics');
+          });
       }
     );
   }

@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import {
   StyleSheet,
+  Text,
   View,
   FlatList,
   Alert,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  AsyncStorage
 } from 'react-native';
 
+import Tooltip from 'react-native-walkthrough-tooltip';
 import { debounce } from 'throttle-debounce';
 import jwtDecode from 'jwt-decode';
 
@@ -54,7 +57,8 @@ export default class Topics extends Component {
       search: '',
       refreshing: false,
       dataEnd: false,
-      dataLoading: false
+      dataLoading: false,
+      readTopicOnboarding: false
     };
     this.listTopicsDebounced = debounce(100, this.listTopics);
     this.searchDebounced = debounce(100, this.search);
@@ -133,7 +137,21 @@ export default class Topics extends Component {
     }
   }
 
-  componentDidMount = this.onRefresh;
+  componentDidMount = () => {
+    this.onRefresh();
+    this.onboarding = {};
+    AsyncStorage
+      .getItem('onboarding')
+      .then(onboarding => {
+        if (onboarding) this.onboarding = JSON.parse(onboarding);
+        if (this.onboarding.readTopic) {
+          this.setState({ readTopicOnboarding: true });
+        } else {
+          this.onboarding.readTopic = true;
+          AsyncStorage.setItem('onboarding', JSON.stringify(this.onboarding));
+        }
+      });
+  };
 
   render() {
     let renderItem;
@@ -141,16 +159,40 @@ export default class Topics extends Component {
 
     if (this.state.optionType === 'sort') {
       data = this.state.topics;
-      renderItem = ({ item }) => (
-        <TouchableOpacity
-          onPress={() => this.props.navigation.push('Topic', { topic: item.topic, jwt: this.props.screenProps.jwt })}
-        >
-          <Topic
-            topic={item.topic}
-            posts={item.posts}
-          />
-        </TouchableOpacity>
-      );
+      renderItem = ({ item, index }) => {
+        if (index === 0 && !this.state.readTopicOnboarding) {
+          return (
+            <Tooltip
+              animated
+              isVisible={!this.state.readTopicOnboarding}
+              content={<Text style={styles.tooltipContent}>Bu konu başlığı hakkındaki fikirleri okumak için tıkla!</Text>}
+              placement="top"
+              tooltipStyle={styles.tooltip}
+              onClose={() => this.setState({ readTopicOnboarding: true })}
+              onChildPress={() => {
+                this.setState({ readTopicOnboarding: true });
+                return this.props.navigation.push('Topic', { topic: item.topic, jwt: this.props.screenProps.jwt });
+              }}
+            >
+              <Topic
+                topic={item.topic}
+                posts={item.posts}
+              />
+            </Tooltip>
+          );
+        }
+
+        return (
+          <TouchableOpacity
+            onPress={() => this.props.navigation.push('Topic', { topic: item.topic, jwt: this.props.screenProps.jwt })}
+          >
+            <Topic
+              topic={item.topic}
+              posts={item.posts}
+            />
+          </TouchableOpacity>
+        );
+      };
     } else if (this.state.optionType === 'search') {
       if (this.state.searchOption === 'topics') {
         data = this.state.searchResults;
@@ -255,5 +297,12 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 15
+  },
+  tooltip: {
+    width: '50%',
+    marginTop: -15
+  },
+  tooltipContent: {
+    textAlign: 'center'
   }
 });
