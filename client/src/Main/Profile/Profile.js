@@ -197,6 +197,8 @@ export default class Profile extends Component {
 
   openModal = () => this.setState({ modalOpen: true });
 
+  reportCallback = this.onRefresh;
+
   componentDidMount = this.onRefresh;
 
   render() {
@@ -218,6 +220,7 @@ export default class Profile extends Component {
               include={['user', 'topic']}
               navigation={this.props.navigation}
               logout={this.props.logout}
+              reportCallback={this.reportCallback}
             />
           )}
           onScroll={e => {

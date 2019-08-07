@@ -45,6 +45,7 @@ export default class Feed extends Component {
       }
     );
   }
+
   onRefresh = () => {
     this.setState({
       refreshing: true,
@@ -52,9 +53,11 @@ export default class Feed extends Component {
       posts: [],
       page: 1
     }, () => {
-      this.listFeedPosts({refreshing: false});
+      this.listFeedPosts({ refreshing: false });
     });
   }
+
+  reportCallback = this.onRefresh;
 
   componentWillMount = this.onRefresh;
 
@@ -79,6 +82,7 @@ export default class Feed extends Component {
               include={['user', 'topic']}
               navigation={navigation}
               logout={logout}
+              reportCallback={this.reportCallback}
             />
           )}
           onScroll={e => {
@@ -100,12 +104,12 @@ export default class Feed extends Component {
               }, this.listFeedPosts);
             }
           }}
-          ListFooterComponent={
+          ListFooterComponent={(
             <ActivityIndicator
               style={styles.loading}
               animating={dataLoading}
             />
-          }
+          )}
         />
         {posts.length === 0 && !refreshing && (
           <View style={styles.emptyFeedContainer}>

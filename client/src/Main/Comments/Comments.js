@@ -26,6 +26,8 @@ export default class Comments extends Component {
     anonymous: false,
   }
 
+  reportCallback = () => this.props.navigation.goBack();
+
   onRefresh = () => {
     this.setState({ refreshing: true }, () => {
       api(
@@ -97,6 +99,7 @@ export default class Comments extends Component {
               include={['user', 'topic']}
               navigation={this.props.navigation}
               logout={this.props.logout}
+              reportCallback={this.reportCallback}
             />
           )}
           <View style={styles.form}>

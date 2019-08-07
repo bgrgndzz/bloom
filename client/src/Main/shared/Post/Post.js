@@ -123,7 +123,7 @@ export default class Post extends Component {
           }
 
           Alert.alert('Şikayetin alındı');
-          return this.setState({ disabled: false });
+          this.props.reportCallback();
         }
       );
     });

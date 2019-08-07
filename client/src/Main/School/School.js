@@ -100,6 +100,8 @@ export default class School extends Component {
 
   onChangeOption = option => this.setState({ option });
 
+  reportCallback = this.onRefresh;
+
   componentDidMount = this.onRefresh;
 
   render() {
@@ -133,6 +135,7 @@ export default class School extends Component {
           include={['user', 'topic']}
           navigation={this.props.navigation}
           logout={this.props.logout}
+          reportCallback={this.reportCallback}
         />
       );
     }

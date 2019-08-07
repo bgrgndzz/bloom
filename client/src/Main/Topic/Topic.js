@@ -135,6 +135,8 @@ export default class Topic extends Component {
     this.setState({ sort }, this.onRefresh);
   }
 
+  reportCallback = this.onRefresh;
+
   componentDidMount = () => {
     this.onRefresh();
     this.loadUsers();
@@ -235,6 +237,7 @@ export default class Topic extends Component {
               include={['user']}
               navigation={this.props.navigation}
               logout={this.props.logout}
+              reportCallback={this.reportCallback}
             />
           ))}
         </ScrollView>
