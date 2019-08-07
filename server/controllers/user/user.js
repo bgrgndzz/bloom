@@ -34,7 +34,10 @@ module.exports = (req, res, next) => {
           }
 
           Post
-            .find({author: req.params.user})
+            .find({
+              author: req.params.user,
+              reportedBy: {$ne: req.user}
+            })
             .sort('-date')
             .exec((err, posts) => {
               res.status(200).send({

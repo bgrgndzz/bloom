@@ -23,7 +23,13 @@ module.exports = (req, res, next) => {
         .select('user')
         .exec((err, self) => {
           Post
-            .find({author: {$in: idList}})
+            .find({
+              author: {
+                $in: idList,
+                $nin: self.user.blocked
+              },
+              reportedBy: {$ne: req.user}
+            })
             .sort('-date')
             .exec((err, posts) => {
               res.status(200).send({

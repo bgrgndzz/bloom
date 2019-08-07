@@ -19,8 +19,9 @@ module.exports = (req, res, next) => {
           topic: req.params.topic,
           $or: [
             {author: {$nin: self.user.blocked}},
-            {anonymous: true}
-          ]
+            {anonymous: true},
+          ],
+          reportedBy: {$ne: req.user}
         })
         .populate('author', 'user')
         .sort((req.params.sort && req.params.sort === 'new') ? {date: -1} : {likeCount: -1, date: -1})

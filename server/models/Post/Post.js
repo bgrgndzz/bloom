@@ -36,7 +36,12 @@ const PostSchema = new Schema({
   anonymous: {
     type: Boolean,
     default: false
-  }
+  },
+  reportedBy: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    default: []
+  }]
 });
 
 mongoosePaginate.paginate.options = {

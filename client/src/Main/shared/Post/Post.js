@@ -122,7 +122,7 @@ export default class Post extends Component {
             return Alert.alert(err);
           }
 
-          Alert.alert('Şikayetiniz alındı');
+          Alert.alert('Şikayetin alındı');
           return this.setState({ disabled: false });
         }
       );
@@ -248,7 +248,22 @@ export default class Post extends Component {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.reportContainer}
-                onPress={this.report}
+                onPress={() => {
+                  Alert.alert(
+                    'Bu paylaşımı gerçekten şikayet etmek istiyor musun?',
+                    'Şikayet edersen bu paylaşımı bir daha görmeyeceksin, ve inan bana, bu işlem geri alınamaz.',
+                    [
+                      {
+                        text: 'Sal',
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'Şikayet Et',
+                        onPress: this.report
+                      }
+                    ]
+                  );
+                }}
                 disabled={this.state.disabled}
               >
                 <FontAwesome

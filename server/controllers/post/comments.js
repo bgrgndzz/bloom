@@ -21,7 +21,8 @@ module.exports = (req, res, next) => {
           $or: [
             { author: { $nin: self.user.blocked } },
             { anonymous: true }
-          ]
+          ],
+          reportedBy: {$ne: req.user}
         })
         .populate('author', 'user')
         .exec((err, post) => {

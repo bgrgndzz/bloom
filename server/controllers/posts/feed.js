@@ -4,14 +4,14 @@ const User = require('../../models/User/User');
 
 module.exports = (req, res, next) => {
   const page = parseInt(req.params.page);
-  
+
   User
     .findById(req.user)
     .select('user')
     .exec((err, user) => {
       if (!user) {
         return res.status(403).send({
-          authenticated: false, 
+          authenticated: false,
           error: 'Bu sayfayı görüntülemek için giriş yapmanız gerekir'
         });
       }
@@ -22,7 +22,8 @@ module.exports = (req, res, next) => {
             $in: user.user.following,
             $nin: user.user.blocked
           },
-          anonymous: false
+          anonymous: false,
+          reportedBy: {$ne: req.user}
         },
         {
           sort: '-date',
