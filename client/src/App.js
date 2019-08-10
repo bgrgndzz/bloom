@@ -12,6 +12,7 @@ import {
 } from 'react-navigation';
 import codePush from 'react-native-code-push';
 import io from 'socket.io-client';
+import PushNotification from 'react-native-push-notification';
 
 import AuthLoading from './AuthLoading/AuthLoading';
 import Landing from './Landing/Landing';
@@ -115,25 +116,30 @@ class App extends PureComponent {
       .then(jwt => {
         if (jwt) this.setState({ jwt });
 
-        PushNotificationIOS.addEventListener('register', token => {
-          this.setState({ notificationToken: token });
-        });
-
-        PushNotificationIOS.addEventListener('registrationError', registrationError => {
-          console.log(registrationError, '--');
-        });
-
-        PushNotificationIOS.addEventListener('notification', notification => {
-          if (!notification) return;
-          const data = notification.getData();
-        });
-
-        PushNotificationIOS.getInitialNotification().then(notification => {
-          if (!notification) return;
-          const data = notification.getData();
-        });
-
-        PushNotificationIOS.requestPermissions();
+        AsyncStorage
+          .getItem('notificationToken')
+          .then(notificationToken => {
+            if (notificationToken) this.setState({ notificationToken });
+            PushNotification.configure({
+              onRegister: token => {
+                if (!notificationToken) {
+                  AsyncStorage.setItem('notificationToken', token.token);
+                  this.setState({ notificationToken: token.token });
+                }
+              },
+              onNotification: notification => {
+                notification.finish(PushNotificationIOS.FetchResult.NoData);
+              },
+              permissions: {
+                alert: true,
+                badge: true,
+                sound: true
+              },
+              senderID: '73006798043',
+              popInitialNotification: true,
+              requestPermissions: true
+            });
+          });
       });
   }
 
@@ -147,7 +153,7 @@ class App extends PureComponent {
   }
 
   render() {
-    return (
+    return this.state.notificationToken ? (
       <AppContainer
         ref={nav => { this.navigator = nav; }}
         screenProps={{
@@ -159,7 +165,7 @@ class App extends PureComponent {
           socketDisconnect: this.socketDisconnect
         }}
       />
-    );
+    ) : null;
   }
 }
 

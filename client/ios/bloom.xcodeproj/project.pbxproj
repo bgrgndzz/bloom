@@ -56,6 +56,7 @@
 		DE06014D21A20B0800E8E2EB /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE06014C21A20B0800E8E2EB /* QBImagePicker.framework */; };
 		DE06014E21A20B0800E8E2EB /* QBImagePicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DE06014C21A20B0800E8E2EB /* QBImagePicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DE410A0A2285F68A00DB6FBA /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DE4109EB2285F65400DB6FBA /* libRCTPushNotification.a */; };
+		DEE0198E22FE194300E23B4E /* notification.wav in Resources */ = {isa = PBXBuildFile; fileRef = DEE0198D22FE194200E23B4E /* notification.wav */; };
 		E1F1A83C743D4D2C97D6B92C /* libReactNativePermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E437B55E2EBE4D16A2D78415 /* libReactNativePermissions.a */; };
 		E5E6473B66314412AD4D3A45 /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F0F4A0E7A7E4E69AA416B93 /* libRNGestureHandler.a */; };
 		FD78C2D9033553DFBFB4E3A8 /* libPods-bloomTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 17A73F8306E193EDF97D7A54 /* libPods-bloomTests.a */; };
@@ -497,6 +498,7 @@
 		DE14E365247E4EC793F1B690 /* libRNFetchBlob.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFetchBlob.a; sourceTree = "<group>"; };
 		DE4109D22285F65400DB6FBA /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		DE496DBF21A59C0500080C74 /* bloom.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = bloom.entitlements; path = bloom/bloom.entitlements; sourceTree = "<group>"; };
+		DEE0198D22FE194200E23B4E /* notification.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = notification.wav; path = ../../android/app/src/main/res/raw/notification.wav; sourceTree = "<group>"; };
 		E3C0B3D81CD7E84C88D22068 /* Pods-bloom-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-bloom-tvOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-bloom-tvOS/Pods-bloom-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		E437B55E2EBE4D16A2D78415 /* libReactNativePermissions.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libReactNativePermissions.a; sourceTree = "<group>"; };
 		E9B1A098EE004C488D9F1BE0 /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGestureHandler.xcodeproj; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; };
@@ -762,6 +764,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				DEE0198A22FE0C3100E23B4E /* Resources */,
 				DE06014C21A20B0800E8E2EB /* QBImagePicker.framework */,
 				DE06014921A20B0800E8E2EB /* RSKImageCropper.framework */,
 				DE06014721A2093000E8E2EB /* fa-solid-900.ttf */,
@@ -910,6 +913,14 @@
 				DE9B1C9421B5D84300AC749C /* libAppCenterReactNative.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		DEE0198A22FE0C3100E23B4E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				DEE0198D22FE194200E23B4E /* notification.wav */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1500,6 +1511,7 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				DE06014821A2093000E8E2EB /* fa-solid-900.ttf in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				DEE0198E22FE194300E23B4E /* notification.wav in Resources */,
 				73E54B8DD9A94C4AAFDB41B5 /* AppCenter-Config.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

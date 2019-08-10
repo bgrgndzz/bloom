@@ -31,14 +31,7 @@ export default class AuthLoading extends Component {
         (err, res) => navigate('Topics', { jwt })
       );
     } else {
-      api(
-        {
-          path: 'notificationToken/unregister',
-          method: 'POST',
-          body: { notificationToken: this.props.screenProps.notificationToken }
-        },
-        (err, res) => navigate('Landing')
-      );
+      navigate('Landing');
     }
   };
 

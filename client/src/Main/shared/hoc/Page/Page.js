@@ -22,8 +22,18 @@ export default Page = BaseComponent => {
 
     logout = async () => {
       const jwt = await AsyncStorage.getItem('jwt');
+      const notificationToken = await AsyncStorage.getItem('notificationToken');
       if (jwt) await AsyncStorage.removeItem('jwt');
-      this.props.navigation.navigate('Landing');
+      if (notificationToken) await AsyncStorage.removeItem('notificationToken');
+      api(
+        {
+          path: 'notificationToken/unregister',
+          method: 'POST',
+          body: { notificationToken },
+          jwt
+        },
+        (err, res) => this.props.navigation.navigate('Landing')
+      );
     }
 
     countNotifications = () => {
