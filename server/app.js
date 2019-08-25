@@ -12,7 +12,7 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const path = require('path');
-const pushNotifications = require('node-pushnotifications');
+const PushNotifications = require('node-pushnotifications');
 const redis = require('redis');
 const socketio = require('socket.io');
 const socketRedis = require('socket.io-redis');
@@ -78,6 +78,28 @@ app.use((req, res, next) => {
   next();
 });
 app.locals.users = [];
+
+// push notification setup
+const settings = {
+  gcm: {
+    id: null,
+    phonegap: false,
+  },
+  apn: {
+    token: {
+      key: './key.p8',
+      keyId: '5RX85Q29QD',
+      teamId: '8DVKCD9DV6',
+    },
+    production: true
+  },
+  isAlwaysUseFCM: false,
+};
+const push = new PushNotifications(settings);
+app.use((req, res, next) => {
+  req.push = push;
+  next();
+});
 
 // logging
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));

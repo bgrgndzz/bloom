@@ -5,7 +5,6 @@ import android.app.Application;
 import com.facebook.react.ReactApplication;
 import com.microsoft.appcenter.reactnative.appcenter.AppCenterReactNativePackage;
 import com.microsoft.appcenter.reactnative.crashes.AppCenterReactNativeCrashesPackage;
-import com.microsoft.appcenter.reactnative.push.AppCenterReactNativePushPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -30,7 +29,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected String getJSBundleFile() {
         return CodePush.getJSBundleFile();
         }
-    
+
     @Override
     public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
@@ -42,7 +41,6 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new AppCenterReactNativePackage(MainApplication.this),
             new AppCenterReactNativeCrashesPackage(MainApplication.this, getResources().getString(R.string.appCenterCrashes_whenToSendCrashes)),
-            new AppCenterReactNativePushPackage(MainApplication.this),
             new ReactNativePushNotificationPackage(),
             new RNGestureHandlerPackage(),
             new RNFetchBlobPackage(),

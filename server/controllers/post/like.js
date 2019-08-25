@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+
+const User = require('../../models/User/User');
 const Post = require('../../models/Post/Post');
 const Topic = require('../../models/Topic/Topic');
 const Notification = require('../../models/Notification/Notification');
@@ -10,9 +12,9 @@ module.exports = (req, res, next) => {
       error: 'Lütfen bir paylaşım girdiğinizden emin olun'
     });
   }
-
   Post
     .findById(req.params.post)
+    .populate('author', 'notificationTokens')
     .exec((err, post) => {
       if (!post) {
         return res.status(422).send({
@@ -26,7 +28,7 @@ module.exports = (req, res, next) => {
         post.likeCount += 1;
         post.save(err => {
           Topic
-            .find({topic: post.topic})
+            .find({ topic: post.topic })
             .exec((err, topic) => {
               topic.likeCount += 1;
 
@@ -36,12 +38,40 @@ module.exports = (req, res, next) => {
                 type: 'like',
                 topic: post.topic
               });
+
               newNotification.save(err => {
-                return res.status(200).send({
-                  authenticated: true,
-                  liked: true,
-                  likes: post.likes
-                });
+                User
+                  .findById(req.user)
+                  .select('user.firstName user.lastName')
+                  .exec((err, self) => {
+                    req.push.send(
+                      post.author.notificationTokens,
+                      {
+                        topic: 'com.bgrgndzz.bloom',
+                        body: `${self.user.firstName} ${self.user.lastName}, "${post.topic}" başlığındaki bir paylaşımını beğendi`,
+                        custom: { sender: 'Bloom' },
+                        priority: 'high',
+                        contentAvailable: true,
+                        delayWhileIdle: true,
+                        retries: 1,
+                        badge: 2,
+                        sound: 'notification.wav',
+                        soundName: 'notification.wav',
+                        android_channel_id: 'Bloom',
+                        action: 'like',
+                        post: req.params.post,
+                        truncateAtWordEnd: true,
+                        expiry: Math.floor(Date.now() / 1000) + 28 * 86400,
+                      },
+                      (err, result) => {
+                        return res.status(200).send({
+                          authenticated: true,
+                          liked: true,
+                          likes: post.likes
+                        });
+                      }
+                    );
+                  });
               });
             });
         });

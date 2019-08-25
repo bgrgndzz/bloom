@@ -108,7 +108,7 @@ android {
         versionCode 2
         versionName "0.2"
         ndk {
-            abiFilters "armeabi-v7a", "x86"
+            abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
         }
     }
     signingConfigs {
@@ -126,7 +126,7 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
+            include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
     buildTypes {
@@ -141,7 +141,7 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2]
+            def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a": 3, "x86_64": 4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
@@ -154,7 +154,7 @@ android {
 dependencies {
     compile project(':appcenter')
     compile project(':appcenter-crashes')
-    compile project(':appcenter-push')
+    // compile project(':appcenter-push')
     compile project(':react-native-push-notification')
     compile project(':react-native-gesture-handler')
     compile project(':rn-fetch-blob')
@@ -162,10 +162,14 @@ dependencies {
     compile project(':react-native-code-push')
     compile project(':appcenter-analytics')
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:appcompat-v7:28.+"
     implementation "com.facebook.react:react-native:+"  // From node_modules
     def appCenterSdkVersion = '1.11.0'
     implementation "com.microsoft.appcenter:appcenter-distribute:${appCenterSdkVersion}"
+    implementation(project(":react-native-push-notification"),  {
+      exclude group: "com.google.android.gms"
+    })
+    implementation "com.google.android.gms:play-services-gcm:16.0.0"
 }
 
 // Run this once to be able to run the application with BUCK
