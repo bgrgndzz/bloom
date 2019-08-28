@@ -48,7 +48,7 @@ module.exports = (req, res, next) => {
                       post.author.notificationTokens,
                       {
                         topic: 'com.bgrgndzz.bloom',
-                        body: `${self.user.firstName} ${self.user.lastName}, "${post.topic}" başlığındaki bir paylaşımını beğendi`,
+                        body: `${self.user.firstName} ${self.user.lastName} "${post.topic}" başlığındaki bir paylaşımını beğendi`,
                         custom: { sender: 'Bloom' },
                         priority: 'high',
                         contentAvailable: true,

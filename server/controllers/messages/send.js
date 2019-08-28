@@ -35,8 +35,40 @@ module.exports = (req, res, next) => {
       req.io.to(`${toSocket}`).emit('new message', newMessage);
     }
 
-    return res.status(200).send({
-      authenticated: true
-    });
+    User
+      .findById(req.user)
+      .select('user.firstName user.lastName')
+      .exec((err, self) => {
+        User
+          .findById(req.params.user)
+          .select('notificationTokens')
+          .exec((err, user) => {
+            req.push.send(
+              user.notificationTokens,
+              {
+                topic: 'com.bgrgndzz.bloom',
+                body: `${self.user.firstName} ${self.user.lastName} sana bir mesaj gönderdi`,
+                custom: { sender: 'Bloom' },
+                priority: 'high',
+                contentAvailable: true,
+                delayWhileIdle: true,
+                retries: 1,
+                badge: 2,
+                sound: 'notification.wav',
+                soundName: 'notification.wav',
+                android_channel_id: 'Bloom',
+                action: 'message',
+                post: req.params.post,
+                truncateAtWordEnd: true,
+                expiry: Math.floor(Date.now() / 1000) + 28 * 86400,
+              },
+              (err, result) => {
+                return res.status(200).send({
+                  authenticated: true
+                });
+              }
+            );
+          });
+      });
   });
 };

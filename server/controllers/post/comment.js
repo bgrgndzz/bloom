@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Post = require('../../models/Post/Post');
 const Comment = require('../../models/Comment/Comment');
-const Topic = require('../../models/Topic/Topic');
+const User = require('../../models/User/User');
 const Notification = require('../../models/Notification/Notification');
 
 const trim = str => str.replace(/\s+/g,' ').trim();
@@ -68,9 +68,36 @@ module.exports = (req, res, next) => {
                 anonymous: req.body.anonymous
               });
               newNotification.save(err => {
-                return res.status(200).send({
-                  authenticated: true
-                });
+                User
+                  .findById(req.user)
+                  .select('user.firstName user.lastName')
+                  .exec((err, self) => {
+                    req.push.send(
+                      post.author.notificationTokens,
+                      {
+                        topic: 'com.bgrgndzz.bloom',
+                        body: `${self.user.firstName} ${self.user.lastName} "${post.topic}" başlığındaki bir paylaşımına yorum yaptı`,
+                        custom: { sender: 'Bloom' },
+                        priority: 'high',
+                        contentAvailable: true,
+                        delayWhileIdle: true,
+                        retries: 1,
+                        badge: 2,
+                        sound: 'notification.wav',
+                        soundName: 'notification.wav',
+                        android_channel_id: 'Bloom',
+                        action: 'comment',
+                        post: req.params.post,
+                        truncateAtWordEnd: true,
+                        expiry: Math.floor(Date.now() / 1000) + 28 * 86400,
+                      },
+                      (err, result) => {
+                        return res.status(200).send({
+                          authenticated: true
+                        });
+                      }
+                    );
+                  });
               });
             });
           });

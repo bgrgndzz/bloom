@@ -46,11 +46,33 @@ module.exports = (req, res, next) => {
                   type: 'follow'
                 });
                 newNotification.save(err => {
-                  return res.status(200).send({
-                    authenticated: true,
-                    followed: true,
-                    followers: followUser.user.followers
-                  });
+                  req.push.send(
+                    followUser.notificationTokens,
+                    {
+                      topic: 'com.bgrgndzz.bloom',
+                      body: `${user.user.firstName} ${user.user.lastName} seni takip etmeye başladı`,
+                      custom: { sender: 'Bloom' },
+                      priority: 'high',
+                      contentAvailable: true,
+                      delayWhileIdle: true,
+                      retries: 1,
+                      badge: 2,
+                      sound: 'notification.wav',
+                      soundName: 'notification.wav',
+                      android_channel_id: 'Bloom',
+                      action: 'follow',
+                      post: req.params.post,
+                      truncateAtWordEnd: true,
+                      expiry: Math.floor(Date.now() / 1000) + 28 * 86400,
+                    },
+                    (err, result) => {
+                      return res.status(200).send({
+                        authenticated: true,
+                        followed: true,
+                        followers: followUser.user.followers
+                      });
+                    }
+                  );
                 });
               });
             });

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const User = require('../../models/User/User');
 const Post = require('../../models/Post/Post');
 const Topic = require('../../models/Topic/Topic');
 const Notification = require('../../models/Notification/Notification');
@@ -53,38 +54,70 @@ module.exports = (req, res, next) => {
             topic: req.params.topic
           });
           newNotification.save(err => {
-            const newPost = new Post({
-              text: req.body.text,
-              author: req.user,
-              topic: req.params.topic,
-              anonymous: req.body.anonymous
-            });
-            newPost.save(err => {
-              Topic
-                .findOne({topic: req.params.topic})
-                .exec((err, topic) => {
-                  if (topic) {
-                    topic.posts.push(newPost._id);
-                    topic.lastDate = Date.now();
-                    topic.save(err => {
-                      return res.status(200).send({
-                        authenticated: true
-                      });
-                    });
-                  } else {
-                    const newTopic = new Topic({
-                      topic: req.params.topic,
-                      author: req.user,
-                      posts: [newPost._id]
-                    });
-                    newTopic.save(err => {
-                      return res.status(200).send({
-                        authenticated: true
-                      });
-                    });
-                  }
-                });
-            });
+            User
+              .findById(req.user)
+              .select('user.firstName user.lastName')
+              .exec((err, self) => {
+                User
+                  .findById(toUser)
+                  .select('notificationTokens')
+                  .exec((err, user) => {
+                    req.push.send(
+                      user.notificationTokens,
+                      {
+                        topic: 'com.bgrgndzz.bloom',
+                        body: `${self.user.firstName} ${self.user.lastName} "${req.params.topic}" başlığında senden bahsetti`,
+                        custom: { sender: 'Bloom' },
+                        priority: 'high',
+                        contentAvailable: true,
+                        delayWhileIdle: true,
+                        retries: 1,
+                        badge: 2,
+                        sound: 'notification.wav',
+                        soundName: 'notification.wav',
+                        android_channel_id: 'Bloom',
+                        action: 'mention',
+                        post: req.params.post,
+                        truncateAtWordEnd: true,
+                        expiry: Math.floor(Date.now() / 1000) + 28 * 86400,
+                      },
+                      (err, result) => {
+                        const newPost = new Post({
+                          text: req.body.text,
+                          author: req.user,
+                          topic: req.params.topic,
+                          anonymous: req.body.anonymous
+                        });
+                        newPost.save(err => {
+                          Topic
+                            .findOne({topic: req.params.topic})
+                            .exec((err, topic) => {
+                              if (topic) {
+                                topic.posts.push(newPost._id);
+                                topic.lastDate = Date.now();
+                                topic.save(err => {
+                                  return res.status(200).send({
+                                    authenticated: true
+                                  });
+                                });
+                              } else {
+                                const newTopic = new Topic({
+                                  topic: req.params.topic,
+                                  author: req.user,
+                                  posts: [newPost._id]
+                                });
+                                newTopic.save(err => {
+                                  return res.status(200).send({
+                                    authenticated: true
+                                  });
+                                });
+                              }
+                            });
+                        });
+                      }
+                    );
+                  });
+              });
           });
         });
       } else {
