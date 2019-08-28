@@ -23,6 +23,7 @@ module.exports = (req, res, next) => {
 
   Post
     .findById(req.params.post)
+    .populate('author', 'notificationTokens')
     .exec((err, post) => {
       if (!post) {
         return res.status(422).send({
@@ -72,11 +73,12 @@ module.exports = (req, res, next) => {
                   .findById(req.user)
                   .select('user.firstName user.lastName')
                   .exec((err, self) => {
+                    const name = req.body.anonymous ? 'Anonim' : `${self.user.firstName} ${self.user.lastName}`;
                     req.push.send(
                       post.author.notificationTokens,
                       {
                         topic: 'com.bgrgndzz.bloom',
-                        body: `${self.user.firstName} ${self.user.lastName} "${post.topic}" başlığındaki bir paylaşımına yorum yaptı`,
+                        body: `${name} "${post.topic}" başlığındaki bir paylaşımına yorum yaptı`,
                         custom: { sender: 'Bloom' },
                         priority: 'high',
                         contentAvailable: true,
