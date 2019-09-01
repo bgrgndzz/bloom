@@ -27,7 +27,8 @@ export default class Register extends Component {
     password2: '',
     school: '',
     schoolField: '',
-    schoolFocused: false
+    schoolFocused: false,
+    registerDisabled: false
   };
 
   onChangeText = key => input => this.setState({ [key]: input });
@@ -36,32 +37,45 @@ export default class Register extends Component {
 
   onSchoolPress = item => this.setState({ school: item, schoolField: item });
 
-  toggleSchoolModal = () => this.setState({schoolFocused: !this.state.schoolFocused});
+  toggleSchoolModal = () => this.setState({ schoolFocused: !this.state.schoolFocused });
 
   register = () => {
-    api(
-      {
-        path: 'auth/register',
-        method: 'POST',
-        body: this.state
-      },
-      (err, res) => {
-        if (err && !res.jwt) return Alert.alert(err);
+    this.setState({
+      registerDisabled: true
+    }, () => {
+      api(
+        {
+          path: 'auth/register',
+          method: 'POST',
+          body: this.state
+        },
+        (err, res) => {
+          if ((!res || !res.jwt) && err) {
+            return this.setState({
+              registerDisabled: false
+            }, () => Alert.alert(err));
+          }
 
-        AsyncStorage.setItem('jwt', res.jwt);
-        this.props.screenProps.setJWT(res.jwt);
+          if (res.error) {
+            return this.setState({
+              registerDisabled: false
+            }, () => Alert.alert(res.error));
+          }
+          AsyncStorage.setItem('jwt', res.jwt);
+          this.props.screenProps.setJWT(res.jwt);
 
-        AsyncStorage
-          .getItem('onboarding')
-          .then(onboarding => {
-            if (!onboarding) {
-              AsyncStorage.setItem('onboarding', JSON.stringify({}));
-            }
+          AsyncStorage
+            .getItem('onboarding')
+            .then(onboarding => {
+              if (!onboarding) {
+                AsyncStorage.setItem('onboarding', JSON.stringify({}));
+              }
 
-            return this.props.navigation.navigate('Topics');
-          });
-      }
-    );
+              return this.props.navigation.navigate('Topics');
+            });
+        }
+      );
+    });
   }
 
   render() {
@@ -73,7 +87,8 @@ export default class Register extends Component {
       password,
       password2,
       schoolField,
-      schoolFocused
+      schoolFocused,
+      registerDisabled
     } = this.state;
     const { animationPresets } = this.props;
 
@@ -142,6 +157,7 @@ export default class Register extends Component {
         />
         <Button
           text="Kayıt Ol"
+          disabled={registerDisabled}
           onPress={this.register}
         />
         <View style={styles.agrements}>
