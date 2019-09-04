@@ -6,7 +6,10 @@ import {
   Alert,
   AsyncStorage,
   Linking,
-  TouchableOpacity
+  TouchableOpacity,
+  Animated,
+  Easing,
+  Dimensions
 } from 'react-native';
 
 import Back from '../../shared/Back/Back';
@@ -28,7 +31,8 @@ export default class Register extends Component {
     school: '',
     schoolField: '',
     schoolFocused: false,
-    registerDisabled: false
+    registerDisabled: false,
+    innerPreset: '1'
   };
 
   onChangeText = key => input => this.setState({ [key]: input });
@@ -78,6 +82,61 @@ export default class Register extends Component {
     });
   }
 
+  componentWillMount() {
+    this.innerAnimatedState = {
+      firstOpacity: new Animated.Value(1),
+      secondOpacity: new Animated.Value(0)
+    };
+    this.innerAnimationPresets = {
+      '1': () => {
+        this.setState(prevState => ({ innerPreset: `${prevState.innerPreset}1` }), () => {
+          Animated.timing(
+            this.innerAnimatedState.firstOpacity,
+            {
+              toValue: 1,
+              duration: 125,
+              delay: 125,
+              easing: Easing.bezier(0.77, 0, 0.175, 1)
+            }
+          ).start();
+          Animated.timing(
+            this.innerAnimatedState.secondOpacity,
+            {
+              toValue: 0,
+              duration: 125,
+              easing: Easing.bezier(0.77, 0, 0.175, 1)
+            }
+          ).start(() => {
+            this.setState({ innerPreset: '1' });
+          });
+        });
+      },
+      '2': () => {
+        this.setState(prevState => ({ innerPreset: `${prevState.innerPreset}2` }), () => {
+          Animated.timing(
+            this.innerAnimatedState.secondOpacity,
+            {
+              toValue: 1,
+              duration: 125,
+              delay: 125,
+              easing: Easing.bezier(0.77, 0, 0.175, 1)
+            }
+          ).start();
+          Animated.timing(
+            this.innerAnimatedState.firstOpacity,
+            {
+              toValue: 0,
+              duration: 125,
+              easing: Easing.bezier(0.77, 0, 0.175, 1)
+            }
+          ).start(() => {
+            this.setState({ innerPreset: '2' });
+          });
+        });
+      }
+    };
+  }
+
   render() {
     const {
       firstName,
@@ -88,89 +147,121 @@ export default class Register extends Component {
       password2,
       schoolField,
       schoolFocused,
-      registerDisabled
+      registerDisabled,
+      innerPreset
     } = this.state;
     const { animationPresets } = this.props;
+    const {
+      firstOpacity,
+      secondOpacity
+    } = this.innerAnimatedState;
 
     return (
       <View style={styles.register}>
-        <View style={styles.headingContainer}>
-          <Back onPress={animationPresets.Landing} />
-          <Text style={styles.heading}>Kayıt Ol</Text>
-        </View>
-        <View style={styles.halfInputs}>
-          <Input
-            onChangeText={this.onChangeText('firstName')}
-            type="firstName"
-            placeholder="Ad"
-            width="45%"
-            value={firstName}
-          />
-          <Input
-            onChangeText={this.onChangeText('lastName')}
-            type="lastName"
-            placeholder="Soyad"
-            width="45%"
-            value={lastName}
-          />
-        </View>
-        <TouchableOpacity
-          style={styles.schoolInputInterceptor}
-          onPress={this.toggleSchoolModal}
-        >
-          <View pointerEvents="none">
-            <Input
-              value={school}
-              editable={false}
+        {innerPreset.includes('1') && (
+          <Animated.View
+            style={[
+              styles.register1,
+              { opacity: firstOpacity }
+            ]}
+          >
+            <View style={styles.headingContainer}>
+              <Back onPress={animationPresets.Landing} />
+              <Text style={styles.heading}>Kayıt Ol</Text>
+            </View>
+            <View style={styles.halfInputs}>
+              <Input
+                onChangeText={this.onChangeText('firstName')}
+                type="firstName"
+                placeholder="Ad"
+                width="45%"
+                value={firstName}
+              />
+              <Input
+                onChangeText={this.onChangeText('lastName')}
+                type="lastName"
+                placeholder="Soyad"
+                width="45%"
+                value={lastName}
+              />
+            </View>
+            <TouchableOpacity
+              style={styles.schoolInputInterceptor}
               onPress={this.toggleSchoolModal}
+            >
+              <View pointerEvents="none">
+                <Input
+                  value={school}
+                  editable={false}
+                  onPress={this.toggleSchoolModal}
+                  placeholder="Okul"
+                  onChangeText={this.onSchoolChange}
+                />
+              </View>
+            </TouchableOpacity>
+            <Dropdown
+              field={schoolField}
+              data={schools}
+              focused={schoolFocused}
               placeholder="Okul"
-              onChangeText={this.onSchoolChange}
+              onChange={this.onSchoolChange}
+              onPress={this.onSchoolPress}
+              toggle={this.toggleSchoolModal}
             />
-          </View>
-        </TouchableOpacity>
-        <Dropdown
-          field={schoolField}
-          data={schools}
-          focused={schoolFocused}
-          placeholder="Okul"
-          onChange={this.onSchoolChange}
-          onPress={this.onSchoolPress}
-          toggle={this.toggleSchoolModal}
-        />
-        <Input
-          onChangeText={this.onChangeText('email')}
-          type="email"
-          placeholder="E-posta"
-          value={email}
-        />
-        <Input
-          onChangeText={this.onChangeText('password')}
-          type="password"
-          placeholder="Şifre"
-          value={password}
-        />
-        <Input
-          onChangeText={this.onChangeText('password2')}
-          type="password"
-          placeholder="Şifre Doğrulama"
-          value={password2}
-        />
-        <Button
-          text="Kayıt Ol"
-          disabled={registerDisabled}
-          onPress={this.register}
-        />
-        <View style={styles.agrements}>
-          <Text>Bu butona basarak</Text>
-          <TouchableOpacity onPress={() => Linking.openURL('https://www.getbloom.info/web/privacy-policy')}>
-            <Text style={styles.agreementLink}> Gizlilik Sözleşmesi'ni </Text>
-          </TouchableOpacity>
-          <Text>ve</Text>
-          <TouchableOpacity onPress={() => Linking.openURL('https://www.getbloom.info/web/terms')}>
-            <Text style={styles.agreementLink}> Kullanım Şartları'nı </Text>
-          </TouchableOpacity>
-          <Text>kabul etmiş olursunuz.</Text>
-        </View>
+            <Button
+              text="Devam Et"
+              disabled={registerDisabled}
+              onPress={this.innerAnimationPresets['2']}
+            />
+          </Animated.View>
+        )}
+        {innerPreset.includes('2') && (
+          <Animated.View
+            style={[
+              styles.register2,
+              { opacity: secondOpacity }
+            ]}
+          >
+            <View style={styles.headingContainer}>
+              <Back onPress={this.innerAnimationPresets['1']} />
+              <Text style={styles.heading}>Kayıt Ol</Text>
+            </View>
+            <Input
+              onChangeText={this.onChangeText('email')}
+              type="email"
+              placeholder="E-posta"
+              value={email}
+            />
+            <Input
+              onChangeText={this.onChangeText('password')}
+              type="password"
+              placeholder="Şifre"
+              value={password}
+            />
+            <Input
+              onChangeText={this.onChangeText('password2')}
+              type="password"
+              placeholder="Şifre Doğrulama"
+              value={password2}
+            />
+            <Button
+              text="Kayıt Ol"
+              disabled={registerDisabled}
+              onPress={this.register}
+            />
+            <View style={styles.agrements}>
+              <Text>Bu butona basarak</Text>
+              <TouchableOpacity onPress={() => Linking.openURL('https://www.getbloom.info/web/privacy-policy')}>
+                <Text style={styles.agreementLink}> Gizlilik Sözleşmesi'ni </Text>
+              </TouchableOpacity>
+              <Text>ve</Text>
+              <TouchableOpacity onPress={() => Linking.openURL('https://www.getbloom.info/web/terms')}>
+                <Text style={styles.agreementLink}> Kullanım Şartları'nı </Text>
+              </TouchableOpacity>
+              <Text>kabul etmiş olursunuz.</Text>
+            </View>
+          </Animated.View>
+        )}
       </View>
     );
   }
@@ -180,7 +271,34 @@ const styles = StyleSheet.create({
   schoolInputInterceptor: { width: '100%' },
   register: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  register1: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    width: Dimensions.get('window').width * 0.9,
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 5
+  },
+  register2: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    width: Dimensions.get('window').width * 0.9,
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 5
   },
   headingContainer: {
     flexDirection: 'row',

@@ -26,7 +26,7 @@ export default class Landing extends Component {
     };
     this.animationPresets = {
       'Login': () => {
-        this.setState(prevState => ({ preset: `${prevState.preset}-Login` }), () => {
+        this.setState(prevState => ({ preset: `${prevState.preset}Login` }), () => {
           Animated.timing(
             this.animatedState.backgroundHeight,
             {
@@ -79,7 +79,7 @@ export default class Landing extends Component {
           Animated.timing(
             this.animatedState.backgroundHeight,
             {
-              toValue: Dimensions.get('window').height * 0.25,
+              toValue: Dimensions.get('window').height * 0.35,
               duration: 250,
               easing: Easing.bezier(0.77, 0, 0.175, 1)
             }
@@ -274,17 +274,6 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   login: {
-    backgroundColor: 'white',
-    width: Dimensions.get('window').width * 0.9,
-    borderRadius: 10,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 5
-  },
-  register: {
     backgroundColor: 'white',
     width: Dimensions.get('window').width * 0.9,
     borderRadius: 10,
