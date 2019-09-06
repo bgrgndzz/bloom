@@ -56,8 +56,18 @@ const styles = StyleSheet.create({
 });
 
 const Topic = props => (
-  <View style={styles.topic}>
-    <Text style={styles.name}>
+  <View
+    style={[
+      styles.topic,
+      props.containerStyle
+    ]}
+  >
+    <Text
+      style={[
+        styles.name,
+        props.textStyle
+      ]}
+    >
       {
         props.search ?
           highlight(props.topic, props.search) :

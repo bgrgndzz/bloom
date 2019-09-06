@@ -7,7 +7,8 @@ import {
   Alert,
   TouchableOpacity,
   ActivityIndicator,
-  AsyncStorage
+  AsyncStorage,
+  Linking
 } from 'react-native';
 
 import Tooltip from 'react-native-walkthrough-tooltip';
@@ -50,6 +51,7 @@ export default class Topics extends Component {
     this.state = {
       topics: [],
       searchResults: [],
+      ad: {},
       page: 1,
       sort: 'popular',
       searchOption: 'topics',
@@ -80,6 +82,7 @@ export default class Topics extends Component {
         return this.setState({
           ...state,
           topics: this.state.topics.concat(res.topics),
+          ad: (res.ad && Object.keys(res.ad).length > 0) ? res.ad : this.state.ad,
           dataEnd: res.topics.length < 10,
           dataLoading: false
         });
@@ -109,15 +112,17 @@ export default class Topics extends Component {
   }
 
   onRefresh = () => {
+    this.adDisplayed = false;
     this.setState(
       {
         refreshing: true,
         dataEnd: false,
         topics: [],
+        ad: {},
         searchResults: [],
         page: 1
       },
-      () => (this.state.optionType === 'sort' ? this.listTopicsDebounced({refreshing: false}) : this.searchDebounced({refreshing: false}))
+      () => (this.state.optionType === 'sort' ? this.listTopicsDebounced({ refreshing: false }) : this.searchDebounced({ refreshing: false }))
     );
   }
 
@@ -159,6 +164,10 @@ export default class Topics extends Component {
 
     if (this.state.optionType === 'sort') {
       data = this.state.topics;
+      if (Object.keys(this.state.ad).length > 0 && !this.adDisplayed && this.state.sort !== 'random') {
+        this.adDisplayed = true;
+        data.splice(3, 0, this.state.ad);
+      }
       renderItem = ({ item, index }) => {
         if (index === 0 && !this.state.readTopicOnboarding) {
           return (
@@ -179,6 +188,16 @@ export default class Topics extends Component {
                 posts={item.posts}
               />
             </Tooltip>
+          );
+        }
+        if (index === 3 && this.state.sort !== 'random' && Object.keys(this.state.ad).length > 0) {
+          return (
+            <TouchableOpacity onPress={() => Linking.openURL(`https://www.getbloom.info/ad/${item._id}/${jwtDecode(this.props.screenProps.jwt).user}?ref=topics`)}>
+              <Topic
+                topic={item.topic}
+                containerStyle={styles.ad}
+              />
+            </TouchableOpacity>
           );
         }
 
@@ -304,5 +323,8 @@ const styles = StyleSheet.create({
   },
   tooltipContent: {
     textAlign: 'center'
+  },
+  ad: {
+    backgroundColor: '#FFDDDD'
   }
 });

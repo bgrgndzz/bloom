@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Topic = require('../../models/Topic/Topic');
+const Ad = require('../../models/Ad/Ad');
 
 module.exports = (req, res, next) => {
   const page = parseInt(req.params.page, 10);
@@ -125,9 +126,27 @@ module.exports = (req, res, next) => {
   Topic
     .aggregate(chosen)
     .exec((err, topics) => {
-      res.status(200).send({
-        authenticated: true,
-        topics
-      });
+      const now = new Date();
+      Ad
+        .find({
+          startDate: { $lte: now },
+          endDate: { $gte: now },
+          types: 'topics'
+        })
+        .exec((err, ads) => {
+          if (ads.length === 0 || page !== 1) {
+            return res.status(200).send({
+              authenticated: true,
+              topics,
+              ad: {}
+            });
+          }
+
+          return res.status(200).send({
+            authenticated: true,
+            topics,
+            ad: ads[0]
+          });
+        });
     });
 };

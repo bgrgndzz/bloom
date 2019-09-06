@@ -8,7 +8,7 @@ import {
 
 import { CachedImage } from 'react-native-cached-image';
 import moment from 'moment';
-import jwt_decode from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 
 const translateDate = date => date
   .replace('a few seconds ago', 'şimdi')
@@ -51,7 +51,7 @@ export default class Notification extends Component {
               });
             } else if (this.props.type === 'follow') {
               this.props.navigation.push('Profile', {
-                user: this.props.from._id === jwt_decode(this.props.screenProps.jwt).user ? null : this.props.from._id,
+                user: this.props.from._id === jwtDecode(this.props.screenProps.jwt).user ? null : this.props.from._id,
                 jwt: this.props.screenProps.jwt
               });
             }
@@ -69,7 +69,7 @@ export default class Notification extends Component {
             () => {
               if (!this.props.anonymous) {
                 this.props.navigation.push('Profile', {
-                  user: this.props.from._id === jwt_decode(this.props.screenProps.jwt).user ? null : this.props.from._id,
+                  user: this.props.from._id === jwtDecode(this.props.screenProps.jwt).user ? null : this.props.from._id,
                   jwt: this.props.screenProps.jwt
                 });
               }

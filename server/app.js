@@ -33,6 +33,7 @@ const messagesRoute = require('./routes/messages');
 const schoolRoute = require('./routes/school');
 const notificationTokenRoute = require('./routes/notificationToken');
 const webRoute = require('./routes/web');
+const adRoute = require('./routes/ad');
 const adminRoute = require('./routes/admin');
 
 // constants
@@ -133,6 +134,7 @@ app.use('/messages', messagesRoute);
 app.use('/school', schoolRoute);
 app.use('/notificationToken', notificationTokenRoute);
 app.use('/web', webRoute);
+app.use('/ad', adRoute);
 app.use('/admin', bruteforce.prevent, adminRoute);
 
 // socket.io setup
