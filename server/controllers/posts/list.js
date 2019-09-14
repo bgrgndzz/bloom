@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Post = require('../../models/Post/Post');
 const User = require('../../models/User/User');
+const Ad = require('../../models/Ad/Ad');
 
 module.exports = (req, res, next) => {
   if (!req.params || !req.params.topic) {
@@ -43,10 +44,29 @@ module.exports = (req, res, next) => {
               ...post.author._doc.user
             }
           }));
-          res.status(200).send({
-            authenticated: true,
-            posts
-          });
+
+          const now = new Date();
+          Ad
+            .find({
+              startDate: { $lte: now },
+              endDate: { $gte: now },
+              types: 'posts'
+            })
+            .exec((err, ads) => {
+              if (ads.length === 0) {
+                return res.status(200).send({
+                  authenticated: true,
+                  posts,
+                  ad: {}
+                });
+              }
+
+              return res.status(200).send({
+                authenticated: true,
+                posts,
+                ad: ads[0]
+              });
+            });
         });
     });
 };

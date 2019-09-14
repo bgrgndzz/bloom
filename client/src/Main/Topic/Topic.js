@@ -7,10 +7,13 @@ import {
   Alert,
   AsyncStorage,
   RefreshControl,
-  TouchableOpacity
+  TouchableOpacity,
+  Linking
 } from 'react-native';
 
 import Tooltip from 'react-native-walkthrough-tooltip';
+import { CachedImage } from 'react-native-cached-image';
+import jwtDecode from 'jwt-decode';
 
 import Post from '../shared/Post/Post';
 import Input from '../../shared/Input/Input';
@@ -18,6 +21,8 @@ import Button from '../../shared/Button/Button';
 import DoubleSelect from '../shared/DoubleSelect/DoubleSelect';
 import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 import Dropdown from '../../shared/Dropdown/Dropdown';
+
+import defaultprofile from '../../images/defaultprofile.png';
 
 import api from '../../shared/api';
 
@@ -27,6 +32,7 @@ export default class Topic extends Component {
   state = {
     posts: [],
     users: [],
+    ad: {},
     sort: 'popular',
     post: '',
     mentionField: '',
@@ -66,7 +72,11 @@ export default class Topic extends Component {
   }
 
   onRefresh = () => {
-    this.setState({ refreshing: true }, () => {
+    this.adDisplayed = false;
+    this.setState({
+      refreshing: true,
+      ad: {}
+    }, () => {
       api(
         {
           path: `posts/list/${this.props.navigation.getParam('topic', '')}/${this.state.sort}`,
@@ -81,6 +91,7 @@ export default class Topic extends Component {
 
           this.setState({
             posts: res.posts,
+            ad: (res.ad && Object.keys(res.ad).length > 0) ? res.ad : this.state.ad,
             refreshing: false
           });
         }
@@ -229,17 +240,49 @@ export default class Topic extends Component {
             option={this.state.sort}
             onChangeOption={this.sort}
           />
-          {this.state.posts.map(post => (
-            <Post
-              key={post._id}
-              {...post}
-              {...this.props}
-              include={['user']}
-              navigation={this.props.navigation}
-              logout={this.props.logout}
-              reportCallback={this.reportCallback}
-            />
-          ))}
+          {(() => {
+            let data = this.state.posts;
+            if (Object.keys(this.state.ad).length > 0 && !this.adDisplayed) {
+              this.adDisplayed = true;
+              data.splice(data.length >= 3 ? 3 : data.length, 0, this.state.ad);
+            }
+            return data.map((post, index) => ((((data.length >= 3 && index === 3) || (data.length < 3 && index === data.length)) && Object.keys(this.state.ad).length > 0) ?
+              (
+                <TouchableOpacity onPress={() => Linking.openURL(`https://www.getbloom.info/ad/${post._id}/${jwtDecode(this.props.screenProps.jwt).user}?ref=posts`)}>
+                  <View style={styles.adPost}>
+                    <View style={styles.adTop}>
+                      <View style={styles.adAuthorContainer}>
+                        <CachedImage
+                          style={styles.adProfilepicture}
+                          source={defaultprofile}
+                        />
+                        <Text style={styles.adAuthor}>{post.company}</Text>
+                      </View>
+                    </View>
+                    <View style={styles.adMain}>
+                      <TouchableOpacity
+                        style={styles.adTopicContainer}
+                        onPress={() => Linking.openURL(`https://www.getbloom.info/ad/${post._id}/${jwtDecode(this.props.screenProps.jwt).user}?ref=posts`)}
+                      >
+                        <Text style={styles.adTopic}>{post.topic}</Text>
+                      </TouchableOpacity>
+                      <Text style={styles.adText}>{post.text}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ) : (
+                <Post
+                  key={post._id}
+                  {...post}
+                  {...this.props}
+                  include={['user']}
+                  navigation={this.props.navigation}
+                  logout={this.props.logout}
+                  reportCallback={this.reportCallback}
+                />
+              )
+            ));
+          })()}
         </ScrollView>
       </View>
     );
@@ -323,5 +366,57 @@ const styles = StyleSheet.create({
   },
   tooltipContent: {
     textAlign: 'center'
-  }
+  },
+  adPost: {
+    backgroundColor: 'white',
+    marginBottom: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 1
+  },
+  adMain: {
+    width: '100%',
+    padding: 15,
+    backgroundColor: '#ffdddd',
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  adTopic: {
+    fontWeight: '700',
+    fontSize: 16,
+    marginBottom: 5
+  },
+  adText: {
+    fontWeight: '100'
+  },
+  adTop: {
+    width: '100%',
+    padding: 15,
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+    borderBottomWidth: 1,
+    backgroundColor: '#ffdddd',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  adAuthorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  adProfilepicture: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginRight: 10
+  },
+  adAuthor: {
+    fontWeight: '700',
+    color: '#505050',
+    marginRight: 5
+  },
 });

@@ -325,6 +325,6 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   ad: {
-    backgroundColor: '#FFDDDD'
+    backgroundColor: '#ffdddd'
   }
 });
