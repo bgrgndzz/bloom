@@ -72,10 +72,10 @@ export default class Topic extends Component {
   }
 
   onRefresh = () => {
-    this.adDisplayed = false;
     this.setState({
       refreshing: true,
-      ad: {}
+      ad: {},
+      posts: []
     }, () => {
       api(
         {
@@ -91,7 +91,7 @@ export default class Topic extends Component {
 
           this.setState({
             posts: res.posts,
-            ad: (res.ad && Object.keys(res.ad).length > 0) ? res.ad : this.state.ad,
+            ad: (res.ad && Object.keys(res.ad).length > 0) ? res.ad : {},
             refreshing: false
           });
         }
@@ -241,47 +241,47 @@ export default class Topic extends Component {
             onChangeOption={this.sort}
           />
           {(() => {
-            let data = this.state.posts;
-            if (Object.keys(this.state.ad).length > 0 && !this.adDisplayed) {
-              this.adDisplayed = true;
-              data.splice(data.length >= 3 ? 3 : data.length, 0, this.state.ad);
-            }
-            return data.map((post, index) => ((((data.length >= 3 && index === 3) || (data.length < 3 && index === data.length)) && Object.keys(this.state.ad).length > 0) ?
-              (
-                <TouchableOpacity onPress={() => Linking.openURL(`https://www.getbloom.info/ad/${post._id}/${jwtDecode(this.props.screenProps.jwt).user}?ref=posts`)}>
-                  <View style={styles.adPost}>
-                    <View style={styles.adTop}>
-                      <View style={styles.adAuthorContainer}>
-                        <CachedImage
-                          style={styles.adProfilepicture}
-                          source={defaultprofile}
-                        />
-                        <Text style={styles.adAuthor}>{post.company}</Text>
+            if (this.state.posts.length === 0) return false;
+            let data = [...this.state.posts];
+            if (Object.keys(this.state.ad).length > 0) data.splice(data.length >= 3 ? 3 : data.length, 0, this.state.ad);
+
+            return data.map((post, index) => {
+              return (post.company && Object.keys(this.state.ad).length > 0) ?
+                (
+                  <TouchableOpacity onPress={() => Linking.openURL(`https://www.getbloom.info/ad/${post._id}/${jwtDecode(this.props.screenProps.jwt).user}?ref=posts`)}>
+                    <View style={styles.adPost}>
+                      <View style={styles.adTop}>
+                        <View style={styles.adAuthorContainer}>
+                          <CachedImage
+                            style={styles.adProfilepicture}
+                            source={defaultprofile}
+                          />
+                          <Text style={styles.adAuthor}>{post.company}</Text>
+                        </View>
+                      </View>
+                      <View style={styles.adMain}>
+                        <TouchableOpacity
+                          style={styles.adTopicContainer}
+                          onPress={() => Linking.openURL(`https://www.getbloom.info/ad/${post._id}/${jwtDecode(this.props.screenProps.jwt).user}?ref=posts`)}
+                        >
+                          <Text style={styles.adTopic}>{post.topic}</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.adText}>{post.text}</Text>
                       </View>
                     </View>
-                    <View style={styles.adMain}>
-                      <TouchableOpacity
-                        style={styles.adTopicContainer}
-                        onPress={() => Linking.openURL(`https://www.getbloom.info/ad/${post._id}/${jwtDecode(this.props.screenProps.jwt).user}?ref=posts`)}
-                      >
-                        <Text style={styles.adTopic}>{post.topic}</Text>
-                      </TouchableOpacity>
-                      <Text style={styles.adText}>{post.text}</Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ) : (
-                <Post
-                  key={post._id}
-                  {...post}
-                  {...this.props}
-                  include={['user']}
-                  navigation={this.props.navigation}
-                  logout={this.props.logout}
-                  reportCallback={this.reportCallback}
-                />
-              )
-            ));
+                  </TouchableOpacity>
+                ) : (
+                  <Post
+                    key={post._id}
+                    {...post}
+                    {...this.props}
+                    include={['user']}
+                    navigation={this.props.navigation}
+                    logout={this.props.logout}
+                    reportCallback={this.reportCallback}
+                  />
+                );
+            });
           })()}
         </ScrollView>
       </View>
