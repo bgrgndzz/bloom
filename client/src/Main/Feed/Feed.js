@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import { CachedImage } from 'react-native-cached-image';
+import jwtDecode from 'jwt-decode';
 
 import Post from '../shared/Post/Post';
 
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
   adText: {
-    fontWeight: '100'
+    fontWeight: '300'
   },
   adTop: {
     width: '100%',

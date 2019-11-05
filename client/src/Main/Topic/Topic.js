@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
   },
   topicName: {
     color: '#202020',
-    fontWeight: '100',
+    fontWeight: '300',
     textAlign: 'center'
   },
   form: {
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
   adText: {
-    fontWeight: '100'
+    fontWeight: '300'
   },
   adTop: {
     width: '100%',

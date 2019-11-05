@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   schoolName: {
     flex: 1,
     color: '#202020',
-    fontWeight: '100',
+    fontWeight: '300',
     flexDirection: 'row',
     alignItems: 'center'
   }

@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   messagePreview: {
-    fontWeight: '100'
+    fontWeight: '300'
   },
   date: {
     color: 'rgba(0, 0, 0, 0.5)',

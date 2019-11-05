@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   name: {
     color: '#202020',
-    fontWeight: '100',
+    fontWeight: '300',
     lineHeight: 30,
     marginRight: 10
   },

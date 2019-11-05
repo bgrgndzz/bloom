@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     color: 'rgba(0, 0, 0, 0.75)'
   },
   text: {
-    fontWeight: '100'
+    fontWeight: '300'
   },
   likesContainer: {
     flexDirection: 'row',
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   },
   comments: {
     color: 'rgba(0, 0, 0, 0.75)',
-    fontWeight: '100',
+    fontWeight: '300',
     flexDirection: 'row',
     justifyContent: 'center'
   },
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   },
   likes: {
     color: 'rgba(0, 0, 0, 0.75)',
-    fontWeight: '100',
+    fontWeight: '300',
     flexDirection: 'row',
     justifyContent: 'center'
   },

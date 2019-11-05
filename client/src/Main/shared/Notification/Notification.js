@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     fontWeight: '700'
   },
   main: {
-    fontWeight: '100',
+    fontWeight: '300',
     flex: 1,
     lineHeight: 30
   },

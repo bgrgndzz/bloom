@@ -68,6 +68,6 @@ const styles = StyleSheet.create({
   settingTitle: {
     flex: 1,
     color: '#202020',
-    fontWeight: '100'
+    fontWeight: '300'
   }
 });

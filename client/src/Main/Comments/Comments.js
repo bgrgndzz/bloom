@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   },
   topicName: {
     color: '#202020',
-    fontWeight: '100',
+    fontWeight: '300',
     textAlign: 'center'
   },
   form: {
