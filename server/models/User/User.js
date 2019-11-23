@@ -65,6 +65,14 @@ const UserSchema = new Schema({
       default: ''
     },
   },
+  referral: {
+    referralCode: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    referrerCode: String
+  },
   passwordReset: {
     hash: String
   },

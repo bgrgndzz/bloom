@@ -1,7 +1,7 @@
+const jwt = require('jsonwebtoken');
+
 const mongoose = require('mongoose');
 const User = require('../../models/User/User');
-
-const jwt = require('jsonwebtoken');
 
 const trim = str => str.replace(/\s+/g,' ').trim();
 
@@ -32,7 +32,7 @@ module.exports = (req, res, next) => {
   req.body.lastName = trim(req.body.lastName);
 
   User
-    .findOne({'auth.email': req.body.email})
+    .findOne({ 'auth.email': req.body.email })
     .exec((err, userRes) => {
       if (userRes) {
         return res.status(422).send({
@@ -40,6 +40,8 @@ module.exports = (req, res, next) => {
           error: 'Bu e-mail ile kayıtlı bir hesap zaten var'
         });
       }
+
+      const referralCode = Math.random().toString(36).substr(2, 9);
 
       const newUser = new User({
         auth: {
@@ -50,14 +52,18 @@ module.exports = (req, res, next) => {
           firstName: req.body.firstName,
           lastName: req.body.lastName,
           school: req.body.school,
+        },
+        referral: {
+          referralCode,
+          referrerCode: req.body.referrerCode || ''
         }
       });
-      newUser.save(err => {
-        const token = jwt.sign({user: newUser.id}, process.env.JWT_SECRET, {
+      return newUser.save(err => {
+        const token = jwt.sign({ user: newUser.id }, process.env.JWT_SECRET, {
           expiresIn: 60 * 60 * 24 * 365 * 10 // 10 years
         });
 
-        res.status(200).send({
+        return res.status(200).send({
           authenticated: true,
           jwt: token
         });

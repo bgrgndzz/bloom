@@ -30,6 +30,7 @@ export default class Register extends Component {
     password2: '',
     school: '',
     schoolField: '',
+    referrerCode: '',
     schoolFocused: false,
     registerDisabled: false,
     innerPreset: '1'
@@ -147,6 +148,7 @@ export default class Register extends Component {
       password2,
       schoolField,
       schoolFocused,
+      referrerCode,
       registerDisabled,
       innerPreset
     } = this.state;
@@ -207,6 +209,12 @@ export default class Register extends Component {
               onChange={this.onSchoolChange}
               onPress={this.onSchoolPress}
               toggle={this.toggleSchoolModal}
+            />
+            <Input
+              onChangeText={this.onChangeText('referrerCode')}
+              type="referrerCode"
+              placeholder="Davet Kodu (İsteğe Bağlı)"
+              value={referrerCode}
             />
             <Button
               text="Devam Et"
