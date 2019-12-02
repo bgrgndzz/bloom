@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const mongoose = require('mongoose');
 const User = require('../../models/User/User');
+const Notification = require('../../models/Notification/Notification');
 
 const trim = str => str.replace(/\s+/g,' ').trim();
 
@@ -63,10 +64,74 @@ module.exports = (req, res, next) => {
           expiresIn: 60 * 60 * 24 * 365 * 10 // 10 years
         });
 
-        return res.status(200).send({
-          authenticated: true,
-          jwt: token
-        });
+        if (!req.body.referrerCode) {
+          return res.status(200).send({
+            authenticated: true,
+            jwt: token
+          });
+        }
+
+        User
+          .find({ 'referral.referrerCode': req.body.referrerCode })
+          .select('_id')
+          .exec((err, users) => {
+            if (users.length !== 3) {
+              return res.status(200).send({
+                authenticated: true,
+                jwt: token
+              });
+            }
+
+            User
+              .findOne({ 'referral.referralCode': req.body.referrerCode })
+              .exec((err, user) => {
+                if (!user) {
+                  return res.status(200).send({
+                    authenticated: true,
+                    jwt: token
+                  });
+                }
+
+                if (!user.badges.includes('davetkar')) user.badges.push('davetkar');
+
+                user.save(err => {
+                  const newNotification = new Notification({
+                    from: 'bloom',
+                    to: user._id,
+                    type: 'bloom',
+                    text: '3 kişiyi davet ettiğin için "Davetkar" isimli yeni bir bloop\'un var! Kullanmak için ayarlardan profilini düzenle.'
+                  });
+                  newNotification.save(err => {
+                    req.push.send(
+                      user.notificationTokens,
+                      {
+                        topic: 'com.bgrgndzz.bloom',
+                        body: '3 kişiyi davet ettiğin için "Davetkar" isimli yeni bir bloop\'un var! Kullanmak için ayarlardan profilini düzenle.',
+                        custom: { sender: 'Bloom' },
+                        priority: 'high',
+                        contentAvailable: true,
+                        delayWhileIdle: true,
+                        retries: 1,
+                        badge: 2,
+                        sound: 'notification.wav',
+                        soundName: 'notification.wav',
+                        android_channel_id: 'Bloom',
+                        action: 'comment',
+                        post: req.params.post,
+                        truncateAtWordEnd: true,
+                        expiry: Math.floor(Date.now() / 1000) + 28 * 86400,
+                      },
+                      (err, result) => {
+                        return res.status(200).send({
+                          authenticated: true,
+                          jwt: token
+                        });
+                      }
+                    );
+                  });
+                });
+              });
+          });
       });
     });
 };

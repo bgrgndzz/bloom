@@ -9,11 +9,12 @@ module.exports = (req, res, next) => {
     .exec((err, user) => {
       if (!user) {
         return res.status(422).send({
-          authenticated: true, 
+          authenticated: true,
           error: 'Böyle bir kullanıcı yok'
         });
       }
 
+      user.user.mainBadge = req.body.badge || '';
       if (req.body.about) user.user.about = req.body.about;
       if (req.body.profilepicture) {
         const filename = `${req.user}_${Math.round((new Date()).getTime() / 1000)}.${req.body.profilepicture.mime.replace('image/', '')}`;

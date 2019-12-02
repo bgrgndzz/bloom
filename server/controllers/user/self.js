@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
   const page = parseInt(req.params.page || 1);
   User
     .findById(req.user)
-    .select('user')
+    .select('user referral')
     .exec((err, user) => {
       if (!user) {
         return res.status(403).send({
@@ -24,6 +24,7 @@ module.exports = (req, res, next) => {
             user: {
               _id: user.id,
               ...user._doc.user,
+              ...user._doc.referral,
               postCount: posts.length,
               likeCount: posts.reduce((reducer, post) => reducer += post.likeCount, 0)
             },

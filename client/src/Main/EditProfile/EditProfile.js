@@ -5,7 +5,9 @@ import {
   Text,
   Alert,
   TouchableOpacity,
-  Modal
+  Modal,
+  Dimensions,
+  ScrollView
 } from 'react-native';
 
 import ImagePicker from 'react-native-image-crop-picker';
@@ -15,8 +17,11 @@ import Permissions from 'react-native-permissions';
 import Input from '../../shared/Input/Input';
 import Button from '../../shared/Button/Button';
 import FontAwesome from '../../shared/FontAwesome/FontAwesome';
+import Badge from '../shared/Badge/Badge';
 
 import api from '../../shared/api';
+
+import badgeList from './badgeList';
 
 import defaultProfile from '../../images/defaultprofile.png';
 
@@ -26,9 +31,13 @@ export default class EditProfile extends Component {
     profilepicture: {
       type: 'default'
     },
+    badge: '',
+    availableBadges: [],
+    detailedBadge: '',
     cameraPermission: 'undetermined',
     photoPermission: 'undetermined',
-    modalOpen: false
+    modalOpen: false,
+    badgeModalOpen: false
   }
 
   requestPermission = (item, callback) => {
@@ -62,10 +71,13 @@ export default class EditProfile extends Component {
 
         return this.setState({
           about: res.user.about || '',
-          profilepicture: res.user.profilepicture ? {
+          badge: res.user.mainBadge,
+          detailedBadge: res.user.mainBadge,
+          availableBadges: res.user.badges,
+          profilepicture: (res.user.profilepicture ? {
             type: 'uri',
             uri: res.user.profilepicture
-          } : { type: 'default' }
+          } : { type: 'default' }),
         });
       }
     );
@@ -144,7 +156,7 @@ export default class EditProfile extends Component {
 
   submitProfileInfo = () => {
     const { jwt } = this.props.screenProps;
-    const { about, profilepicture } = this.state;
+    const { badge, about, profilepicture } = this.state;
     api(
       {
         path: 'user/edit/',
@@ -152,6 +164,7 @@ export default class EditProfile extends Component {
         body: {
           profilepicture: profilepicture.type === 'base64' ? profilepicture : null,
           about,
+          badge
         },
         jwt
       },
@@ -161,7 +174,7 @@ export default class EditProfile extends Component {
           return Alert.alert(err);
         }
 
-        return this.props.navigation.navigate('Profile', { jwt });
+        return this.props.navigation.push('Profile', { jwt });
       }
     );
   }
@@ -205,6 +218,18 @@ export default class EditProfile extends Component {
                 Profil fotoğrafını değiştir
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => this.setState({ badgeModalOpen: true })}
+              style={styles.badgeButtonContainer}
+            >
+              <Text style={styles.badgeButtonLabel}>Bloop: </Text>
+              {this.state.badge ? (
+                <Badge
+                  badge={this.state.badge}
+                  size="small"
+                />
+              ) : <Text>Seçilmedi</Text>}
+            </TouchableOpacity>
             <Input
               placeholder="Hakkında"
               onChangeText={this.onChangeText('about')}
@@ -217,6 +242,54 @@ export default class EditProfile extends Component {
             />
           </View>
         </View>
+        <Modal
+          style={styles.badgeModalContainer}
+          visible={this.state.badgeModalOpen}
+          transparent
+        >
+          <TouchableOpacity
+            style={styles.badgeModalBackdrop}
+            onPress={() => this.setState({ badgeModalOpen: false })}
+          />
+          <ScrollView style={styles.badgeModal} contentContainerStyle={styles.badgeModalContent}>
+            {badgeList.map(badge => {
+              let style = '';
+              if (this.state.badge === badge.name) {
+                style = 'Selected';
+              } else if (!this.state.availableBadges.includes(badge.name)) {
+                style = 'Unavailable';
+              }
+
+              return (
+                <TouchableOpacity
+                  style={styles[`badgeModalBadge${style}`]}
+                  key={badge.name}
+                  onPress={() => {
+                    const newState = {
+                      detailedBadge: badge.name
+                    };
+                    if (this.state.availableBadges.includes(badge.name)) newState.badge = badge.name;
+                    return this.setState(newState);
+                  }}
+                >
+                  <Badge
+                    badge={badge.name}
+                    size="small"
+                  />
+                </TouchableOpacity>
+              );
+            })}
+            <TouchableOpacity
+              style={this.state.badge === '' ? styles.badgeModalBadgeSelected : styles.badgeModalBadge}
+              onPress={() => this.setState({
+                detailedBadge: '',
+                badge: ''
+              })}
+            >
+              <Text>Hiçbiri</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </Modal>
         <Modal
           style={styles.imageModalContainer}
           visible={this.state.modalOpen}
@@ -320,5 +393,74 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 15,
     textAlign: 'center'
-  }
+  },
+  badgeButtonContainer: {
+    width: '50%',
+    left: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15
+  },
+  badgeModal: {
+    width: 300,
+    height: 400,
+    position: 'absolute',
+    top: Dimensions.get('window').height / 2 - 200,
+    left: Dimensions.get('window').width / 2 - 150,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10
+  },
+  badgeModalContent: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20
+  },
+  badgeModalBadge: {
+    width: 120,
+    height: 75,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    marginBottom: 20,
+    borderRadius: 10,
+  },
+  badgeModalBadgeUnavailable: {
+    width: 120,
+    height: 75,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#e0e0e0',
+    marginBottom: 20,
+    borderRadius: 10,
+  },
+  badgeModalBadgeSelected: {
+    width: 120,
+    height: 75,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    marginBottom: 20,
+    borderRadius: 10,
+    borderColor: '#16425B',
+    borderWidth: 2
+  },
+  badgeModalBadgeNone: {
+    width: 120,
+    height: 75,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    marginBottom: 20,
+    borderRadius: 10
+  },
+  badgeModalBackdrop: {
+    flex: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
 });
+/* TODO:
+- show badge details in modal
+*/

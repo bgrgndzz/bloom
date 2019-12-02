@@ -38,7 +38,7 @@ const UserInformation = props => (
         <CachedImage
           style={styles.profilepicture}
           source={props.user.profilepicture ?
-            {uri: 'https://www.getbloom.info/uploads/profilepictures/' + props.user.profilepicture} :
+            { uri: `https://www.getbloom.info/uploads/profilepictures/${props.user.profilepicture}` } :
             require('../../../src/images/defaultprofile.png')
           }
         />
@@ -61,6 +61,11 @@ const UserInformation = props => (
         ) : null}
         {props.user.about && (
           <Text style={styles.about}>{props.user.about}</Text>
+        )}
+        {props.userId ? null : (
+          <Text style={styles.referralCode}>
+            <Text style={styles.bold}>Davet Kodu:</Text> {props.user.referralCode}
+          </Text>
         )}
         <View style={styles.stats}>
           <View style={styles.stat}>
@@ -434,5 +439,15 @@ const styles = StyleSheet.create({
   },
   loading: {
     marginBottom: 15
+  },
+  referralCode: {
+    marginTop: 20,
+    fontSize: 15
+  },
+  bold: {
+    fontWeight: '700'
   }
 });
+/* TODO:
+- Add info button next to invite code
+*/
