@@ -92,11 +92,10 @@ module.exports = (req, res, next) => {
                   });
                 }
 
-                if (!user.badges.includes('davetkar')) user.badges.push('davetkar');
+                if (!user.user.badges.includes('davetkar')) user.user.badges.push('davetkar');
 
                 user.save(err => {
                   const newNotification = new Notification({
-                    from: 'bloom',
                     to: user._id,
                     type: 'bloom',
                     text: '3 kişiyi davet ettiğin için "Davetkar" isimli yeni bir bloop\'un var! Kullanmak için ayarlardan profilini düzenle.'

@@ -152,6 +152,32 @@ const badges = {
       }
     }
   },
+  davetkar: {
+    icon: require('../../../images/badges/davetkar.png'),
+    text: 'Davetkar',
+    big: {
+      containerStyle: {
+        backgroundColor: '#EA3546'
+      },
+      textStyle: {
+        color: 'white'
+      },
+      iconStyle: {
+        height: 17.5
+      }
+    },
+    small: {
+      containerStyle: {
+        backgroundColor: '#EA3546'
+      },
+      textStyle: {
+        color: 'white'
+      },
+      iconStyle: {
+        height: 12.5
+      }
+    }
+  },
 };
 
 const Badge = props => {

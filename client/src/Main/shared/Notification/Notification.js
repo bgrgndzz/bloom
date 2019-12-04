@@ -67,7 +67,7 @@ export default class Notification extends Component {
           style={styles.fromContainer}
           onPress={
             () => {
-              if (!this.props.anonymous) {
+              if (!this.props.anonymous && this.props.from) {
                 this.props.navigation.push('Profile', {
                   user: this.props.from._id === jwtDecode(this.props.screenProps.jwt).user ? null : this.props.from._id,
                   jwt: this.props.screenProps.jwt
@@ -78,16 +78,19 @@ export default class Notification extends Component {
         >
           <CachedImage
             style={styles.profilepicture}
-            source={(this.props.from.profilepicture && !this.props.anonymous) ?
-              { uri: 'https://www.getbloom.info/uploads/profilepictures/' + this.props.from.profilepicture } :
-              require('../../../images/defaultprofile.png')
-            }
+            source={(() => {
+              if (this.props.from) {
+                if (this.props.from.profilepicture && !this.props.anonymous) return { uri: `https://www.getbloom.info/uploads/profilepictures/${this.props.from.profilepicture}` };
+                return require('../../../images/defaultprofile.png');
+              }
+              return require('../../../images/logosquared.jpeg');
+            })()}
           />
         </TouchableOpacity>
         {
           (() => {
             let from;
-            if (this.props.anonymous) {
+            if (this.props.anonymous || !this.props.from) {
               from = (<Text style={styles.from}>Anonim</Text>);
             } else {
               from = (<Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text>);

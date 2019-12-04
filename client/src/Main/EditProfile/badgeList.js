@@ -1,5 +1,10 @@
 export default [
   {
+    name: 'davetkar',
+    text: 'Davetkar',
+    description: '3 arkadaşını davet koduyla uygulamaya kaydeden müthiş kullanıcıların bloop\'u'
+  },
+  {
     name: 'beta',
     text: 'beta',
     description: 'Uygulama çıkmadan önce Bloom\'u kullanan 200 kişiye verilen bloop'

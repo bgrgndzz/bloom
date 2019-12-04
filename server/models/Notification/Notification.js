@@ -5,8 +5,7 @@ const Schema = mongoose.Schema;
 const NotificationSchema = new Schema({
   from: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: 'User'
   },
   to: {
     type: Schema.Types.ObjectId,
