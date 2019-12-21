@@ -61,7 +61,6 @@ module.exports = (req, res, next) => {
                       soundName: 'notification.wav',
                       android_channel_id: 'Bloom',
                       action: 'follow',
-                      post: req.params.post,
                       truncateAtWordEnd: true,
                       expiry: Math.floor(Date.now() / 1000) + 28 * 86400,
                     },
