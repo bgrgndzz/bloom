@@ -63,9 +63,16 @@ const UserInformation = props => (
           <Text style={styles.about}>{props.user.about}</Text>
         )}
         {props.userId ? null : (
-          <Text style={styles.referralCode}>
-            <Text style={styles.bold}>Davet Kodu:</Text> {props.user.referralCode}
-          </Text>
+          <>
+            <TouchableOpacity
+              onPress={() => Alert.alert('Bu davet kodunu kullanarak Bloom\'u 3 arkadaşına öner ve "Davetkar" isimli bloop\'a sahip ol!')}
+              style={styles.referralCode}
+            >
+              <Text style={styles.bold}>Davet Kodu: </Text>
+              <Text>{props.user.referralCode} </Text>
+              <FontAwesome icon="question" />
+            </TouchableOpacity>
+          </>
         )}
         <View style={styles.stats}>
           <View style={styles.stat}>
@@ -442,12 +449,12 @@ const styles = StyleSheet.create({
   },
   referralCode: {
     marginTop: 20,
-    fontSize: 15
+    fontSize: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   bold: {
     fontWeight: '700'
   }
 });
-/* TODO:
-- Add info button next to invite code
-*/

@@ -13,5 +13,6 @@ export default {
   ellipsisV: '\uf142',
   envelope: '\uf0e0',
   paperPlane: '\uf1d8',
-  comment: '\uf27a'
+  comment: '\uf27a',
+  question: '\uf059'
 };
