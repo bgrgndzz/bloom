@@ -18,5 +18,10 @@ export default [
     name: 'mekaninsahibi',
     text: 'Mekanın Sahibi',
     description: 'Sadece Emir\'de olan özel bir bloop'
+  },
+  {
+    name: 'blooper',
+    text: '👅 Blooper',
+    description: 'Umay Yılmaz\'a badge yerine "bloop" kelimesini bulduğu için verilen özel bir badge'
   }
 ];

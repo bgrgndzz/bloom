@@ -178,6 +178,32 @@ const badges = {
       }
     }
   },
+  blooper: {
+    icon: null,
+    text: '👅 Blooper',
+    big: {
+      containerStyle: {
+        backgroundColor: '#FFC1C1'
+      },
+      textStyle: {
+        color: 'black'
+      },
+      iconStyle: {
+        height: 0
+      }
+    },
+    small: {
+      containerStyle: {
+        backgroundColor: '#FFC1C1'
+      },
+      textStyle: {
+        color: 'black'
+      },
+      iconStyle: {
+        height: 0
+      }
+    }
+  }
 };
 
 const Badge = props => {
