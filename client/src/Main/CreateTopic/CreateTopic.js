@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
@@ -10,76 +10,150 @@ import {
 
 import Input from '../../shared/Input/Input';
 import Button from '../../shared/Button/Button';
+import Dropdown from '../../shared/Dropdown/Dropdown';
 import FontAwesome from '../../shared/FontAwesome/FontAwesome';
 
 import api from '../../shared/api';
 
+const transformPostInput = post => post.replace(/\[mention: \((.*?)\)\((.*?)\)\]/gi, '@$2');
+
 export default class CreateTopic extends Component {
   state = {
     topic: '',
-    post: '',
-    anonymous: false
+    text: '',
+    anonymous: false,
+    users: [],
+    mentionField: '',
+    refreshing: false,
+    anonymous: false,
+    mentionFocused: false
   }
 
-  onChangeText = (key) => {
-    return (input) => this.setState({[key]: input});
+  onChangeTopic = topic => this.setState({ topic })
+
+  onChangeText = text => {
+    const mentionRegex = /\[mention: \((.*?)\)\((.*?)\)\]/i;
+    const mentionRegexGlobal = /\[mention: \((.*?)\)\((.*?)\)\]/gi;
+    const mentions = text.match(/@([^\s]+)/gi);
+    const originalMentions = this.state.text.match(mentionRegexGlobal);
+
+    if (mentions && originalMentions) {
+      originalMentions.forEach(mention => {
+        const name = mention.match(mentionRegex)[2];
+        text = text.replace(new RegExp(`@${name}`, 'gi'), mention);
+      });
+    }
+
+    this.setState({ text });
+
+    if (text[text.length - 1] === '@') {
+      this.toggleMentionModal();
+    }
   }
-  onPress = () => {
+
+  toggleMentionModal = () => this.setState({ mentionFocused: !this.state.mentionFocused });
+
+  onMentionChange = input => this.setState({ mentionField: input });
+
+  onMentionPress = item => {
+    lastAt = this.state.text.lastIndexOf('@');
+    text = this.state.text.substring(0, lastAt) + `[mention: (${item._id})(${item.name})]`;
+
+    this.setState({ mentionField: item.name, text });
+  }
+
+  loadUsers = () => {
     api(
       {
-        path: 'posts/create/' + this.state.topic,
-        method: 'POST',
-        jwt: this.props.navigation.getParam('jwt', ''),
-        body: {
-          text: this.state.post,
-          anonymous: this.state.anonymous
-        }
+        path: 'users/list',
+        method: 'GET',
+        jwt: this.props.screenProps.jwt
       },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
-        
-        this.props.navigation.navigate('Topic', {topic: this.state.topic, jwt: this.props.navigation.getParam('jwt', '')});
+
+        this.setState({ users: res.users });
       }
     );
   }
 
+  onPress = () => {
+    const { topic, text, anonymous } = this.state;
+    const { navigation, logout } = this.props;
+    const { jwt } = this.props.screenProps;
+    api(
+      {
+        path: `posts/create/${topic}`,
+        method: 'POST',
+        body: { text, anonymous },
+        jwt
+      },
+      (err, res) => {
+        if (err && !res) {
+          if (err === 'unauthenticated') return logout();
+          return Alert.alert(err);
+        }
+
+        return navigation.navigate('Topic', { topic, jwt });
+      }
+    );
+  }
+
+  componentDidMount = this.loadUsers;
+
   render() {
+    const { text, topic, anonymous, users, mentionField, mentionFocused } = this.state;
     return (
       <ScrollView style={styles.container}>
         <View style={styles.formContainer}>
           <Text style={styles.formHeading}>Bir konu aç</Text>
           <View style={styles.form}>
-            <Input 
+            <Input
               placeholder="Konu Başlığı"
-              onChangeText={this.onChangeText('topic')}
-              value={this.state.topic}
+              onChangeText={this.onChangeTopic}
+              value={topic}
               containerStyle={styles.input}
             />
-            <Input 
+            <Input
               placeholder="Senin Fikrin"
-              multiline={true}
-              onChangeText={this.onChangeText('post')}
-              value={this.state.post}
+              onChangeText={this.onChangeText}
+              value={transformPostInput(text)}
               containerStyle={styles.input}
+              multiline
+            />
+            <Dropdown
+              field={mentionField}
+              data={users}
+              searchKey="name"
+              placeholder="Kişi"
+              focused={mentionFocused}
+              onChange={this.onMentionChange}
+              onPress={this.onMentionPress}
+              toggle={this.toggleMentionModal}
             />
             <TouchableOpacity
               style={styles.checkboxContainer}
-              onPress={() => this.setState({anonymous: !this.state.anonymous})}
+              onPress={() => this.setState(prevState => ({ anonymous: !prevState.anonymous }))}
             >
-              <View style={[styles.checkbox, this.state.anonymous ? styles.checkboxActive : styles.checkboxInactive]}>
-                {this.state.anonymous &&
-                  <FontAwesome 
+              <View
+                style={[
+                  styles.checkbox,
+                  anonymous ? styles.checkboxActive : styles.checkboxInactive
+                ]}
+              >
+                {anonymous && (
+                  <FontAwesome
                     style={styles.checkboxIcon}
                     icon="check"
                   />
-                }
+                )}
               </View>
               <Text style={styles.checkboxText}>Anonim</Text>
             </TouchableOpacity>
-            <Button 
+            <Button
               text="Konu Aç"
               onPress={this.onPress}
             />
@@ -99,10 +173,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 15,
     borderRadius: 10,
-    shadowColor: '#000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowOpacity: 0.1, 
-    shadowRadius: 5, 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 1
   },
   formHeading: {
@@ -112,7 +186,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center'
   },
-  input: {marginBottom: 15},
+  input: { marginBottom: 15 },
   checkboxContainer: {
     marginBottom: 15,
     flexDirection: 'row',
@@ -126,12 +200,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  checkboxActive: {
-    backgroundColor: '#16425B',
-  },
-  checkboxInactive: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)'
-  },
+  checkboxActive: { backgroundColor: '#16425B' },
+  checkboxInactive: { backgroundColor: 'rgba(0, 0, 0, 0.1)' },
   checkboxIcon: {
     color: 'white',
     fontSize: 12.5

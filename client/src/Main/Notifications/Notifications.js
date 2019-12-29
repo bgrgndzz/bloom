@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   FlatList,
   View,
   Text,
@@ -24,17 +24,17 @@ export default class Notifications extends Component {
   listNotifications = (state = {}) => {
     api(
       {
-        path: 'notifications/list/' + this.state.page,
+        path: `notifications/list/${this.state.page}`,
         method: 'GET',
-        jwt: this.props.navigation.getParam('jwt', '')
+        jwt: this.props.screenProps.jwt
       },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
-        
-        this.setState({
+
+        return this.setState({
           ...state,
           notifications: this.state.notifications.concat(res.notifications),
           dataEnd: res.notifications.length < 10,
@@ -43,6 +43,7 @@ export default class Notifications extends Component {
       }
     );
   }
+
   onRefresh = () => {
     this.setState({
       refreshing: true,
@@ -50,7 +51,7 @@ export default class Notifications extends Component {
       notifications: [],
       page: 1
     }, () => {
-      this.listNotifications({refreshing: false});
+      this.listNotifications({ refreshing: false });
     });
   }
 
@@ -59,7 +60,7 @@ export default class Notifications extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <FlatList               
+        <FlatList
           style={styles.notifications}
           contentContainerStyle={styles.notificationsContent}
           showsVerticalScrollIndicator={false}
@@ -67,23 +68,25 @@ export default class Notifications extends Component {
           onRefresh={this.onRefresh}
           data={this.state.notifications}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({item}) => (
-            <Notification 
+          renderItem={({ item }) => (
+            <Notification
               {...item}
+              {...this.props}
               navigation={this.props.navigation}
-            /> 
+            />
           )}
           onScroll={e => {
-            const event = e.nativeEvent
+            const event = e.nativeEvent;
             const currentOffset = event.contentOffset.y;
+            const heightLimit = event.contentSize.height - event.layoutMeasurement.height * 1.25;
             this.direction = currentOffset > this.offset ? 'down' : 'up';
             this.offset = currentOffset;
-            
+
             if (
-              event.contentOffset.y >= event.contentSize.height - event.layoutMeasurement.height * 1.25 && 
-              !this.state.dataLoading && 
-              !this.state.dataEnd && 
-              this.direction === 'down' && 
+              event.contentOffset.y >= heightLimit &&
+              !this.state.dataLoading &&
+              !this.state.dataEnd &&
+              this.direction === 'down' &&
               this.offset > 0
             ) {
               this.setState({
@@ -92,12 +95,12 @@ export default class Notifications extends Component {
               }, this.listNotifications);
             }
           }}
-          ListFooterComponent={
-            <ActivityIndicator 
+          ListFooterComponent={(
+            <ActivityIndicator
               style={styles.loading}
-              animating={this.state.dataLoading} 
+              animating={this.state.dataLoading}
             />
-          }
+          )}
         />
         {this.state.notifications.length === 0 && !this.state.refreshing && (
           <View style={styles.emptyNotificationsContainer}>

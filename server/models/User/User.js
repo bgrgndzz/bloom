@@ -10,7 +10,8 @@ const UserSchema = new Schema({
   auth: {
     email: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
     password: {
       type: String,
@@ -23,15 +24,15 @@ const UserSchema = new Schema({
   },
   user: {
     firstName: {
-      type: String, 
+      type: String,
       required: true
     },
     lastName: {
-      type: String, 
+      type: String,
       required: true
     },
     school: {
-      type: String, 
+      type: String,
       required: true
     },
     about: String,
@@ -41,19 +42,11 @@ const UserSchema = new Schema({
       ref: 'User',
       default: []
     }],
-    followingCount: {
-      type: Number,
-      default: 0
-    },
     followers: [{
       type: Schema.Types.ObjectId,
       ref: 'User',
       default: []
     }],
-    followersCount: {
-      type: Number,
-      default: 0
-    },
     likeCount: {
       type: Number,
       default: 0
@@ -62,11 +55,31 @@ const UserSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'User',
       default: []
-    }]
+    }],
+    badges: [{
+      type: String,
+      default: []
+    }],
+    mainBadge: {
+      type: String,
+      default: ''
+    },
+  },
+  referral: {
+    referralCode: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    referrerCode: String
   },
   passwordReset: {
     hash: String
   },
+  notificationTokens: [{
+    type: String,
+    default: []
+  }],
   preSave: {
     type: Boolean,
     default: true
@@ -76,7 +89,7 @@ const UserSchema = new Schema({
 UserSchema.pre('save', hashPassword);
 UserSchema.methods.verifyPassword = verifyPassword;
 
-mongoosePaginate.paginate.options = { 
+mongoosePaginate.paginate.options = {
   lean: true,
   limit: 20,
   select: 'user'

@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   View,
   TouchableOpacity,
   Image,
@@ -14,21 +14,21 @@ export default class Header extends Component {
     return (
       <View style={styles.header}>
         {this.props.navigation.dangerouslyGetParent().state.routes.length > 1 ? (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.leftIconContainer}
             onPress={() => this.props.navigation.goBack()}
           >
-            <FontAwesome 
+            <FontAwesome
               style={styles.icon}
               icon="chevronLeft"
             />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.leftIconContainer}
-            onPress={() => this.props.navigation.push('Notifications', {jwt: this.props.navigation.getParam('jwt', '')})}
+            onPress={() => this.props.navigation.push('Notifications')}
           >
-            <FontAwesome 
+            <FontAwesome
               style={styles.icon}
               icon="bell"
             />
@@ -37,21 +37,21 @@ export default class Header extends Component {
                 <Text style={styles.notificationCount}>{this.props.notifications}</Text>
               </View>
             ) : null}
-            
+
           </TouchableOpacity>
         )}
-        <Image 
+        <Image
           style={styles.logo}
           source={require('../../../images/logo.png')}
           resizeMode="contain"
         />
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.rightIconContainer}
-          onPress={() => this.props.navigation.push('CreateTopic', {jwt: this.props.navigation.getParam('jwt', '')})}
+          onPress={() => this.props.navigation.push(this.props.navigation.state.routeName === 'Profile' ? 'Settings' : 'CreateTopic')}
         >
-          <FontAwesome 
+          <FontAwesome
             style={styles.icon}
-            icon="plus"
+            icon={this.props.navigation.state.routeName === 'Profile' ? 'cog' : 'plus'}
           />
         </TouchableOpacity>
       </View>
@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     color: 'white',
-    fontFamily: 'FontAwesome5FreeRegular',
     fontSize: 25
   },
   notificationCountContainer: {

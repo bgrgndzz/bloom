@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const TopicSchema = new Schema({
   topic: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   author: {
     type: Schema.Types.ObjectId,

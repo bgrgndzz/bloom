@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
       error: 'Lütfen bir kişi seçtiğinizden emin olun'
     });
   }
-  
+
   const page = parseInt(req.params.page);
 
   User
@@ -18,7 +18,7 @@ module.exports = (req, res, next) => {
     .exec((err, user) => {
       if (!user) {
         return res.status(422).send({
-          authenticated: true, 
+          authenticated: true,
           error: 'Böyle bir kullanıcı yok'
         });
       }
@@ -28,13 +28,16 @@ module.exports = (req, res, next) => {
         .exec((err, self) => {
           if (self.user.blocked.indexOf(req.params.user) !== -1) {
             return res.status(422).send({
-              authenticated: true, 
+              authenticated: true,
               error: 'Böyle bir kullanıcı yok'
             });
           }
-          
+
           Post
-            .find({author: req.params.user})
+            .find({
+              author: req.params.user,
+              reportedBy: {$ne: req.user}
+            })
             .sort('-date')
             .exec((err, posts) => {
               res.status(200).send({
@@ -44,7 +47,6 @@ module.exports = (req, res, next) => {
                   ...user._doc.user,
                   postCount: posts.length,
                   likeCount: posts.reduce((reducer, post) => reducer += post.likeCount, 0),
-                  followersCount: user.user.followersCount,
                   followed: user.user.followers.indexOf(req.user) >= 0
                 },
                 posts: posts

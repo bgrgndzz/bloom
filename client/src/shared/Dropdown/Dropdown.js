@@ -1,63 +1,123 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  StyleSheet, 
-  View, 
-  Dimensions
+  StyleSheet,
+  View,
+  Modal,
+  TouchableOpacity,
+  FlatList,
+  Text
 } from 'react-native';
 
-import ModalDropdown from 'react-native-modal-dropdown';
+import Input from '../Input/Input';
+
+import FontAwesome from '../FontAwesome/FontAwesome';
 
 export default class Dropdown extends Component {
   render() {
-    const width = this.props.width || '100%';
-    const props = {
-      style: styles.input,
-      dropdownStyle: styles.dropdown,
-      dropdownTextStyle: styles.dropdownText,
-      defaultValue: this.props.defaultValue,
-      onSelect: this.props.onSelect,
-      options: this.props.options
-    };
+    const {field, data, focused, placeholder, searchKey, onChange, onPress, toggle} = this.props;
+
     return (
-      <View style={[styles.inputContainer, {width}]}>
-        <ModalDropdown {...props} />
-      </View>
+      <React.Fragment>
+        <Modal
+          visible={focused}
+          onRequestClose={toggle}
+          animationType="slide"
+        >
+          <View style={styles.schoolModal}>
+            <FlatList
+              style={styles.schools}
+              contentContainerStyle={styles.schoolsContent}
+              showsVerticalScrollIndicator={false}
+              data={field ? data.filter(option => (searchKey ? option[searchKey] : option)
+                .replace('İ', 'i').toLowerCase()
+                .indexOf(
+                  field.replace('İ', 'i').toLowerCase()
+                ) > -1) : []}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.school}
+                  onPress={() => onPress(item)}
+                >
+                  <Text style={styles.schoolName}>{searchKey ? item[searchKey] : item}</Text>
+                </TouchableOpacity>
+              )}
+              ListHeaderComponent={(
+                <View style={styles.modalHeading}>
+                  <Input
+                    containerStyle={styles.modalInputContainer}
+                    clearButtonMode="while-editing"
+                    value={field}
+                    placeholder={placeholder}
+                    onChangeText={onChange}
+                    autoFocus
+                  />
+                  <TouchableOpacity
+                    style={styles.schoolSubmitButton}
+                    onPress={toggle}
+                  >
+                    <FontAwesome
+                      style={styles.schoolSubmitIcon}
+                      icon="check"
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+              stickyHeaderIndices={[0]}
+            />
+          </View>
+        </Modal>
+      </React.Fragment>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  inputContainer: {
+  schoolModal: {
+    flex: 1,
+    backgroundColor: '#f7f7f7'
+  },
+  modalHeading: {
+    flexDirection: 'row',
+    marginTop: 15,
+    paddingTop: 15,
+    paddingBottom: 0
+  },
+  modalInputContainer: { flex: 1 },
+  schoolSubmitButton: {
+    width: 39,
+    height: 39,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 15
+  },
+  schoolSubmitIcon: {
+    fontSize: 20,
+    color: '#16425B'
+  },
+  schools: { flex: 1 },
+  schoolsContent: {
+    marginTop: -15,
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingHorizontal: 15
+  },
+  school: {
     backgroundColor: 'white',
-    borderRadius: 5,
-    borderColor: 'rgba(0, 0, 0, 0.25)',
-    borderWidth: 1,
-    marginBottom: 25
+    padding: 15,
+    marginBottom: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 1
   },
-  dropdownText: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 15,
-    paddingRight: 15
-  },
-  input: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 15,
-    paddingRight: 15
-  },
-  dropdown: {
-    width: Dimensions.get('window').width - 85,
-    marginTop: 10,
-    marginLeft: -12.5,
-    shadowColor: '#000', 
-    shadowOffset: {width: 0, height: 5}, 
-    shadowOpacity: 0.1, 
-    shadowRadius: 5, 
-    elevation: 2,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-    height: 'auto',
-    maxHeight: 400
+  schoolName: {
+    flex: 1,
+    color: '#202020',
+    fontWeight: '300',
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 });

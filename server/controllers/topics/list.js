@@ -1,45 +1,152 @@
-const moment = require('moment');
-
 const mongoose = require('mongoose');
 const Topic = require('../../models/Topic/Topic');
+const Ad = require('../../models/Ad/Ad');
 
 module.exports = (req, res, next) => {
-  const page = parseInt(req.params.page);
+  const page = parseInt(req.params.page, 10);
+
+  const popularAggregation = [
+    {
+      $lookup: {
+        from: 'posts',
+        localField: 'posts',
+        foreignField: '_id',
+        as: 'postLinks'
+      }
+    },
+    {
+      $addFields: {
+        posts: { $size: '$postLinks' },
+        lifetime: {
+          $divide: [
+            { $subtract: [new Date(), '$date'] },
+            1000 * 60 * 60 * 24
+          ]
+        }
+      }
+    },
+    {
+      $addFields: {
+        rank: {
+          $cond: [
+            { $gt: ['$lifetime', 1] },
+            {
+              $size: {
+                $filter: {
+                  input: '$postLinks',
+                  as: 'post',
+                  cond: {
+                    $lte: [
+                      {
+                        $divide: [
+                          { $subtract: [new Date(), '$$post.date'] },
+                          1000 * 60 * 60 * 24
+                        ]
+                      },
+                      1
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              $cond: [
+                { $lt: ['$lifetime', 0.25] },
+                { $divide: ['$posts', 0.25] },
+                { $divide: ['$posts', '$lifetime'] }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        topic: 1,
+        posts: 1,
+        rank: 1,
+        lastDate: 1
+      }
+    },
+    { $sort: { rank: -1, lastDate: -1 } },
+    { $skip: (page - 1) * 10 },
+    { $limit: 10 }
+  ];
+
+  const newAggregation = [
+    {
+      $addFields: {
+        posts: { $size: '$posts' }
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        topic: 1,
+        posts: 1,
+        lastDate: 1
+      }
+    },
+    { $sort: { lastDate: -1 } },
+    { $skip: (page - 1) * 10 },
+    { $limit: 10 }
+  ];
+
+  const randomAggregation = [
+    { $sample: { size: 10 } },
+    {
+      $addFields: {
+        posts: { $size: '$posts' }
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        topic: 1,
+        posts: 1
+      }
+    }
+  ];
+
+  let chosen;
+
+  switch (req.params.sort) {
+    case 'popular':
+      chosen = popularAggregation;
+      break;
+    case 'new':
+      chosen = newAggregation;
+      break;
+    default:
+      chosen = randomAggregation;
+      break;
+  }
 
   Topic
-    .find()
-    .populate('posts')
-    .sort('-lastDate')
+    .aggregate(chosen)
     .exec((err, topics) => {
-      if ((req.params && req.params.sort === 'popular') || (!req.params || !req.params.sort)) {
-        const rank = topic => {
-          const topicLifetime = moment().diff(moment(topic.posts[0].date), 'minutes') / (60 * 24);
-          let postCount, divisor;
-          if (topicLifetime > 1) {
-            postCount = topic.posts.filter(post => moment().diff(moment(post.date), 'minutes') / (60 * 24) <= 1).length;
-            divisor = 1;
-          } else if (topicLifetime < 0.25) {
-            postCount = topic.posts.length;
-            divisor = 0.25;
-          } else {
-            postCount = topic.posts.length;
-            divisor = topicLifetime;
+      const now = new Date();
+      Ad
+        .find({
+          startDate: { $lte: now },
+          endDate: { $gte: now },
+          types: 'topics'
+        })
+        .exec((err, ads) => {
+          if (ads.length === 0 || page !== 1) {
+            return res.status(200).send({
+              authenticated: true,
+              topics,
+              ad: {}
+            });
           }
 
-          return postCount / divisor;
-        };
-        topics = topics.sort((prev, cur) => rank(cur) - rank(prev));
-      }
-
-      topics = topics.map(topic => ({
-        id: topic.id,
-        ...topic._doc,
-        posts: topic.posts.length
-      }));
-
-      res.status(200).send({
-        authenticated: true,
-        topics: topics.slice((page - 1) * 10, page * 10)
-      });
+          return res.status(200).send({
+            authenticated: true,
+            topics,
+            ad: ads[0]
+          });
+        });
     });
 };

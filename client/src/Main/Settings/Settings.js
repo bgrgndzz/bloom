@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -12,15 +12,15 @@ export default class Settings extends Component {
     this.settings = [
       {
         title: 'Profilini Düzenle',
-        onPress: () => this.props.navigation.push('EditProfile', {jwt: this.props.navigation.getParam('jwt', '')})
+        onPress: () => this.props.navigation.push('EditProfile')
       },
       {
         title: 'Gizlilik Sözleşmesi',
-        onPress: () => Linking.openURL('https://www.bloomapp.tk/web/privacy-policy')
+        onPress: () => Linking.openURL('https://www.getbloom.info/web/privacy-policy')
       },
       {
         title: 'Kullanım Şartları',
-        onPress: () => Linking.openURL('https://www.bloomapp.tk/web/terms')
+        onPress: () => Linking.openURL('https://www.getbloom.info/web/terms')
       },
       {
         title: 'Çıkış Yap',
@@ -31,12 +31,12 @@ export default class Settings extends Component {
 
   render() {
     return (
-      <ScrollView 
+      <ScrollView
         style={styles.settings}
         showsVerticalScrollIndicator={false}
       >
         {this.settings.map((setting, index) => (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.setting}
             key={index}
             onPress={setting.onPress}
@@ -58,16 +58,16 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 15,
     borderRadius: 10,
-    shadowColor: '#000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowOpacity: 0.1, 
-    shadowRadius: 5, 
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 1,
     flexDirection: 'row'
   },
   settingTitle: {
     flex: 1,
     color: '#202020',
-    fontWeight: '100'
+    fontWeight: '300'
   }
 });

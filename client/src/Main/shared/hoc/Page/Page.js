@@ -1,27 +1,39 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   View,
-  AsyncStorage
+  AsyncStorage,
+  Alert
 } from 'react-native';
 
 import StatusBarPaddingIOS from 'react-native-ios-status-bar-padding';
 
-import Header from '../../Header/Header.js';
-import BottomNavigation from '../../BottomNavigation/BottomNavigation.js';
+import Header from '../../Header/Header';
+import BottomNavigation from '../../BottomNavigation/BottomNavigation';
 
 import api from '../../../../shared/api';
 
-export default Page = (BaseComponent) => {
-  return class extends Component {
+export default Page = BaseComponent => {
+  return class Page extends Component {
     state = {
-      notifications: 0
-    }
+      notifications: 0,
+      messages: 0
+    };
 
     logout = async () => {
       const jwt = await AsyncStorage.getItem('jwt');
+      const notificationToken = await AsyncStorage.getItem('notificationToken');
       if (jwt) await AsyncStorage.removeItem('jwt');
-      this.props.navigation.navigate('Landing');
+      if (notificationToken) await AsyncStorage.removeItem('notificationToken');
+      api(
+        {
+          path: 'notificationToken/unregister',
+          method: 'POST',
+          body: { notificationToken },
+          jwt
+        },
+        (err, res) => this.props.navigation.navigate('Landing')
+      );
     }
 
     countNotifications = () => {
@@ -29,37 +41,58 @@ export default Page = (BaseComponent) => {
         {
           path: 'notifications/count',
           method: 'GET',
-          jwt: this.props.navigation.getParam('jwt', ''),
+          jwt: this.props.screenProps.jwt,
         },
         (err, res) => {
           if (err && !res) {
             if (err === 'unauthenticated') return this.props.logout();
             return Alert.alert(err);
           }
-          this.setState({notifications: res.notifications});
+          return this.setState({ notifications: res.notifications });
         }
       );
     }
 
-    componentWillMount = this.countNotifications;
+    countMessages = () => {
+      api(
+        {
+          path: 'messages/count',
+          method: 'GET',
+          jwt: this.props.screenProps.jwt,
+        },
+        (err, res) => {
+          if (err && !res) {
+            if (err === 'unauthenticated') return this.props.logout();
+            return Alert.alert(err);
+          }
+          return this.setState({ messages: res.messages });
+        }
+      );
+    }
+
+    componentDidMount() {
+      this.countNotifications();
+      this.countMessages();
+    }
 
     render() {
       return (
         <View style={styles.container}>
-          <StatusBarPaddingIOS style={{backgroundColor: '#16425B'}} />
-          <Header 
+          <StatusBarPaddingIOS style={styles.statusBar} />
+          <Header
             navigation={this.props.navigation}
             notifications={this.state.notifications}
             {...this.props}
           />
           <View style={styles.content}>
-            <BaseComponent 
+            <BaseComponent
               {...this.props}
-              logout={this.logout} 
+              logout={this.logout}
             />
           </View>
-          <BottomNavigation 
+          <BottomNavigation
             logout={this.logout}
+            messages={this.state.messages}
             {...this.props}
           />
         </View>
@@ -75,5 +108,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1
+  },
+  statusBar: {
+    backgroundColor: '#16425B'
   }
 });
