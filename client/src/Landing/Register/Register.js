@@ -1,20 +1,25 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  StyleSheet, 
-  Text, 
+  StyleSheet,
+  Text,
   View,
   Alert,
   AsyncStorage,
   Linking,
-  TouchableOpacity
+  TouchableOpacity,
+  Animated,
+  Easing,
+  Dimensions
 } from 'react-native';
 
 import Back from '../../shared/Back/Back';
 import Button from '../../shared/Button/Button';
 import Input from '../../shared/Input/Input';
-import Dropdown from '../../shared/Dropdown/Dropdown';
 
 import api from '../../shared/api';
+
+import schools from './schools';
+import Dropdown from '../../shared/Dropdown/Dropdown';
 
 export default class Register extends Component {
   state = {
@@ -23,132 +28,285 @@ export default class Register extends Component {
     email: '',
     password: '',
     password2: '',
-    school: ''
+    school: '',
+    schoolField: '',
+    referrerCode: '',
+    schoolFocused: false,
+    registerDisabled: false,
+    innerPreset: '1'
   };
 
-  componentWillMount() {
-    this.schools = [
-      'ALEV Lisesi',
-      'Alman Lisesi',
-      'Avusturya Lisesi',
-      'Bahçelievler Anadolu Lisesi',
-      'Beşiktaş Anadolu Lisesi',
-      'Cağaloğlu Anadolu Lisesi',
-      'Çapa Fen Lisesi',
-      'Çevre Koleji',
-      'FMV Işık Lisesi',
-      'Galatasaray Lisesi',
-      'Hacı Ömer Tarman Anadolu Lisesi',
-      'İstanbul Erkek Lisesi',
-      'Kabataş Erkek Lisesi',
-      'Kadıköy Anadolu Lisesi',
-      'Notre Dame de Sion',
-      'Robert Kolej',
-      'Saint Benoit',
-      'Saint Joseph',
-      'Saint Michel',
-      'Saint Pulcherie',
-      'Sakıp Sabancı Anadolu Lisesi',
-      'Terakki Lisesi',
-      'Ulus Özel Musevi Lisesi',
-      'Üsküdar Amerikan Lisesi',
-      'Vefa Lisesi',
-      'Yaşar Acar Fen Lisesi',
-    ];
-  }
+  onChangeText = key => input => this.setState({ [key]: input });
 
-  onChangeText = (key) => {
-    return (input) => this.setState({[key]: input});
-  }
-  onSelect = (key) => {
-    return (index, input) => this.setState({[key]: input});
-  }
+  onSchoolChange = input => this.setState({ schoolField: input });
+
+  onSchoolPress = item => this.setState({ school: item, schoolField: item });
+
+  toggleSchoolModal = () => this.setState({ schoolFocused: !this.state.schoolFocused });
 
   register = () => {
-    api(
-      {
-        path: 'auth/register',
-        method: 'POST',
-        body: this.state
+    this.setState({
+      registerDisabled: true
+    }, () => {
+      api(
+        {
+          path: 'auth/register',
+          method: 'POST',
+          body: this.state
+        },
+        (err, res) => {
+          if ((!res || !res.jwt) && err) {
+            return this.setState({
+              registerDisabled: false
+            }, () => Alert.alert(err));
+          }
+
+          if (res.error) {
+            return this.setState({
+              registerDisabled: false
+            }, () => Alert.alert(res.error));
+          }
+          AsyncStorage.setItem('jwt', res.jwt);
+          this.props.screenProps.setJWT(res.jwt);
+
+          AsyncStorage
+            .getItem('onboarding')
+            .then(onboarding => {
+              if (!onboarding) {
+                AsyncStorage.setItem('onboarding', JSON.stringify({}));
+              }
+
+              return this.props.navigation.navigate('Topics');
+            });
+        }
+      );
+    });
+  }
+
+  componentWillMount() {
+    this.innerAnimatedState = {
+      firstOpacity: new Animated.Value(1),
+      secondOpacity: new Animated.Value(0)
+    };
+    this.innerAnimationPresets = {
+      '1': () => {
+        this.setState(prevState => ({ innerPreset: `${prevState.innerPreset}1` }), () => {
+          Animated.timing(
+            this.innerAnimatedState.firstOpacity,
+            {
+              toValue: 1,
+              duration: 125,
+              delay: 125,
+              easing: Easing.bezier(0.77, 0, 0.175, 1)
+            }
+          ).start();
+          Animated.timing(
+            this.innerAnimatedState.secondOpacity,
+            {
+              toValue: 0,
+              duration: 125,
+              easing: Easing.bezier(0.77, 0, 0.175, 1)
+            }
+          ).start(() => {
+            this.setState({ innerPreset: '1' });
+          });
+        });
       },
-      (err, res) => {
-        if (err && !res.jwt) return Alert.alert(err);
-        AsyncStorage.setItem('jwt', res.jwt);
-        this.props.navigation.navigate('Feed', {jwt: res.jwt});
+      '2': () => {
+        this.setState(prevState => ({ innerPreset: `${prevState.innerPreset}2` }), () => {
+          Animated.timing(
+            this.innerAnimatedState.secondOpacity,
+            {
+              toValue: 1,
+              duration: 125,
+              delay: 125,
+              easing: Easing.bezier(0.77, 0, 0.175, 1)
+            }
+          ).start();
+          Animated.timing(
+            this.innerAnimatedState.firstOpacity,
+            {
+              toValue: 0,
+              duration: 125,
+              easing: Easing.bezier(0.77, 0, 0.175, 1)
+            }
+          ).start(() => {
+            this.setState({ innerPreset: '2' });
+          });
+        });
       }
-    );
+    };
   }
 
   render() {
+    const {
+      firstName,
+      lastName,
+      school,
+      email,
+      password,
+      password2,
+      schoolField,
+      schoolFocused,
+      referrerCode,
+      registerDisabled,
+      innerPreset
+    } = this.state;
+    const { animationPresets } = this.props;
+    const {
+      firstOpacity,
+      secondOpacity
+    } = this.innerAnimatedState;
+
     return (
       <View style={styles.register}>
-        <View style={styles.headingContainer}>
-          <Back onPress={this.props.animationPresets['Landing']} />
-          <Text style={styles.heading}>Kayıt Ol</Text>
-        </View>
-        <View style={styles.halfInputs}>
-          <Input 
-            onChangeText={this.onChangeText('firstName')} 
-            type="firstName"
-            placeholder="Ad"
-            width="45%"
-            value={this.state.firstName}
-          />
-          <Input 
-            onChangeText={this.onChangeText('lastName')} 
-            type="lastName"
-            placeholder="Soyad"
-            width="45%"
-            value={this.state.lastName}
-          />
-        </View>
-        <Dropdown 
-          defaultValue={this.state.school || 'Okul'}
-          onSelect={this.onSelect('school')}
-          options={this.schools} 
-        />
-        <Input 
-          onChangeText={this.onChangeText('email')} 
-          type='email'
-          placeholder='E-posta'
-          value={this.state.email}
-        />
-        <Input 
-          onChangeText={this.onChangeText('password')} 
-          type='password'
-          placeholder='Şifre'
-          value={this.state.password}
-        />
-        <Input 
-          onChangeText={this.onChangeText('password2')} 
-          type='password'
-          placeholder="Şifre Doğrulama"
-          value={this.state.password2}
-        />
-        <Button 
-          text="Kayıt Ol" 
-          onPress={this.register}
-        />
-        <View style={styles.aggrements}>
-          <Text>Bu butona basarak</Text> 
-          <TouchableOpacity onPress={() => Linking.openURL('https://www.bloomapp.tk/web/privacy-policy')}>
-            <Text style={styles.agreementLink}> Gizlilik Sözleşmesi'ni </Text>
-          </TouchableOpacity> 
-          <Text>ve</Text> 
-          <TouchableOpacity onPress={() => Linking.openURL('https://www.bloomapp.tk/web/terms')}>
-            <Text style={styles.agreementLink}> Kullanım Şartları'nı </Text>
-          </TouchableOpacity> 
-          <Text>kabul etmiş olursunuz.</Text>
-        </View>
+        {innerPreset.includes('1') && (
+          <Animated.View
+            style={[
+              styles.register1,
+              { opacity: firstOpacity }
+            ]}
+          >
+            <View style={styles.headingContainer}>
+              <Back onPress={animationPresets.Landing} />
+              <Text style={styles.heading}>Kayıt Ol</Text>
+            </View>
+            <View style={styles.halfInputs}>
+              <Input
+                onChangeText={this.onChangeText('firstName')}
+                type="firstName"
+                placeholder="Ad"
+                width="45%"
+                value={firstName}
+              />
+              <Input
+                onChangeText={this.onChangeText('lastName')}
+                type="lastName"
+                placeholder="Soyad"
+                width="45%"
+                value={lastName}
+              />
+            </View>
+            <TouchableOpacity
+              style={styles.schoolInputInterceptor}
+              onPress={this.toggleSchoolModal}
+            >
+              <View pointerEvents="none">
+                <Input
+                  value={school}
+                  editable={false}
+                  onPress={this.toggleSchoolModal}
+                  placeholder="Okul"
+                  onChangeText={this.onSchoolChange}
+                />
+              </View>
+            </TouchableOpacity>
+            <Dropdown
+              field={schoolField}
+              data={schools}
+              focused={schoolFocused}
+              placeholder="Okul"
+              onChange={this.onSchoolChange}
+              onPress={this.onSchoolPress}
+              toggle={this.toggleSchoolModal}
+            />
+            <Input
+              onChangeText={this.onChangeText('referrerCode')}
+              type="referrerCode"
+              placeholder="Davet Kodu (İsteğe Bağlı)"
+              value={referrerCode}
+            />
+            <Button
+              text="Devam Et"
+              disabled={registerDisabled}
+              onPress={this.innerAnimationPresets['2']}
+            />
+          </Animated.View>
+        )}
+        {innerPreset.includes('2') && (
+          <Animated.View
+            style={[
+              styles.register2,
+              { opacity: secondOpacity }
+            ]}
+          >
+            <View style={styles.headingContainer}>
+              <Back onPress={this.innerAnimationPresets['1']} />
+              <Text style={styles.heading}>Kayıt Ol</Text>
+            </View>
+            <Input
+              onChangeText={this.onChangeText('email')}
+              type="email"
+              placeholder="E-posta"
+              value={email}
+            />
+            <Input
+              onChangeText={this.onChangeText('password')}
+              type="password"
+              placeholder="Şifre"
+              value={password}
+            />
+            <Input
+              onChangeText={this.onChangeText('password2')}
+              type="password"
+              placeholder="Şifre Doğrulama"
+              value={password2}
+            />
+            <Button
+              text="Kayıt Ol"
+              disabled={registerDisabled}
+              onPress={this.register}
+            />
+            <View style={styles.agrements}>
+              <Text>Bu butona basarak</Text>
+              <TouchableOpacity onPress={() => Linking.openURL('https://www.getbloom.info/web/privacy-policy')}>
+                <Text style={styles.agreementLink}> Gizlilik Sözleşmesi'ni </Text>
+              </TouchableOpacity>
+              <Text>ve</Text>
+              <TouchableOpacity onPress={() => Linking.openURL('https://www.getbloom.info/web/terms')}>
+                <Text style={styles.agreementLink}> Kullanım Şartları'nı </Text>
+              </TouchableOpacity>
+              <Text>kabul etmiş olursunuz.</Text>
+            </View>
+          </Animated.View>
+        )}
       </View>
-    )
+    );
   }
 }
 
 const styles = StyleSheet.create({
+  schoolInputInterceptor: { width: '100%' },
   register: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  register1: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    width: Dimensions.get('window').width * 0.9,
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 5
+  },
+  register2: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    width: Dimensions.get('window').width * 0.9,
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 5
   },
   headingContainer: {
     flexDirection: 'row',
@@ -174,14 +332,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  aggrements: {
+  agrements: {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginTop: 15,
     justifyContent: 'center'
   },
-  agreementLink: {
-    color: '#16425B'
-  }
+  agreementLink: { color: '#16425B' }
 });

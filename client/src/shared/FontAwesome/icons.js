@@ -1,6 +1,5 @@
 export default {
   plus: '\uf067',
-  angleLeft: '\uf104',
   bookmark: '\uf02e',
   user: '\uf007',
   cog: '\uf013',
@@ -13,4 +12,8 @@ export default {
   exclamation: '\uf12a',
   ellipsisV: '\uf142',
   search: '\uf002'
+  envelope: '\uf0e0',
+  paperPlane: '\uf1d8',
+  comment: '\uf27a',
+  question: '\uf059'
 };

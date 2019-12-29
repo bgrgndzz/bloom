@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   ActivityIndicator,
   AsyncStorage,
@@ -6,18 +6,32 @@ import {
   View,
 } from 'react-native';
 
+import api from '../shared/api';
+
 export default class AuthLoading extends Component {
   constructor(props) {
     super(props);
-    this._navigate();
+    this.redirect();
   }
-  _navigate = async () => {
+
+  redirect = async () => {
     const jwt = await AsyncStorage.getItem('jwt');
+    const { navigate } = this.props.navigation;
 
     if (jwt) {
-      this.props.navigation.navigate('Feed', {jwt});
+      this.props.screenProps.socketConnect();
+
+      api(
+        {
+          path: 'notificationToken/register',
+          method: 'POST',
+          body: { notificationToken: this.props.screenProps.notificationToken },
+          jwt: this.props.screenProps.jwt
+        },
+        (err, res) => navigate('Topics', { jwt })
+      );
     } else {
-      this.props.navigation.navigate('Landing');
+      navigate('Landing');
     }
   };
 

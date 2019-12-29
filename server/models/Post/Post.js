@@ -28,13 +28,23 @@ const PostSchema = new Schema({
     type: Number,
     default: 0
   },
+  comments: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Comment',
+    default: []
+  }],
   anonymous: {
     type: Boolean,
     default: false
-  }
+  },
+  reportedBy: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    default: []
+  }]
 });
 
-mongoosePaginate.paginate.options = { 
+mongoosePaginate.paginate.options = {
   lean: true,
   limit: 10,
   populate: 'author'

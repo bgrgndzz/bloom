@@ -19,6 +19,12 @@ module.exports = (req, res, next) => {
           error: 'Böyle bir paylaşım yok'
         });
       }
+      if (post.author.toString() === req.user) {
+        return res.status(422).send({
+          authenticated: true,
+          error: 'Kendi paylaşımını şikayet edemezsin'
+        });
+      }
 
       Report
         .findOne({
@@ -38,8 +44,11 @@ module.exports = (req, res, next) => {
             post: req.params.post,
           });
           newReport.save(err => {
-            return res.status(200).send({
-              authenticated: true
+            post.reportedBy.push(req.user);
+            post.save(err => {
+              return res.status(200).send({
+                authenticated: true
+              });
             });
           });
         });

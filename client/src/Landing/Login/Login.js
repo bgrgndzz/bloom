@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  StyleSheet, 
-  Text, 
+  StyleSheet,
+  Text,
   View,
   Alert,
   AsyncStorage
@@ -19,9 +19,7 @@ export default class Login extends Component {
     password: ''
   };
 
-  onChangeText = (key) => {
-    return (input) => this.setState({[key]: input});
-  }
+  onChangeText = key => input => this.setState({ [key]: input });
 
   login = () => {
     api(
@@ -31,38 +29,52 @@ export default class Login extends Component {
         body: this.state
       },
       (err, res) => {
-        if (err && !res.jwt) return Alert.alert(err);
+        if (err) return Alert.alert(err);
+        if (!res) return Alert.alert('Bilinmeyen bir hata oluştu');
+
         AsyncStorage.setItem('jwt', res.jwt);
-        this.props.navigation.navigate('Feed', {jwt: res.jwt});
+        this.props.screenProps.setJWT(res.jwt);
+
+        AsyncStorage
+          .getItem('onboarding')
+          .then(onboarding => {
+            if (!onboarding) {
+              AsyncStorage.setItem('onboarding', JSON.stringify({}));
+            }
+
+            return this.props.navigation.navigate('Topics');
+          });
       }
     );
   }
 
   render() {
+    const { email, password } = this.state;
+    const { animationPresets } = this.props;
     return (
       <View style={styles.login}>
         <View style={styles.headingContainer}>
-          <Back onPress={this.props.animationPresets['Landing']} />
+          <Back onPress={animationPresets.Landing} />
           <Text style={styles.heading}>Giriş Yap</Text>
         </View>
-        <Input 
-          onChangeText={this.onChangeText('email')} 
-          type='email'
-          placeholder='E-posta'
-          value={this.state.email}
+        <Input
+          onChangeText={this.onChangeText('email')}
+          type="email"
+          placeholder="E-posta"
+          value={email}
         />
-        <Input 
-          onChangeText={this.onChangeText('password')} 
-          type='password'
-          placeholder='Şifre'
-          value={this.state.password}
+        <Input
+          onChangeText={this.onChangeText('password')}
+          type="password"
+          placeholder="Şifre"
+          value={password}
         />
-        <Button 
-          text="Giriş Yap" 
+        <Button
+          text="Giriş Yap"
           onPress={this.login}
         />
       </View>
-    )
+    );
   }
 }
 

@@ -21,13 +21,13 @@ module.exports = (req, res, next) => {
           page
         },
         (err, notifications) => {
-          notifications = notifications.docs.map(notification => ({
+          notifications = notifications.docs.map(notification => (notification.from ? {
             ...notification,
             from: {
               _id: notification.from._id,
               ...notification.from.user
             }
-          }));
+          } : {...notification}));
 
           Notification.updateMany({
             _id: {$in: notifications.map(notification => notification.id)},

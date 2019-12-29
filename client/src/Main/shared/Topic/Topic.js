@@ -1,47 +1,28 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   View,
   Text
 } from 'react-native';
 
-const highlight = (string, search) => {
-  return string && string.split(new RegExp(search, 'gi')).map((splitName, index, array) => [
-    (
-      <Text 
-        style={styles.normal}
-        key="normal"
-      >
-        {splitName}
-      </Text>
-    ),
-    index === array.length - 1 ? null : (
-      <Text 
-        style={styles.highlighted}
-        key="higlighted"
-      >
-        {string.match(new RegExp(search, 'gi'))[index]}
-      </Text>
-    )
-  ]);
-};
-
-export default class Topic extends Component {
-  render() {
-    return (
-      <View style={styles.topic}>
-        <Text style={styles.name}>
-          {
-            this.props.search ? 
-            highlight(this.props.topic, this.props.search) :
-            this.props.topic
-          }
-        </Text>
-        <Text style={styles.posts}>{this.props.posts}</Text>
-      </View>
-    );
-  }
-}
+const highlight = (string, search) => string && string.split(new RegExp(search, 'gi')).map((splitName, index, array) => [
+  (
+    <Text
+      style={styles.normal}
+      key="normal"
+    >
+      {splitName}
+    </Text>
+  ),
+  index === array.length - 1 ? null : (
+    <Text
+      style={styles.highlighted}
+      key="higlighted"
+    >
+      {string.match(new RegExp(search, 'gi'))[index]}
+    </Text>
+  )
+]);
 
 const styles = StyleSheet.create({
   topic: {
@@ -49,10 +30,10 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 15,
     borderRadius: 10,
-    shadowColor: '#000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowOpacity: 0.1, 
-    shadowRadius: 5, 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 1,
     flexDirection: 'row'
   },
@@ -65,7 +46,7 @@ const styles = StyleSheet.create({
   name: {
     flex: 1,
     color: '#202020',
-    fontWeight: '100',
+    fontWeight: '300',
     flexDirection: 'row',
     alignItems: 'center'
   },
@@ -73,3 +54,28 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   }
 });
+
+const Topic = props => (
+  <View
+    style={[
+      styles.topic,
+      props.containerStyle
+    ]}
+  >
+    <Text
+      style={[
+        styles.name,
+        props.textStyle
+      ]}
+    >
+      {
+        props.search ?
+          highlight(props.topic, props.search) :
+          props.topic
+      }
+    </Text>
+    <Text style={styles.posts}>{props.posts}</Text>
+  </View>
+);
+
+export default Topic;

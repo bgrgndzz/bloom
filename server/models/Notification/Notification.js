@@ -5,8 +5,7 @@ const Schema = mongoose.Schema;
 const NotificationSchema = new Schema({
   from: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: 'User'
   },
   to: {
     type: Schema.Types.ObjectId,
@@ -24,13 +23,24 @@ const NotificationSchema = new Schema({
   topic: {
     type: String
   },
+  post: {
+    type: Schema.Types.ObjectId,
+    ref: 'Post'
+  },
+  anonymous: {
+    type: Boolean,
+    default: false
+  },
+  text: {
+    type: String
+  },
   seen: {
     type: Boolean,
     default: false
   }
 });
 
-mongoosePaginate.paginate.options = { 
+mongoosePaginate.paginate.options = {
   lean: true,
   limit: 10,
   populate: 'from'

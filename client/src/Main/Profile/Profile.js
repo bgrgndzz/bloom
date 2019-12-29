@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   ActivityIndicator,
   FlatList,
   View,
@@ -10,71 +10,106 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-import {CachedImage} from 'react-native-cached-image';
+import jwtDecode from 'jwt-decode';
+import { CachedImage } from 'react-native-cached-image';
 
 import Post from '../shared/Post/Post';
 import Button from '../../shared/Button/Button';
 import FontAwesome from '../../shared/FontAwesome/FontAwesome';
+import Badge from '../shared/Badge/Badge';
 
 import api from '../../shared/api';
 
-const UserInformation = props => {
-  return (
-    <React.Fragment>
-      {Object.keys(props.user).length > 0 && (
-        <View style={styles.user}>
+const UserInformation = props => (
+  <React.Fragment>
+    {Object.keys(props.user).length > 0 && (
+      <View style={styles.user}>
         {props.userId ? (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.modalOpenButton}
             onPress={props.openModal}
           >
-            <FontAwesome 
+            <FontAwesome
               style={styles.modalOpenIcon}
-              icon="ellipsisV" 
+              icon="ellipsisV"
             />
           </TouchableOpacity>
         ) : null}
-          <CachedImage 
-            style={styles.profilepicture}
-            source={props.user.profilepicture ? 
-              {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + props.user.profilepicture} : 
-              require('../../../src/images/defaultprofile.png')
-            }
-          />
-          <Text style={styles.name}>{props.user.firstName} {props.user.lastName}</Text>
+        <CachedImage
+          style={styles.profilepicture}
+          source={props.user.profilepicture ?
+            { uri: `https://www.getbloom.info/uploads/profilepictures/${props.user.profilepicture}` } :
+            require('../../../src/images/defaultprofile.png')
+          }
+        />
+        <Text style={styles.name}>{props.user.firstName} {props.user.lastName}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            props.navigationPush('School', {
+              school: props.user.school,
+              jwt: props.jwt
+            });
+          }}
+        >
           <Text style={styles.school}>{props.user.school}</Text>
-          {props.user.about && (
-            <Text style={styles.about}>{props.user.about}</Text>
-          )}
-          <View style={styles.stats}>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>{props.user.postCount}</Text>
-              <Text style={styles.statName}>Paylaşım</Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>{props.user.followersCount}</Text>
-              <Text style={styles.statName}>Takipçi</Text>
-            </View>
-            <View style={styles.stat}>
-              <Text style={styles.statNumber}>{props.user.likeCount}</Text>
-              <Text style={styles.statName}>Beğeni</Text>
-            </View>
+        </TouchableOpacity>
+        {props.user.mainBadge ? (
+          <Badge
+            badge={props.user.mainBadge}
+            size="big"
+          />
+        ) : null}
+        {props.user.about && (
+          <Text style={styles.about}>{props.user.about}</Text>
+        )}
+        {props.userId ? null : (
+          <>
+            <TouchableOpacity
+              onPress={() => Alert.alert('Davetkâr Bloop'u', 'Bu davet kodunu kullanarak Bloom\'u 3 arkadaşına öner ve "Davetkar" isimli bloop\'a sahip ol!')}
+              style={styles.referralCode}
+            >
+              <Text style={styles.bold}>Davet Kodu: </Text>
+              <Text>{props.user.referralCode} </Text>
+              <FontAwesome icon="question" />
+            </TouchableOpacity>
+          </>
+        )}
+        <View style={styles.stats}>
+          <View style={styles.stat}>
+            <Text style={styles.statNumber}>{props.user.postCount}</Text>
+            <Text style={styles.statName}>Paylaşım</Text>
           </View>
-          {props.userId ? (
-            <Button 
-              style={styles.followButton}
-              onPress={props.follow}
-              disabled={props.followDisabled}
-              text={props.user.followed ? 'Takipten Çık' : 'Takip Et'}
-            />
-          ) : null}
+          <TouchableOpacity
+            style={styles.stat}
+            onPress={() => {
+              props.navigationPush('Followers', {
+                user: props.userId || jwtDecode(props.jwt).user,
+                jwt: props.jwt
+              });
+            }}
+          >
+            <Text style={styles.statNumber}>{props.user.followers.length}</Text>
+            <Text style={styles.statName}>Takipçi</Text>
+          </TouchableOpacity>
+          <View style={styles.stat}>
+            <Text style={styles.statNumber}>{props.user.likeCount}</Text>
+            <Text style={styles.statName}>Beğeni</Text>
+          </View>
         </View>
-      )}
-    </React.Fragment>
-  );
-};
+        {props.userId ? (
+          <Button
+            style={styles.followButton}
+            onPress={props.follow}
+            disabled={props.followDisabled}
+            text={props.user.followed ? 'Takipten Çık' : 'Takip Et'}
+          />
+        ) : null}
+      </View>
+    )}
+  </React.Fragment>
+);
 
-export default class Profile extends Component {  
+export default class Profile extends Component {
   state = {
     user: {},
     refreshing: false,
@@ -88,7 +123,7 @@ export default class Profile extends Component {
   loadUser = (state = {}) => {
     let path = 'user/';
     if (this.props.navigation.getParam('user', '')) {
-      path += this.props.navigation.getParam('user', '') + '/';
+      path += `${this.props.navigation.getParam('user', '')}/`;
     }
     path += this.state.page;
 
@@ -96,15 +131,15 @@ export default class Profile extends Component {
       {
         path,
         method: 'GET',
-        jwt: this.props.navigation.getParam('jwt', ''),
+        jwt: this.props.screenProps.jwt,
       },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
-        
-        this.setState({
+
+        return this.setState({
           ...state,
           user: res.user,
           posts: this.state.posts.concat(res.posts),
@@ -114,25 +149,26 @@ export default class Profile extends Component {
       }
     );
   }
+
   follow = () => {
-    this.setState({followDisabled: true}, () => {
+    this.setState({ followDisabled: true }, () => {
       api(
         {
           path: `user/${this.state.user.followed ? 'unfollow' : 'follow'}/${this.props.navigation.getParam('user', '')}`,
           method: 'POST',
-          jwt: this.props.navigation.getParam('jwt', ''),
+          jwt: this.props.screenProps.jwt,
         },
         (err, res) => {
           if (err && !res) {
             if (err === 'unauthenticated') return this.props.logout();
             return Alert.alert(err);
           }
-          
-          this.setState({
+
+          return this.setState({
             user: {
               ...this.state.user,
               followed: res.followed,
-              followersCount: res.followersCount
+              followers: res.followers
             },
             followDisabled: false
           });
@@ -140,23 +176,25 @@ export default class Profile extends Component {
       );
     });
   }
+
   block = () => {
     api(
       {
         path: `user/block/${this.props.navigation.getParam('user', '')}`,
         method: 'POST',
-        jwt: this.props.navigation.getParam('jwt', ''),
+        jwt: this.props.screenProps.jwt,
       },
       (err, res) => {
         if (err && !res) {
           if (err === 'unauthenticated') return this.props.logout();
           return Alert.alert(err);
         }
-        
-        this.props.navigation.goBack();
+
+        return this.props.navigation.goBack();
       }
     );
   }
+
   onRefresh = () => {
     this.setState({
       refreshing: true,
@@ -165,18 +203,20 @@ export default class Profile extends Component {
       posts: [],
       page: 1
     }, () => {
-      this.loadUser({refreshing: false});
+      this.loadUser({ refreshing: false });
     });
   }
 
-  openModal = () => this.setState({modalOpen: true});
+  openModal = () => this.setState({ modalOpen: true });
+
+  reportCallback = this.onRefresh;
 
   componentDidMount = this.onRefresh;
 
   render() {
     return (
       <View style={styles.container}>
-        <FlatList               
+        <FlatList
           style={styles.posts}
           contentContainerStyle={styles.postsContent}
           showsVerticalScrollIndicator={false}
@@ -184,26 +224,29 @@ export default class Profile extends Component {
           onRefresh={this.onRefresh}
           data={this.state.posts}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({item}) => (
-            <Post 
+          renderItem={({ item }) => (
+            <Post
               {...item}
+              {...this.props}
               author={this.state.user}
               include={['user', 'topic']}
               navigation={this.props.navigation}
               logout={this.props.logout}
+              reportCallback={this.reportCallback}
             />
           )}
           onScroll={e => {
-            const event = e.nativeEvent
+            const event = e.nativeEvent;
             const currentOffset = event.contentOffset.y;
+            const heightLimit = event.contentSize.height - event.layoutMeasurement.height * 1.25;
             this.direction = currentOffset > this.offset ? 'down' : 'up';
             this.offset = currentOffset;
-            
+
             if (
-              event.contentOffset.y >= event.contentSize.height - event.layoutMeasurement.height * 1.25 && 
-              !this.state.dataLoading && 
-              !this.state.dataEnd && 
-              this.direction === 'down' && 
+              event.contentOffset.y >= heightLimit &&
+              !this.state.dataLoading &&
+              !this.state.dataEnd &&
+              this.direction === 'down' &&
               this.offset > 0
             ) {
               this.setState({
@@ -213,40 +256,60 @@ export default class Profile extends Component {
             }
           }}
           ListHeaderComponent={(
-            <UserInformation 
+            <UserInformation
               user={this.state.user}
               followDisabled={this.state.followDisabled}
               userId={this.props.navigation.getParam('user', '')}
+              jwt={this.props.screenProps.jwt}
+              navigationPush={this.props.navigation.push}
               openModal={this.openModal}
               follow={this.follow}
             />
           )}
-          ListFooterComponent={
-            <ActivityIndicator 
+          ListFooterComponent={(
+            <ActivityIndicator
               style={styles.loading}
-              animating={this.state.dataLoading} 
+              animating={this.state.dataLoading}
             />
-          }
+          )}
         />
-        <Modal 
+        <Modal
           style={styles.settingsModalContainer}
           visible={this.state.modalOpen}
-          transparent={true}
+          transparent
         >
-          <TouchableOpacity 
-            style={styles.settingsModalBackdrop} 
-            onPress={() => this.setState({modalOpen: false})}
+          <TouchableOpacity
+            style={styles.settingsModalBackdrop}
+            onPress={() => this.setState({ modalOpen: false })}
           />
           <View style={styles.settingsModalContent}>
-            <TouchableOpacity 
+            <TouchableOpacity
+              style={styles.settingsModalItem}
+              onPress={
+                () => {
+                  if (this.state.user._id !== jwtDecode(this.props.screenProps.jwt).user) {
+                    this.setState(
+                      { modalOpen: false },
+                      () => this.props.navigation.push('Conversation', {
+                        user: this.state.user._id,
+                        jwt: this.props.screenProps.jwt
+                      })
+                    );
+                  }
+                }
+              }
+            >
+              <Text style={styles.settingsModalText}>Mesaj Gönder</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               style={styles.settingsModalItem}
               onPress={this.block}
             >
               <Text style={styles.settingsModalText}>Engelle</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.settingsModalCancel}
-              onPress={() => this.setState({modalOpen: false})}
+              onPress={() => this.setState({ modalOpen: false })}
             >
               <Text style={styles.settingsModalCancelText}>Vazgeç</Text>
             </TouchableOpacity>
@@ -273,10 +336,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 45,
     borderRadius: 10,
-    shadowColor: '#000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowOpacity: 0.1, 
-    shadowRadius: 5, 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 1,
     padding: 15,
     paddingBottom: 30,
@@ -297,11 +360,14 @@ const styles = StyleSheet.create({
   school: {
     textAlign: 'center',
     fontSize: 15,
-    marginBottom: 15,
+    marginBottom: 5,
     fontWeight: '300',
     color: 'rgba(0, 0, 0, 0.5)'
   },
-  about: {fontWeight: '400'},
+  about: {
+    fontWeight: '400',
+    marginTop: 10
+  },
   backButtonContainer: {
     width: 30,
     height: 30,
@@ -380,5 +446,15 @@ const styles = StyleSheet.create({
   },
   loading: {
     marginBottom: 15
+  },
+  referralCode: {
+    marginTop: 20,
+    fontSize: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  bold: {
+    fontWeight: '700'
   }
 });

@@ -1,17 +1,20 @@
-import React, {Component} from 'react';
-import {Text} from 'react-native';
+import React, { Component } from 'react';
+import { Text } from 'react-native';
 
-import icons from './icons.js';
+import icons from './icons';
 
-export default class FontAwesome extends Component {
-  render() {
-    return (
-      <Text style={[
-        this.props.style,
-        {fontFamily: 'FontAwesome5FreeSolid'}
-      ]}>
-        {icons[this.props.icon]}
-      </Text>
-    ); 
-  }
-};
+const FontAwesome = props => (
+  <Text
+    style={Array.isArray(props.style) ? [
+      { fontFamily: 'FontAwesome5FreeSolid' },
+      ...props.style
+    ] : [
+      { fontFamily: 'FontAwesome5FreeSolid' },
+      props.style
+    ]}
+  >
+    {icons[props.icon]}
+  </Text>
+);
+
+export default FontAwesome;

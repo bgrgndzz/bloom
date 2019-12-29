@@ -1,90 +1,139 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   View,
   Text,
   TouchableOpacity
 } from 'react-native';
 
-import {CachedImage} from 'react-native-cached-image';
+import { CachedImage } from 'react-native-cached-image';
 import moment from 'moment';
-import jwt_decode from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 
-const translateDate = (date) => {
-  date = date.replace('a few seconds ago', 'şimdi');
-  date = date.replace('seconds ago', ' sn');
-
-  date = date.replace('a minute ago', '1 dk');
-  date = date.replace('minutes ago', 'dk');
-
-  date = date.replace('an hour ago', '1 sa');
-  date = date.replace('hours ago', 'sa');
-
-  date = date.replace('a day ago', '1 gün');
-  date = date.replace('days ago', 'gün');
-
-  date = date.replace('a month ago', '1 ay');
-  date = date.replace('months ago', 'ay');
-
-  date = date.replace('a year ago', '1 yıl');
-  date = date.replace('years ago', 'yıl');
-
-  return date;
-}
+const translateDate = date => date
+  .replace('a few seconds ago', 'şimdi')
+  .replace('seconds ago', ' sn')
+  .replace('a minute ago', '1 dk')
+  .replace('minutes ago', 'dk')
+  .replace('an hour ago', '1 sa')
+  .replace('hours ago', 'sa')
+  .replace('a day ago', '1 gün')
+  .replace('days ago', 'gün')
+  .replace('a month ago', '1 ay')
+  .replace('months ago', 'ay')
+  .replace('a year ago', '1 yıl')
+  .replace('years ago', 'yıl');
 
 export default class Notification extends Component {
   render() {
     return (
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.notification}
         onPress={
           () => {
-            if (this.props.type === 'like') {
+            if (
+              (
+                this.props.type === 'like' ||
+                this.props.type === 'comment'
+              ) && this.props.post
+            ) {
+              this.props.navigation.push('Comments', {
+                post: this.props.post,
+                jwt: this.props.screenProps.jwt
+              });
+            } else if (
+              this.props.type === 'like' ||
+              this.props.type === 'mention'
+            ) {
               this.props.navigation.push('Topic', {
-                topic: this.props.topic, 
-                jwt: this.props.navigation.getParam('jwt', '')
+                topic: this.props.topic,
+                jwt: this.props.screenProps.jwt
               });
             } else if (this.props.type === 'follow') {
               this.props.navigation.push('Profile', {
-                user: this.props.from._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : this.props.from._id, 
-                jwt: this.props.navigation.getParam('jwt', '')
-              })
+                user: this.props.from._id === jwtDecode(this.props.screenProps.jwt).user ? null : this.props.from._id,
+                jwt: this.props.screenProps.jwt
+              });
             }
           }
         }
       >
         {
           this.props.seen ? null : (
-            <View style={styles.new}></View>
+            <View style={styles.new} />
           )
         }
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.fromContainer}
           onPress={
             () => {
-              this.props.navigation.push('Profile', {
-                user: this.props.from._id === jwt_decode(this.props.navigation.getParam('jwt', '')).user ? null : this.props.from._id, 
-                jwt: this.props.navigation.getParam('jwt', '')
-              })
+              if (!this.props.anonymous && this.props.from) {
+                this.props.navigation.push('Profile', {
+                  user: this.props.from._id === jwtDecode(this.props.screenProps.jwt).user ? null : this.props.from._id,
+                  jwt: this.props.screenProps.jwt
+                });
+              }
             }
           }
         >
-          <CachedImage 
+          <CachedImage
             style={styles.profilepicture}
-            source={this.props.from.profilepicture ? 
-              {uri: 'https://www.bloomapp.tk/uploads/profilepictures/' + this.props.from.profilepicture} : 
-              require('../../../images/defaultprofile.png')
-            }
+            source={(() => {
+              if (this.props.from) {
+                if (this.props.from.profilepicture && !this.props.anonymous) return { uri: `https://www.getbloom.info/uploads/profilepictures/${this.props.from.profilepicture}` };
+                return require('../../../images/defaultprofile.png');
+              }
+              return require('../../../images/logosquared.jpeg');
+            })()}
           />
         </TouchableOpacity>
         {
-          this.props.type === 'like' ?
-          (
-            <Text style={styles.main}><Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> "<Text style={styles.bold}>{this.props.topic}</Text>" başlığındaki bir paylaşımını beğendi. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text></Text>
-          ) : 
-          (
-            <Text style={styles.main}><Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text> seni takip etmeye başladı. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text></Text>
-          )
+          (() => {
+            let from;
+            if (this.props.anonymous || !this.props.from) {
+              from = (<Text style={styles.from}>Anonim</Text>);
+            } else {
+              from = (<Text style={styles.from}>{this.props.from.firstName} {this.props.from.lastName}</Text>);
+            }
+
+            if (this.props.type === 'like') {
+              return (
+                <Text style={styles.main}>
+                  {from} "<Text style={styles.bold}>{this.props.topic}</Text>" başlığındaki bir paylaşımını beğendi. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                </Text>
+              );
+            }
+            if (this.props.type === 'follow') {
+              return (
+                <Text style={styles.main}>
+                  {from} seni takip etmeye başladı. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                </Text>
+              );
+            }
+            if (this.props.type === 'mention') {
+              return (
+                <Text style={styles.main}>
+                  {from} "<Text style={styles.bold}>{this.props.topic}</Text>" başlığında senden bahsetti. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                </Text>
+              );
+            }
+            if (this.props.type === 'comment') {
+              return (
+                <Text style={styles.main}>
+                  {from} "<Text style={styles.bold}>{this.props.topic}</Text>" başlığındaki bir paylaşımına yorum yaptı. <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                </Text>
+              );
+            }
+            if (this.props.type === 'bloom') {
+              return (
+                <Text style={styles.main}>
+                  {this.props.text} <Text style={styles.date}>{translateDate(moment(this.props.date).fromNow())}</Text>
+                </Text>
+              );
+            }
+
+            return;
+          })()
         }
       </TouchableOpacity>
     );
@@ -96,10 +145,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 15,
     borderRadius: 10,
-    shadowColor: '#000', 
-    shadowOffset: {width: 0, height: 0}, 
-    shadowOpacity: 0.1, 
-    shadowRadius: 5, 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 1,
     padding: 15,
     flexDirection: 'row',
@@ -124,7 +173,7 @@ const styles = StyleSheet.create({
     fontWeight: '700'
   },
   main: {
-    fontWeight: '100',
+    fontWeight: '300',
     flex: 1,
     lineHeight: 30
   },

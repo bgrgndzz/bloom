@@ -1,11 +1,12 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
-  StyleSheet, 
+  StyleSheet,
   View,
+  Text,
   TouchableOpacity
 } from 'react-native';
 
-import {NavigationActions} from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 
 import FontAwesome from '../../../shared/FontAwesome/FontAwesome';
 
@@ -13,31 +14,8 @@ const pages = {
   Feed: 'home',
   Topics: 'bookmark',
   Profile: 'user',
-  Settings: 'cog'
-}
-export default class BottomNavigation extends Component {
-  render() {
-    const routeName = this.props.navigation.state.routeName;
-    const jwt = this.props.navigation.getParam('jwt', '');
-
-    return (
-      <View style={styles.bottomNavigation}>
-        {Object.keys(pages).map(page => (
-          <TouchableOpacity
-            style={[styles.navItem, routeName === page && styles.activeNavItem]}
-            onPress={() => {this.props.navigation.reset([NavigationActions.navigate({routeName: page, params: {jwt}})], 0)}}
-            key={page}
-          >
-            <FontAwesome 
-              style={[styles.navIcon, routeName === page && styles.activeNavIcon]}
-              icon={pages[page]}
-            />
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
-  }
-}
+  Messages: 'envelope'
+};
 
 const styles = StyleSheet.create({
   bottomNavigation: {
@@ -53,7 +31,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 50,
     width: '15%',
-    justifyContent: 'center',
     alignItems: 'center'
   },
   activeNavItem: {
@@ -71,5 +48,52 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#16425B',
     fontWeight: '500'
+  },
+  messageCountContainer: {
+    width: 15,
+    height: 15,
+    borderRadius: 10,
+    position: 'absolute',
+    top: 7.5,
+    right: 7.5,
+    backgroundColor: '#EA3546',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  messageCount: {
+    color: 'white',
+    fontSize: 10,
+    textAlign: 'center',
+    fontWeight: '900'
   }
 });
+
+const BottomNavigation = props => (
+  <View style={styles.bottomNavigation}>
+    {Object.keys(pages).map(page => (
+      <TouchableOpacity
+        style={[
+          styles.navItem,
+          props.navigation.state.routeName === page && styles.activeNavItem
+        ]}
+        onPress={() => props.navigation.reset([NavigationActions.navigate({ routeName: page })], 0)}
+        key={page}
+      >
+        <FontAwesome
+          style={[
+            styles.navIcon,
+            props.navigation.state.routeName === page && styles.activeNavIcon
+          ]}
+          icon={pages[page]}
+        />
+        {(props.messages && page === 'Messages') ? (
+          <View style={styles.messageCountContainer}>
+            <Text style={styles.messageCount}>{props.messages}</Text>
+          </View>
+        ) : null}
+      </TouchableOpacity>
+    ))}
+  </View>
+);
+
+export default BottomNavigation;
