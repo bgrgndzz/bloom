@@ -65,7 +65,7 @@ const UserInformation = props => (
         {props.userId ? null : (
           <>
             <TouchableOpacity
-              onPress={() => Alert.alert('Bu davet kodunu kullanarak Bloom\'u 3 arkadaşına öner ve "Davetkar" isimli bloop\'a sahip ol!')}
+              onPress={() => Alert.alert('Davetkâr Bloop\'u', 'Bu davet kodunu kullanarak Bloom\'u 3 arkadaşına öner ve "Davetkar" isimli bloop\'a sahip ol!')}
               style={styles.referralCode}
             >
               <Text style={styles.bold}>Davet Kodu: </Text>
