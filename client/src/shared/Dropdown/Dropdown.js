@@ -32,7 +32,7 @@ export default class Dropdown extends Component {
                 .replace('İ', 'i').toLowerCase()
                 .indexOf(
                   field.replace('İ', 'i').toLowerCase()
-                ) > -1) : []}
+                ) > -1) : data}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity

@@ -83,7 +83,7 @@ class App extends PureComponent {
 
   socketConnect = callback => {
     this.setState({
-      socket: io('https://www.getbloom.info/socket.io/', {
+      socket: io('https://www.bloomapp.xyz/socket.io/', {
         query: {
           token: this.state.jwt
         },

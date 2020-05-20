@@ -16,11 +16,11 @@ export default class Settings extends Component {
       },
       {
         title: 'Gizlilik Sözleşmesi',
-        onPress: () => Linking.openURL('https://www.getbloom.info/web/privacy-policy')
+        onPress: () => Linking.openURL('https://www.bloomapp.xyz/web/privacy-policy')
       },
       {
         title: 'Kullanım Şartları',
-        onPress: () => Linking.openURL('https://www.getbloom.info/web/terms')
+        onPress: () => Linking.openURL('https://www.bloomapp.xyz/web/terms')
       },
       {
         title: 'Çıkış Yap',

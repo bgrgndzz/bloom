@@ -248,7 +248,7 @@ export default class Topic extends Component {
             return data.map((post, index) => {
               return (post.company && Object.keys(this.state.ad).length > 0) ?
                 (
-                  <TouchableOpacity onPress={() => Linking.openURL(`https://www.getbloom.info/ad/${post._id}/${jwtDecode(this.props.screenProps.jwt).user}?ref=posts`)}>
+                  <TouchableOpacity onPress={() => Linking.openURL(`https://www.bloomapp.xyz/ad/${post._id}/${jwtDecode(this.props.screenProps.jwt).user}?ref=posts`)}>
                     <View style={styles.adPost}>
                       <View style={styles.adTop}>
                         <View style={styles.adAuthorContainer}>
@@ -262,7 +262,7 @@ export default class Topic extends Component {
                       <View style={styles.adMain}>
                         <TouchableOpacity
                           style={styles.adTopicContainer}
-                          onPress={() => Linking.openURL(`https://www.getbloom.info/ad/${post._id}/${jwtDecode(this.props.screenProps.jwt).user}?ref=posts`)}
+                          onPress={() => Linking.openURL(`https://www.bloomapp.xyz/ad/${post._id}/${jwtDecode(this.props.screenProps.jwt).user}?ref=posts`)}
                         >
                           <Text style={styles.adTopic}>{post.topic}</Text>
                         </TouchableOpacity>

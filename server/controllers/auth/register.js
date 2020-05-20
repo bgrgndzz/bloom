@@ -11,6 +11,7 @@ module.exports = (req, res, next) => {
     !req.body ||
     !req.body.firstName ||
     !req.body.lastName ||
+    !req.body.city ||
     !req.body.school ||
     !req.body.email ||
     !req.body.password ||
@@ -53,6 +54,7 @@ module.exports = (req, res, next) => {
           firstName: req.body.firstName,
           lastName: req.body.lastName,
           school: req.body.school,
+          city: req.body.city,
         },
         referral: {
           referralCode,

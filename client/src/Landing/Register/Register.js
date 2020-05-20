@@ -18,6 +18,7 @@ import Input from '../../shared/Input/Input';
 
 import api from '../../shared/api';
 
+import cities from './cities';
 import schools from './schools';
 import Dropdown from '../../shared/Dropdown/Dropdown';
 
@@ -28,10 +29,13 @@ export default class Register extends Component {
     email: '',
     password: '',
     password2: '',
+    city: '',
+    cityField: '',
     school: '',
     schoolField: '',
     referrerCode: '',
     schoolFocused: false,
+    cityFocused: false,
     registerDisabled: false,
     innerPreset: '1'
   };
@@ -43,6 +47,12 @@ export default class Register extends Component {
   onSchoolPress = item => this.setState({ school: item, schoolField: item });
 
   toggleSchoolModal = () => this.setState({ schoolFocused: !this.state.schoolFocused });
+
+  onCityChange = input => this.setState({ cityField: input });
+
+  onCityPress = item => this.setState({ city: item, cityField: item });
+
+  toggleCityModal = () => this.setState({ cityFocused: !this.state.cityFocused });
 
   register = () => {
     this.setState({
@@ -142,12 +152,15 @@ export default class Register extends Component {
     const {
       firstName,
       lastName,
+      city,
       school,
       email,
       password,
       password2,
       schoolField,
       schoolFocused,
+      cityField,
+      cityFocused,
       referrerCode,
       registerDisabled,
       innerPreset
@@ -189,6 +202,29 @@ export default class Register extends Component {
             </View>
             <TouchableOpacity
               style={styles.schoolInputInterceptor}
+              onPress={this.toggleCityModal}
+            >
+              <View pointerEvents="none">
+                <Input
+                  value={city}
+                  editable={false}
+                  onPress={this.toggleCityModal}
+                  placeholder="Şehir"
+                  onChangeText={this.onCityChange}
+                />
+              </View>
+            </TouchableOpacity>
+            <Dropdown
+              field={cityField}
+              data={cities}
+              focused={cityFocused}
+              placeholder="City"
+              onChange={this.onCityChange}
+              onPress={this.onCityPress}
+              toggle={this.toggleCityModal}
+            />
+            <TouchableOpacity
+              style={styles.schoolInputInterceptor}
               onPress={this.toggleSchoolModal}
             >
               <View pointerEvents="none">
@@ -203,7 +239,7 @@ export default class Register extends Component {
             </TouchableOpacity>
             <Dropdown
               field={schoolField}
-              data={schools}
+              data={schools[city]}
               focused={schoolFocused}
               placeholder="Okul"
               onChange={this.onSchoolChange}
@@ -259,11 +295,11 @@ export default class Register extends Component {
             />
             <View style={styles.agrements}>
               <Text>Bu butona basarak</Text>
-              <TouchableOpacity onPress={() => Linking.openURL('https://www.getbloom.info/web/privacy-policy')}>
+              <TouchableOpacity onPress={() => Linking.openURL('https://www.bloomapp.xyz/web/privacy-policy')}>
                 <Text style={styles.agreementLink}> Gizlilik Sözleşmesi'ni </Text>
               </TouchableOpacity>
               <Text>ve</Text>
-              <TouchableOpacity onPress={() => Linking.openURL('https://www.getbloom.info/web/terms')}>
+              <TouchableOpacity onPress={() => Linking.openURL('https://www.bloomapp.xyz/web/terms')}>
                 <Text style={styles.agreementLink}> Kullanım Şartları'nı </Text>
               </TouchableOpacity>
               <Text>kabul etmiş olursunuz.</Text>

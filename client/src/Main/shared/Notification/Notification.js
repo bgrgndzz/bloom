@@ -80,7 +80,7 @@ export default class Notification extends Component {
             style={styles.profilepicture}
             source={(() => {
               if (this.props.from) {
-                if (this.props.from.profilepicture && !this.props.anonymous) return { uri: `https://www.getbloom.info/uploads/profilepictures/${this.props.from.profilepicture}` };
+                if (this.props.from.profilepicture && !this.props.anonymous) return { uri: `https://www.bloomapp.xyz/uploads/profilepictures/${this.props.from.profilepicture}` };
                 return require('../../../images/defaultprofile.png');
               }
               return require('../../../images/logosquared.jpeg');

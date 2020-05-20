@@ -132,7 +132,7 @@ export default class Messages extends Component {
                 <CachedImage
                   style={styles.profilepicture}
                   source={item.otherUser.user.profilepicture ?
-                    { uri: `https://www.getbloom.info/uploads/profilepictures/${item.otherUser.user.profilepicture}` } :
+                    { uri: `https://www.bloomapp.xyz/uploads/profilepictures/${item.otherUser.user.profilepicture}` } :
                     defaultprofile
                   }
                 />

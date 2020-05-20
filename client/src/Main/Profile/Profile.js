@@ -38,7 +38,7 @@ const UserInformation = props => (
         <CachedImage
           style={styles.profilepicture}
           source={props.user.profilepicture ?
-            { uri: `https://www.getbloom.info/uploads/profilepictures/${props.user.profilepicture}` } :
+            { uri: `https://www.bloomapp.xyz/uploads/profilepictures/${props.user.profilepicture}` } :
             require('../../../src/images/defaultprofile.png')
           }
         />

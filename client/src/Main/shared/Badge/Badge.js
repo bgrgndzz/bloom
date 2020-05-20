@@ -203,6 +203,32 @@ const badges = {
         height: 0
       }
     }
+  },
+  fenomen: {
+    icon: null,
+    text: 'Fenomen',
+    big: {
+      containerStyle: {
+        backgroundColor: '#FFC1C1'
+      },
+      textStyle: {
+        color: 'white'
+      },
+      iconStyle: {
+        height: 0
+      }
+    },
+    small: {
+      containerStyle: {
+        backgroundColor: '#FFC1C1'
+      },
+      textStyle: {
+        color: 'white'
+      },
+      iconStyle: {
+        height: 0
+      }
+    }
   }
 };
 

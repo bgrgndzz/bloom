@@ -88,7 +88,7 @@ const settings = {
   },
   apn: {
     token: {
-      key: './key.p8',
+      key: path.join(__dirname, '/key.p8'),
       keyId: '5RX85Q29QD',
       teamId: '8DVKCD9DV6',
     },

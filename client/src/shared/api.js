@@ -9,7 +9,7 @@ module.exports = ({ path, method, jwt, body }, callback) => {
       'x-access-token': jwt
     },
     validateStatus: status => status >= 200 && status < 500,
-    url: `https://www.getbloom.info/${path}`,
+    url: `https://www.bloomapp.xyz/${path}`,
     data: body,
     method
   };

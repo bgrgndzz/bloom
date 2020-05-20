@@ -59,7 +59,7 @@ export default class Comment extends Component {
                   <CachedImage
                     style={styles.profilepicture}
                     source={this.props.author.profilepicture ?
-                      { uri: `https://www.getbloom.info/uploads/profilepictures/${this.props.author.profilepicture}` } :
+                      { uri: `https://www.bloomapp.xyz/uploads/profilepictures/${this.props.author.profilepicture}` } :
                       defaultprofile
                     }
                   />

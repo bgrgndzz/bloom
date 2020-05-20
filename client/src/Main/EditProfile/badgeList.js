@@ -22,6 +22,11 @@ export default [
   {
     name: 'blooper',
     text: '👅 Blooper',
-    description: 'Umay Yılmaz\'a badge yerine "bloop" kelimesini bulduğu için verilen özel bir badge'
+    description: 'Umay Yılmaz\'a badge yerine "bloop" kelimesini bulduğu için verilen özel bir bloop'
+  },
+  {
+    name: 'fenomen',
+    text: 'Fenomen',
+    description: 'Yiğit Çakan\'a müthiş TikTok\'ları için verilen özel bir bloop'
   }
 ];

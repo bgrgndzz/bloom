@@ -67,7 +67,7 @@ const User = (props) => ((props.user && props.user.user) ? (
     {props.user.user.profilepicture ? (
       <CachedImage
         style={styles.profilepicture}
-        source={{ uri: `https://www.getbloom.info/uploads/profilepictures/${props.user.user.profilepicture}` }}
+        source={{ uri: `https://www.bloomapp.xyz/uploads/profilepictures/${props.user.user.profilepicture}` }}
         resizeMode="contain"
       />
     ) : (

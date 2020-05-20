@@ -208,7 +208,7 @@ export default class Conversation extends Component {
               <CachedImage
                 style={styles.profilepicture}
                 source={otherUser.user.profilepicture ?
-                  { uri: `https://www.getbloom.info/uploads/profilepictures/${otherUser.user.profilepicture}` } :
+                  { uri: `https://www.bloomapp.xyz/uploads/profilepictures/${otherUser.user.profilepicture}` } :
                   defaultprofile
                 }
               />

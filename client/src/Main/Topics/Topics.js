@@ -192,7 +192,7 @@ export default class Topics extends Component {
         }
         if (index === 3 && this.state.sort !== 'random' && Object.keys(this.state.ad).length > 0) {
           return (
-            <TouchableOpacity onPress={() => Linking.openURL(`https://www.getbloom.info/ad/${item._id}/${jwtDecode(this.props.screenProps.jwt).user}?ref=topics`)}>
+            <TouchableOpacity onPress={() => Linking.openURL(`https://www.bloomapp.xyz/ad/${item._id}/${jwtDecode(this.props.screenProps.jwt).user}?ref=topics`)}>
               <Topic
                 topic={item.topic}
                 containerStyle={styles.ad}
