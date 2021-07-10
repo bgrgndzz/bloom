@@ -233,6 +233,7 @@ export default class EditProfile extends Component {
             <Input
               placeholder="Hakkında"
               onChangeText={this.onChangeText('about')}
+              multiline={true}
               value={this.state.about}
               containerStyle={styles.input}
             />
@@ -393,6 +394,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 15,
     textAlign: 'center'
+  }
+});
+
   },
   badgeButtonContainer: {
     width: '50%',
