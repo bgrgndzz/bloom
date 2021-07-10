@@ -11,6 +11,7 @@ export default {
   bell: '\uf0f3',
   exclamation: '\uf12a',
   ellipsisV: '\uf142',
+  search: '\uf002'
   envelope: '\uf0e0',
   paperPlane: '\uf1d8',
   comment: '\uf27a',
