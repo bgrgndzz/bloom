@@ -20,7 +20,7 @@
     "react": "^16.8.3",
     "react-native": "^0.59.1",
     "react-native-cached-image": "github:fungilation/react-native-cached-image#32a8a9a",
-    "react-native-code-push": "^5.4.2",
+    "react-native-code-push": "^5.7.0",
     "react-native-gesture-handler": "^1.0.9",
     "react-native-image-crop-picker": "^0.21.3",
     "react-native-ios-status-bar-padding": "^1.2.0",
