@@ -39,7 +39,7 @@
     "pug": "^2.0.3",
     "rate-limiter-flexible": "^1.0.2",
     "redis": "^2.8.0",
-    "socket.io": "^2.2.0",
+    "socket.io": "^2.5.0",
     "socket.io-redis": "^5.2.0"
   },
   "devDependencies": {
